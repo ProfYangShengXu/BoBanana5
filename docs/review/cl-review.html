@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>CL 终审报告 — Bobanana 5.0</title>
+<style>
+body { font-family: -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 1rem; background: #f8f9fa; }
+h1 { color: #dc2626; border-bottom: 3px solid #dc2626; padding-bottom: 0.5rem; }
+.score { font-size: 3rem; font-weight: 700; text-align: center; padding: 1rem; }
+.pass { color: #16a34a; } .fail { color: #dc2626; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+th, td { padding: 0.5rem; border: 1px solid #e0e0e0; text-align: left; }
+th { background: #1a1a2e; color: #fff; }
+tr:nth-child(even) { background: #f5f5f5; }
+.box { border-left: 4px solid #dc2626; padding: 0.8rem 1.2rem; margin: 1rem 0; background: #fff; border-radius: 0 6px 6px 0; }
+</style>
+</head>
+<body>
+<h1>🔴 CL 终审报告</h1>
+
+<div class="score fail">评分: 7/10 ❌ FAIL</div>
+<p style="text-align:center">需修复后重新提交终审</p>
+
+<h2>各维度评分</h2>
+<table>
+  <tr><th>维度</th><th>评分</th><th>说明</th></tr>
+  <tr><td>PRD 文档完整性</td><td>8/10</td><td>HTML+YAML 齐全，缺可追踪性矩阵</td></tr>
+  <tr><td>代码质量</td><td>7/10</td><td>无裸 except ✅，6 处精确 except 缺日志</td></tr>
+  <tr><td>测试覆盖</td><td>9/10</td><td>~168 tests，四层完整</td></tr>
+  <tr><td>安全修复</td><td>8/10</td><td>os.system 已修 ✅，except 缺日志</td></tr>
+  <tr><td>仪表盘修复</td><td>9/10</td><td>编译通过 ✅，线程安全 ✅，布局常量 ✅</td></tr>
+  <tr><td>架构设计</td><td>6/10</td><td>state-machine.yaml phase 与实际运行不匹配</td></tr>
+</table>
+
+<h2>Top 3 必须修复项</h2>
+
+<div class="box">
+<h3>🔴 1. state-machine.yaml phase 与 bobanana.py 不匹配</h3>
+<p>state-machine.yaml v3 定义了 boss-done/arch-dev-done/fullstack-done/arch-cl-ready/cl-pass/cl-fail，但 <code>bobanana.py:76-87</code> 使用的是 arch-done/dev-done_task-done/test-done_layer-not-done/judge-done_no-badcase/critic-done_pass 等。引擎执行到第二个 phase 即抛 ValueError 被 catch 后 break。</p>
+<p><strong>修复：</strong>统一两边的 phase 名称，或更新 bobanana.py 的 route 列表。</p>
+</div>
+
+<div class="box">
+<h3>🟡 2. 6 处精确 except 缺少日志</h3>
+<p>handoff_ticket.py:45,97 + role_tag_system.py:34 + pipeline_orchestrator.py:222 + mcp_events.py:89 + hr_recruitment.py:81 — 虽已改为精确异常类型，但 PRD 验收标准 A-01 要求"精确异常处理 + 日志"。</p>
+<p><strong>修复：</strong>添加 logging.warning() 或 print(..., file=sys.stderr)。</p>
+</div>
+
+<div class="box">
+<h3>🟡 3. bobanana.py start_gui() MCPClient 连接泄漏</h3>
+<p><code>start_gui()</code> 创建 MCPClient 并 connect，然后 gui_dashboard.py 第 13 行再次创建自己的 MCPClient，前一个连接被覆盖泄漏。</p>
+<p><strong>修复：</strong>start_gui() 中不创建 MCPClient，由 gui_dashboard.py 自行管理连接。</p>
+</div>
+
+<p style="text-align:center; margin-top:2rem; color:#666;">— CL 终审 · score: 7/10 · verdict: FAIL —</p>
+</body>
+</html>

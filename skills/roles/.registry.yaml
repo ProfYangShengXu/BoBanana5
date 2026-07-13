@@ -1,0 +1,200 @@
+cards:
+- description: 架构师 — 管线的编排者。读取项目目标和角色卡库，设计状态机拓扑，触发紧急招聘，制定技术方案
+  has_example_sm: true
+  id: architect
+  kitset: ''
+  name: architect
+  path: architect/role-card.yaml
+  registered_at: ''
+  tags:
+  - OP
+  use_case: 适合技术方案设计、任务拆分、质量验收阶段，可替代fullstack-dev的架构决策工作
+- description: 甲方终审 — 管线的唯一终结出口。在所有技术角色完成后执行，使用隔离 subagent 全量审查项目代码并打分
+  has_example_sm: false
+  id: client-gate
+  kitset: ''
+  name: client-gate
+  path: client-gate/role-card.yaml
+  registered_at: ''
+  tags:
+  - CL
+  use_case: 管线最终出口，所有角色完成后执行隔离审查
+- description: HR 招聘专员 — 使用 /hr skill 招聘新角色。派出 4 个并行 subagent 研究职业准则，生成标准角色卡并注册到管线
+  has_example_sm: true
+  id: hr-recruiter
+  kitset: ''
+  name: hr-recruiter
+  path: hr-recruiter/role-card.yaml
+  registered_at: ''
+  tags:
+  - HR
+  use_case: 适合在架构师编排过程中发现角色卡缺失时触发，替代手动创建角色卡
+- description: 'Backend developer: server architecture, API design, database, performance
+    optimi'
+  has_example_sm: false
+  id: backend-dev
+  kitset: ''
+  name: backend-dev
+  path: backend-dev/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合后端API和数据库开发，替代fullstack-dev的后端工作
+- description: 'Client developer: desktop/mobile native app, cross-platform, performance.
+    C++/C#'
+  has_example_sm: false
+  id: client-dev
+  kitset: ''
+  name: client-dev
+  path: client-dev/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合桌面/移动端原生应用开发，替代fullstack-dev的客户端工作
+- description: 'Database engineer: schema design, query optimization, migration, backup/recovery'
+  has_example_sm: false
+  id: database-engineer
+  kitset: ''
+  name: database-engineer
+  path: database-engineer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合数据库Schema设计和查询优化
+- description: 'Frontend developer: web/mobile UI, component libraries, interaction
+    optimization'
+  has_example_sm: false
+  id: frontend-dev
+  kitset: ''
+  name: frontend-dev
+  path: frontend-dev/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合Web/移动端UI开发和交互优化
+- description: 推荐算法工程师：设计实现推荐系统，协同过滤/深度学习排序，特征工程，AB测试，离线评估
+  has_example_sm: false
+  id: recommendation-engineer
+  kitset: ''
+  name: recommendation-engineer
+  path: recommendation-engineer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合推荐系统设计和AB测试
+- description: NLP/CV算法工程师：自然语言处理与计算机视觉算法研发，文本分类/实体识别/图像分类/目标检测，模型训练与部署
+  has_example_sm: false
+  id: nlp-cv-engineer
+  kitset: ''
+  name: nlp-cv-engineer
+  path: nlp-cv-engineer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合NLP/CV算法研发和模型训练部署
+- description: 大模型应用开发工程师：LLM API 调用与微调，RAG 管线构建，Prompt 工程，Agent 开发，模型评估与监控
+  has_example_sm: false
+  id: llm-app-engineer
+  kitset: ''
+  name: llm-app-engineer
+  path: llm-app-engineer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合LLM API调用、RAG管线和Prompt工程
+- description: 搜索/广告算法工程师：搜索引擎索引与排序，广告竞价与CTR预估，召回/粗排/精排/重排全链路，特征工程与AB测试
+  has_example_sm: false
+  id: search-ad-engineer
+  kitset: ''
+  name: search-ad-engineer
+  path: search-ad-engineer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合搜索引擎和广告竞价算法
+- description: 测试开发工程师：自动化测试框架搭建，单元/集成/场景/安全四层测试，CI/CD 集成，测试覆盖率分析与质量门禁
+  has_example_sm: false
+  id: test-dev-engineer
+  kitset: ''
+  name: test-dev-engineer
+  path: test-dev-engineer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合自动化测试框架搭建和四层测试覆盖
+- description: 运维/SRE工程师：K8s容器编排与云原生架构，监控告警体系，CI/CD流水线，容灾备份，成本优化
+  has_example_sm: false
+  id: sre-engineer
+  kitset: ''
+  name: sre-engineer
+  path: sre-engineer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合K8s运维、监控告警和CI/CD流水线
+- description: 安全工程师：应用安全审计与渗透测试，数据加密与密钥管理，SDL安全开发生命周期，安全应急响应
+  has_example_sm: false
+  id: security-engineer
+  kitset: ''
+  name: security-engineer
+  path: security-engineer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合安全审计、渗透测试和SDL安全开发
+- description: 数据工程师：数据管道搭建与ETL开发，数据仓库建模，实时/离线数据处理，数据质量监控与治理
+  has_example_sm: false
+  id: data-engineer
+  kitset: ''
+  name: data-engineer
+  path: data-engineer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合数据管道搭建和ETL开发
+- description: 数据分析师：业务指标体系搭建，用户行为分析，AB实验设计与评估，数据可视化报表，数据驱动决策
+  has_example_sm: false
+  id: data-analyst
+  kitset: ''
+  name: data-analyst
+  path: data-analyst/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合数据分析、报表和AB实验评估
+- description: 数据平台开发工程师：数据平台架构设计与开发，OLAP引擎集成，数据血缘与元数据管理，任务调度系统，数据自助查询平台
+  has_example_sm: false
+  id: data-platform-dev
+  kitset: ''
+  name: data-platform-dev
+  path: data-platform-dev/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合数据平台架构和OLAP引擎集成
+- description: 全栈开发工程师：前后端全栈开发，数据库设计，API设计与实现，DevOps，从需求到上线全链路负责
+  has_example_sm: false
+  id: fullstack-dev
+  kitset: ''
+  name: fullstack-dev
+  path: fullstack-dev/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 全栈开发，前后端通吃，适合中小型项目全链路负责
+- description: Boss — 用户的代言人。bobanana 管线的固定入口角色，强制读角色卡库，调用 /docs 更新产品文档，编写第一个无 CL
+    的状态机
+  has_example_sm: false
+  id: boss
+  kitset: ''
+  name: boss
+  path: boss/role-card.yaml
+  registered_at: ''
+  tags:
+  - OP
+  use_case: 管线入口角色，读取用户目标并启动管线
+- description: Integration test role
+  has_example_sm: false
+  id: integ-test
+  kitset: ''
+  name: integ-test
+  path: integ-test/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合集成测试和跨模块交互验证
+- description: Test role for unit testing
+  has_example_sm: true
+  id: test-role
+  kitset: ''
+  name: test-role
+  path: test-role/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合Test role for unit testing，可替代fullstack-dev在该领域的专门工作
+last_scan: ''
+version: 1

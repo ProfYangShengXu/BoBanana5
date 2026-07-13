@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>Bobanana 5.0 GUI — UI/UX 技术方案</title>
+<style>
+body { font-family: -apple-system, sans-serif; max-width: 900px; margin: 2rem auto; padding: 1rem; background: #f8f9fa; }
+h1 { color: #1a1a2e; border-bottom: 3px solid #e94560; padding-bottom: 0.5rem; }
+h2 { color: #16213e; margin-top: 2rem; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+th, td { padding: 0.5rem; border: 1px solid #e0e0e0; text-align: left; }
+th { background: #1a1a2e; color: #fff; }
+tr:nth-child(even) { background: #f5f5f5; }
+code { background: #eef; padding: 0.15rem 0.35rem; border-radius: 3px; }
+.details { border-left: 4px solid #7c3aed; padding: 0.8rem 1.2rem; margin: 1rem 0; background: #fff; border-radius: 0 6px 6px 0; }
+</style>
+</head>
+<body>
+<h1>🎨 Bobanana 5.0 GUI — UI/UX 技术方案</h1>
+<p>基于 EUI-NEO 框架 (C++17/OpenGL) 的桌面仪表盘 UI/UX 升级</p>
+
+<h2>1. 配色系统</h2>
+
+<div class="details">
+<h3>1.1 架构</h3>
+<p>定义 <code>Theme</code> 结构体，包含所有 UI 元素的颜色属性。通过 <code>ThemeManager</code> 在运行时切换。</p>
+<pre><code>struct Theme {
+    std::string name;
+    eui::Color background;     // 背景色
+    eui::Color surface;        // 卡片/面板背景
+    eui::Color text_primary;   // 主文字
+    eui::Color text_secondary; // 副文字
+    eui::Color accent;         // 强调色
+    eui::Color success;        // 绿色
+    eui::Color danger;         // 红色
+    eui::Color warning;        // 黄色
+    eui::Color info;           // 蓝色
+    eui::Color border;         // 边框色
+    // 渐变
+    eui::Color gradient_start, gradient_end;
+};</code></pre>
+
+<h3>1.2 配色方案（4 套）</h3>
+<table>
+  <tr><th>方案</th><th>背景</th><th>文字</th><th>强调</th><th>风格</th></tr>
+  <tr><td>🌙 暗夜 (Dark)</td><td>#0d0d14</td><td>#e8e8f0</td><td>#e94560</td><td>赛博朋克暗色</td></tr>
+  <tr><td>☀️ 晨曦 (Light)</td><td>#f5f0eb</td><td>#2d2a26</td><td>#c0392b</td><td>暖白高对比</td></tr>
+  <tr><td>💜 霓虹 (Neon)</td><td>#0a0015</td><td>#00ff88</td><td>#ff00ff</td><td>荧光赛博</td></tr>
+  <tr><td>🧊 极简 (Minimal)</td><td>#eceff4</td><td>#2e3440</td><td>#5e81ac</td><td>Nord 北欧风</td></tr>
+</table>
+</div>
+
+<h2>2. 动画系统</h2>
+
+<div class="details">
+<h3>2.1 动画引擎</h3>
+<p>利用 EUI-NEO 的帧渲染循环，在 <code>compose()</code> 中计算动画插值。</p>
+<pre><code>// 动画状态
+struct AnimState {
+    float progress;           // 0.0 → 1.0
+    float speed;              // 每秒进度增量
+    bool active;
+    std::string easing;       // "ease-out" | "linear" | "bounce"
+    std::chrono::steady_clock::time_point last_time;
+};</code></pre>
+
+<h3>2.2 动画类型</h3>
+<table>
+  <tr><th>类型</th><th>目标</th><th>时长</th><th>效果</th></tr>
+  <tr><td>Fade In</td><td>面板加载</td><td>0.3s</td><td>透明度 0→1</td></tr>
+  <tr><td>Slide Up</td><td>状态更新</td><td>0.4s</td><td>Y 轴偏移 20→0</td></tr>
+  <tr><td>Pulse</td><td>当前节点</td><td>1.0s 循环</td><td>缩放 1.0→1.05→1.0</td></tr>
+  <tr><td>Glow</td><td>强调元素</td><td>1.5s 循环</td><td>发光强度呼吸变化</td></tr>
+  <tr><td>Progress Fill</td><td>进度条</td><td>0.6s</td><td>宽度从 0→目标%</td></tr>
+  <tr><td>Hover Glow</td><td>导航项</td><td>0.2s</td><td>悬停时背景发光</td></tr>
+  <tr><td>Transition</td><td>配色切换</td><td>0.5s</td><td>颜色线性插值过渡</td></tr>
+</table>
+</div>
+
+<h2>3. 组件结构</h2>
+
+<div class="details">
+<table>
+  <tr><th>组件</th><th>文件</th><th>描述</th></tr>
+  <tr><td>ThemeManager</td><td>main.cpp</td><td>配色方案管理 + 切换</td></tr>
+  <tr><td>AnimEngine</td><td>main.cpp</td><td>动画状态机 + 插值计算</td></tr>
+  <tr><td>Header</td><td>main.cpp</td><td>标题栏 + 时间 + 主题切换按钮</td></tr>
+  <tr><td>NavPanel</td><td>main.cpp</td><td>左侧导航 + 悬停发光效果</td></tr>
+  <tr><td>RoleCards</td><td>main.cpp</td><td>角色卡列表 + 淡入动画</td></tr>
+  <tr><td>GraphPanel</td><td>main.cpp</td><td>状态机图 + 节点脉冲动画</td></tr>
+  <tr><td>StatsPanel</td><td>main.cpp</td><td>统计面板 + 进度条填充动画</td></tr>
+  <tr><td>CLPanel</td><td>main.cpp</td><td>CL 评分显示</td></tr>
+</table>
+</div>
+
+<h2>4. 视觉效果</h2>
+
+<div class="details">
+<ul>
+  <li><strong>渐变背景</strong> — 标题栏和面板使用线性渐变而非纯色</li>
+  <li><strong>发光边框</strong> — 当前活跃面板有霓虹光晕边框</li>
+  <li><strong>毛玻璃</strong> — 面板背景带模糊效果 (backdrop-filter 模拟)</li>
+  <li><strong>节点连线动画</strong> — 状态机边用虚线动画流动</li>
+  <li><strong>评分动画</strong> — CL 分数以数字滚动动画呈现</li>
+  <li><strong>粒子背景</strong> — 背景飘浮缓慢移动的细小光点</li>
+</ul>
+</div>
+
+<h2>5. 接口定义</h2>
+
+<div class="details">
+<pre><code>// 主题切换
+void cycleTheme();                    // 循环切换下一套配色
+
+// 动画控制
+float animate(AnimState &s);          // 更新动画状态，返回当前插值
+eui::Color lerpColor(eui::Color a, eui::Color b, float t);  // 颜色插值
+
+// 效果
+void drawGlow(eui::Ui &ui, float x, float y, float w, float h, eui::Color c);
+void drawParticles(eui::Ui &ui, float W, float H);</code></pre>
+</div>
+</body>
+</html>

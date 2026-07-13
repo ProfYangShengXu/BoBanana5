@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+*.egg
+
+# Build artifacts
+build-eui/
+*.exe
+*.obj
+*.a
+*.o
+*.lib
+
+# Reasonix runtime state (auto-generated, not for repo)
+.reasonix/cycle/
+.reasonix/handoffs/
+.reasonix/pipelines/
+.reasonix/recruitments/
+.reasonix/state/
+.reasonix/desktop-*
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Submodules - EUI-NEO is a submodule reference
+eui_neo_app/external/EUI-NEO/
+
+# 为什么选择这个架构？baseline
+为什么选择这个架构？baseline

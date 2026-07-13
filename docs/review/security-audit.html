@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bobanana 5.0 — 安全审计报告</title>
+<style>
+:root { --primary: #1a1a2e; --accent: #e94560; --bg: #f8f9fa; --card: #fff; --text: #333; --border: #e0e0e0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", monospace; line-height: 1.7; color: var(--text); background: var(--bg); }
+.header { background: linear-gradient(135deg, var(--primary), #16213e); color: #fff; padding: 2rem; text-align: center; }
+.header h1 { font-size: 1.6rem; }
+.header .meta { font-size: 0.85rem; opacity: 0.7; margin-top: 0.5rem; }
+.main { max-width: 960px; margin: 0 auto; padding: 2rem; }
+.main h2 { font-size: 1.3rem; color: var(--primary); margin: 2rem 0 1rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.4rem; }
+.main h3 { font-size: 1.1rem; color: #16213e; margin: 1.3rem 0 0.6rem; }
+.main p { margin-bottom: 0.8rem; }
+.main ul { margin-bottom: 0.8rem; padding-left: 1.3rem; }
+.main li { margin-bottom: 0.3rem; }
+.main code { background: #eef; padding: 0.15rem 0.35rem; border-radius: 3px; font-size: 0.9em; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; }
+th, td { padding: 0.5rem 0.7rem; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+th { background: var(--primary); color: #fff; }
+tr:nth-child(even) td { background: #f5f5f5; }
+.tag-crit { background: #dc2626; color: #fff; padding: 0.15rem 0.5rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; }
+.tag-high { background: #ea580c; color: #fff; padding: 0.15rem 0.5rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; }
+.tag-med { background: #ca8a04; color: #fff; padding: 0.15rem 0.5rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; }
+.tag-low { background: #16a34a; color: #fff; padding: 0.15rem 0.5rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; }
+.box { background: var(--card); border-left: 4px solid var(--accent); padding: 0.8rem 1.2rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+.box.red { border-left-color: #dc2626; }
+.box.green { border-left-color: #16a34a; }
+details { margin: 0.8rem 0; background: var(--card); border-radius: 6px; border: 1px solid var(--border); overflow: hidden; }
+details summary { padding: 0.6rem 1rem; cursor: pointer; font-weight: 600; color: var(--primary); background: #fafafa; }
+details .body { padding: 0.8rem 1.2rem; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🔒 Bobanana 5.0 — 安全审计报告</h1>
+  <div class="meta">审计日期: 2026-07-13 · 审计范围: 全量 Python 源码 · 审计角色: security-engineer</div>
+</div>
+<div class="main">
+
+<h2>1. 审计摘要</h2>
+
+<p>对 bobanana4.0 代码库 14 个 Python 模块 + 3 个工具脚本进行安全审计。共发现 <strong>13 项安全问题</strong>，其中 <span class="tag-crit">1 严重</span>、<span class="tag-high">4 高</span>、<span class="tag-med">5 中</span>、<span class="tag-low">3 低</span>。</p>
+
+<div class="box red">
+<strong>⚠️ 总体风险评估：中</strong><br>
+项目为本地运行的 CLI 工具，不涉及网络服务或外部用户，降低了远程攻击面。
+但 <code>os.system()</code> 和大量 <code>except: pass</code> 构成了本地提权和可靠性风险。
+</div>
+
+<h2>2. 漏洞详情</h2>
+
+<details open>
+<summary><span class="tag-crit">CRITICAL</span> V-01: os.system() 命令注入 (bobanana.py:142)</summary>
+<div class="body">
+<table>
+  <tr><th>属性</th><th>值</th></tr>
+  <tr><td>文件</td><td><code>bobanana.py:142</code></td></tr>
+  <tr><td>代码</td><td><code>os.system('python gui_dashboard.py')</code></td></tr>
+  <tr><td>风险</td><td><code>os.system</code> 通过 shell 执行命令。如果 <code>gui_dashboard.py</code> 路径被污染或当前目录有同名文件，可执行任意代码。</td></tr>
+  <tr><td>影响</td><td>在 Windows 上，`%PATH%` 劫持可导致任意命令执行</td></tr>
+  <tr><td>修复</td><td>替换为 <code>subprocess.run([sys.executable, 'gui_dashboard.py'])</code></td></tr>
+  <tr><td>CVSS</td><td>7.5 (AV:L/AC:H/PR:L/UI:R/S:U/C:H/I:H/A:H)</td></tr>
+</table>
+</div>
+</details>
+
+<details open>
+<summary><span class="tag-high">HIGH</span> V-02: 裸 except: — 静默吞异常 (handoff_ticket.py:45,97)</summary>
+<div class="body">
+<table>
+  <tr><th>文件</th><th>行</th><th>代码</th><th>影响</th></tr>
+  <tr><td><code>handoff_ticket.py</code></td><td>45</td><td><code>except:</code> (pass)</td><td>FileNotFoundError 被静默忽略</td></tr>
+  <tr><td><code>handoff_ticket.py</code></td><td>97</td><td><code>except:</code> (pass)</td><td>JSON 解码错误被静默忽略</td></tr>
+</table>
+<p>这些异常可能导致角色卡加载失败、工单丢失而不留任何痕迹。修复：改为精确异常类型 + <code>logging.warning()</code>。</p>
+</div>
+</details>
+
+<details open>
+<summary><span class="tag-high">HIGH</span> V-03: 裸 except: — YAML 错误吞没 (role_tag_system.py:34)</summary>
+<div class="body">
+<p><code>except:</code> 在 <code>load_all_role_cards()</code> 中捕获所有异常。如果 YAML 文件损坏，角色卡加载失败没有任何日志。</p>
+<p><strong>修复：</strong>捕获 <code>yaml.YAMLError</code> + <code>FileNotFoundError</code>，记录警告日志。</p>
+</div>
+</details>
+
+<details open>
+<summary><span class="tag-high">HIGH</span> V-04: 裸 except: — JSON 状态丢失 (pipeline_orchestrator.py:222)</summary>
+<div class="body">
+<p><code>except:</code> 在读取管线状态 JSON 时吞没所有异常。如果状态文件损坏，管线可能静默回退到空状态而不告警。</p>
+<p><strong>修复：</strong>捕获 <code>json.JSONDecodeError</code> + <code>FileNotFoundError</code>，回滚到上次有效状态并记录告警。</p>
+</div>
+</details>
+
+<details open>
+<summary><span class="tag-high">HIGH</span> V-05: 裸 except: — HR 网络请求失败 (hr_recruitment.py:81)</summary>
+<div class="body">
+<p><code>except:</code> 在 <code>start_recruitment()</code> 中吞没网络请求异常。如果 <code>urllib.request</code> 失败（网络不通、DNS 解析失败），用户得不到任何反馈。</p>
+<p><strong>修复：</strong>捕获 <code>urllib.error.URLError</code> + 超时异常，返回错误信息给调用方。</p>
+</div>
+</details>
+
+<details>
+<summary><span class="tag-med">MEDIUM</span> V-06: 裸 except: — 事件文件读取 (mcp_events.py:89)</summary>
+<div class="body">
+<p><code>except:</code> 在 <code>_check_file()</code> 中吞没 JSON 解码错误。虽然已设 <code>data = {}</code> 作为 fallback，但无法区分"文件损坏"和"空文件"。</p>
+<p><strong>修复：</strong>捕获 <code>json.JSONDecodeError</code>，记录警告日志。</p>
+</div>
+</details>
+
+<details>
+<summary><span class="tag-med">MEDIUM</span> V-07: 裸 except: — 环境检查 (bobanana.py:39,45)</summary>
+<div class="body">
+<p><code>except:</code> 在 <code>check_env()</code> 中 pip install 失败后无反馈。用户不知道依赖安装是否成功。</p>
+<p><strong>修复：</strong>检查 <code>subprocess.run()</code> 的 returncode，失败时输出提示。</p>
+</div>
+</details>
+
+<details>
+<summary><span class="tag-med">MEDIUM</span> V-08: MCP 路径遍历风险 (mcp_server.py)</summary>
+<div class="body">
+<p><code>handle_read_file</code> 接收用户提供的 <code>path</code> 参数，未做路径消毒。理论上可通过 <code>../../../etc/passwd</code> 读取任意文件。</p>
+<p>但由于 MCP 仅用于本地 stdio 通信，攻击面有限。建议添加 <code>os.path.abspath()</code> 和 <code>startswith</code> 检查。</p>
+</div>
+</details>
+
+<details>
+<summary><span class="tag-med">MEDIUM</span> V-09: 硬编码路径 (多处)</summary>
+<div class="body">
+<p>多处代码直接硬编码 <code>.reasonix/pipelines</code>、<code>.reasonix/state</code>、<code>skills/roles/</code> 等路径，未使用 <code>os.path.join()</code> 或配置常量。在非标准工作目录运行时可能出错。</p>
+</div>
+</details>
+
+<details>
+<summary><span class="tag-med">MEDIUM</span> V-10: GUI 启动器无超时/重试 (mcp_client.py)</summary>
+<div class="body">
+<p><code>connect()</code> 的 <code>timeout</code> 参数在 direct 模式下未使用。subprocess 模式启动服务器无超时保护，服务器可能永久挂起。</p>
+<p><strong>修复：</strong>添加 <code>subprocess.Popen</code> 超时 + 指数退避重试。</p>
+</div>
+</details>
+
+<details>
+<summary><span class="tag-low">LOW</span> V-11: 无密钥/凭据管理</summary>
+<div class="body">
+<p>项目当前不涉及外部 API 密钥或数据库凭据，代码中无硬编码密码。但作为基础架构工具，建议预留 <code>.env</code> 或 <code>keyring</code> 支持。</p>
+</div>
+</details>
+
+<details>
+<summary><span class="tag-low">LOW</span> V-12: 日志与监控不足</summary>
+<div class="body">
+<p>项目使用 <code>print()</code> 而非 <code>logging</code> 模块。生产运行无法分级控制日志输出、无法通过日志文件排查问题。</p>
+</div>
+</details>
+
+<details>
+<summary><span class="tag-low">LOW</span> V-13: 无鉴权/加密 (MCP 协议)</summary>
+<div class="body">
+<p>MCP JSON-RPC 通过 stdio 通信，无身份验证或传输层加密。对于本地 CLI 工具，这是可接受的。如果未来增加远程 MCP 支持，必须添加 TLS + Token 鉴权。</p>
+</div>
+</details>
+
+<h2>3. 必须修复项 (T-01~T-04)</h2>
+
+<table>
+  <tr><th>ID</th><th>漏洞</th><th>文件</th><th>修复方式</th></tr>
+  <tr><td>T-01</td><td>V-02</td><td><code>handoff_ticket.py</code></td><td><code>except: pass</code> → 精确异常 + 日志</td></tr>
+  <tr><td>T-02</td><td>V-03</td><td><code>role_tag_system.py</code></td><td><code>except: pass</code> → yaml.YAMLError + 日志</td></tr>
+  <tr><td>T-03</td><td>V-04</td><td><code>pipeline_orchestrator.py</code></td><td><code>except: pass</code> → JSONDecodeError + 日志</td></tr>
+  <tr><td>T-04</td><td>V-01</td><td><code>bobanana.py</code></td><td><code>os.system()</code> → <code>subprocess.run()</code></td></tr>
+</table>
+
+<div class="box green">
+<strong>注意：</strong>安全工程师只负责发现和报告，不修改代码。以上修复项应交给 <strong>fullstack-dev</strong> 在下一阶段执行。
+</div>
+
+<h2>4. 安全态势总结</h2>
+
+<table>
+  <tr><th>检查项</th><th>状态</th><th>备注</th></tr>
+  <tr><td>SQL/命令注入</td><td><span class="tag-high">1 严重</span></td><td>os.system() 在 bobanana.py</td></tr>
+  <tr><td>密钥硬编码</td><td><span class="tag-low">通过</span></td><td>无硬编码凭据</td></tr>
+  <tr><td>认证/鉴权</td><td><span class="tag-low">不适用</span></td><td>本地 CLI 工具</td></tr>
+  <tr><td>输入消毒</td><td><span class="tag-med">1 中</span></td><td>read_file 路径遍历</td></tr>
+  <tr><td>异常处理</td><td><span class="tag-crit">5 处裸 except:</span></td><td>需全部修复</td></tr>
+  <tr><td>加密/传输安全</td><td><span class="tag-low">不适用</span></td><td>本地 stdio 通信</td></tr>
+  <tr><td>日志/审计</td><td><span class="tag-low">1 低</span></td><td>缺少分级日志</td></tr>
+</table>
+
+<p style="text-align: center; margin-top: 3rem; color: #666;">— END —<br>Bobanana 5.0 安全审计 · security-engineer · v1</p>
+</div>
+</body>
+</html>

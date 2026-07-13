@@ -1,0 +1,48 @@
+deliverables:
+  output_types:
+  - 设计文档
+  - 实现代码
+  - 测试用例
+  - 使用手册
+  quality_criteria:
+  - 功能完整
+  - 性能达标
+  - 可维护性强
+  - 文档齐全
+meta:
+  description: 全栈开发工程师：前后端全栈开发，数据库设计，API设计与实现，DevOps，从需求到上线全链路负责
+  research_date: '2026-07-13T15:04:32.258776'
+  role_name: fullstack-dev
+  subagents_completed: 4
+pitfalls_and_risks:
+  anti_patterns:
+  - 过早优化
+  - 镀金
+  - silos 孤岛
+  common_mistakes:
+  - 需求理解偏差
+  - 技术选型过度设计
+  - 测试覆盖不足
+  - 文档滞后
+  risk_factors:
+  - 时间估算不足
+  - 依赖变更未同步
+  - 沟通断层
+profession_standards:
+  best_practices:
+  - 使用业界标准工具链
+  - 遵循团队协作规范
+  - 保持文档同步
+  key_standards:
+  - fullstack-dev 的标准工作流程
+  - fullstack-dev 核心方法论
+  - fullstack-dev 交付物规范
+  summary: fullstack-dev 职业准则
+tools_and_methods:
+  software:
+  - 标准 IDE
+  - 版本控制工具
+  - CI/CD 工具
+  - 项目管理平台
+  workflow:
+  - 需求分析 -> 设计 -> 实现 -> 测试 -> 评审 -> 发布

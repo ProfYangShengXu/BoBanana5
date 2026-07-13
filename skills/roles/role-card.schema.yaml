@@ -1,0 +1,149 @@
+# Bobanana 5.0 Role Card Schema
+# 定义角色卡的结构化格式。每张角色卡必须符合此 Schema。
+# Schema 版本: v1
+#
+# 字段说明：
+# - $schema: 指向此 Schema 文件的引用
+# - name: 角色名称（唯一标识）
+# - description: 角色描述
+# - tags: 角色标签数组，可选值: OP, CL, HR, 或留空（普通角色）
+# - input_contract: 输入契约列表
+# - output_contract: 输出契约列表
+# - quality_gates: 质量门列表
+# - standards_file: 职业准则文件路径（可选，相对于 skills/roles/<角色名>/）
+# - research: 研究配置（可选）
+#   - subagents: subagent 数量，默认 4
+#   - sources: 研究来源列表
+
+schema:
+  version: 1
+  fields:
+    name:
+      type: string
+      required: true
+      description: "角色名称，唯一标识"
+      min_length: 2
+      max_length: 64
+      pattern: "^[a-zA-Z0-9_-]+$"
+    description:
+      type: string
+      required: true
+      description: "角色描述，一句话说清该角色做什么"
+      min_length: 10
+      max_length: 500
+    tags:
+      type: array
+      required: false
+      description: "角色标签，决定角色在管线中的层级行为"
+      items:
+        type: string
+        enum: ["OP", "CL", "HR"]
+      max_items: 2
+      unique: true
+    input_contract:
+      type: array
+      required: false
+      description: "输入契约列表——该角色需要什么输入"
+      items:
+        type: object
+        fields:
+          name:
+            type: string
+            required: true
+          type:
+            type: string
+            required: true
+          description:
+            type: string
+            required: false
+          required:
+            type: boolean
+            required: false
+            default: false
+    output_contract:
+      type: array
+      required: false
+      description: "输出契约列表——该角色产出什么"
+      items:
+        type: object
+        fields:
+          name:
+            type: string
+            required: true
+          type:
+            type: string
+            required: true
+          description:
+            type: string
+            required: false
+    quality_gates:
+      type: array
+      required: false
+      description: "质量门列表——该角色必须满足的验收条件"
+      items:
+        type: object
+        fields:
+          id:
+            type: string
+            required: true
+            pattern: "^[A-Z]+-[A-Z]+\\d+$"
+          desc:
+            type: string
+            required: true
+          check:
+            type: string
+            required: true
+          layer:
+            type: string
+            required: false
+            enum: ["U", "I", "S", "A"]
+    standards_file:
+      type: string
+      required: false
+      description: "职业准则文件路径（相对于 skills/roles/<角色名>/）"
+      pattern: "^(SKILL\\.md|[a-zA-Z0-9_-]+\\.(md|yaml))$"
+    research:
+      type: object
+      required: false
+      description: "研究配置（仅 HR 相关角色使用）"
+      fields:
+        subagents:
+          type: integer
+          required: false
+          default: 4
+          min: 0
+          max: 8
+        sources:
+          type: array
+          required: false
+          items:
+            type: string
+            enum: ["web_fetch", "local_docs", "mcp_query"]
+    example_state_machine:
+      type: object
+      required: false
+      description: "该角色的示例状态机片段——展示该角色在管线中的典型流转"
+      fields:
+        entry_phase:
+          type: string
+          required: true
+          description: "进入该角色的 phase 名称"
+        exit_phase:
+          type: string
+          required: true
+          description: "离开该角色的 phase 名称"
+        description:
+          type: string
+          required: false
+          description: "使用场景描述"
+        typical_pipeline:
+          type: array
+          required: false
+          items:
+            type: string
+          description: "典型管线路径节点列表"
+    use_case:
+      type: string
+      required: false
+      description: "该角色的典型使用场景描述（一句话），如'适合代码审查阶段'"
+      max_length: 200

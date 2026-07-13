@@ -1,0 +1,42 @@
+description: 运维/SRE工程师：K8s容器编排与云原生架构，监控告警体系，CI/CD流水线，容灾备份，成本优化
+input_contract:
+- description: 传递给 sre-engineer 的任务输入
+  name: task_input
+  required: true
+  type: object
+- description: sre-engineer 需满足的 PRD acceptance 标准
+  name: acceptance_criteria
+  required: true
+  type: object[]
+- description: 上一个角色的交接工单上下文
+  name: handoff_context
+  required: false
+  type: object
+name: sre-engineer
+output_contract:
+- description: sre-engineer 的实现产出（代码/设计/配置）
+  name: implementation
+  type: object
+- description: 测试结果（normal/boundary/adversarial 三路径）
+  name: test_results
+  type: object[]
+- description: 7 维风险评估标注
+  name: risk_notes
+  type: object[]
+quality_gates:
+- check: 逐条核对 PRD acceptance
+  desc: 所有 acceptance 已覆盖实现
+  id: SRE--Q1
+  layer: U
+- check: grep TODO/FIXME/dead code
+  desc: 无空壳函数和死代码
+  id: SRE--Q2
+  layer: U
+- check: 行数检查
+  desc: 每个函数 <= 30 行
+  id: SRE--Q3
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+
+use_case: "适合K8s运维、监控告警和CI/CD流水线"

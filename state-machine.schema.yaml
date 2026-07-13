@@ -1,0 +1,118 @@
+# Bobanana 5.0 — State Machine Schema
+# 定义 state-machine.yaml 的结构化格式
+# Schema 版本: v1
+
+schema:
+  version: 1
+  description: "Bobanana 5.0 可编程状态机配置 Schema"
+
+  fields:
+    version:
+      type: integer
+      required: true
+      description: "状态机配置版本号"
+      default: 1
+
+    entry_point:
+      type: string
+      required: true
+      description: "入口节点的 role_id"
+
+    max_loops:
+      type: integer
+      required: false
+      description: "最大流转次数（防无限递归）"
+      default: 50
+
+    nodes:
+      type: array
+      required: true
+      description: "状态机节点列表，每个节点对应一个角色"
+      min_items: 2
+      items:
+        type: object
+        fields:
+          id:
+            type: string
+            required: true
+            description: "节点 ID，对应角色卡名称"
+          label:
+            type: string
+            required: false
+            description: "节点显示名称（可选，默认使用 id）"
+          description:
+            type: string
+            required: false
+            description: "节点描述"
+          is_exit:
+            type: boolean
+            required: false
+            description: "是否为出口节点（仅 CL 标签角色可为 true）"
+            default: false
+          is_temporary:
+            type: boolean
+            required: false
+            description: "是否为临时节点（如 HR 紧急招聘，完成后自动移除）"
+            default: false
+          config:
+            type: object
+            required: false
+            description: "节点配置（可选，传递给角色的额外参数）"
+            fields:
+              research_subagents:
+                type: integer
+                required: false
+              research_sources:
+                type: array
+                required: false
+                items:
+                  type: string
+
+    edges:
+      type: array
+      required: true
+      description: "状态机边列表，定义角色间的转换关系"
+      items:
+        type: object
+        fields:
+          from:
+            type: string
+            required: true
+            description: "源节点 ID"
+          to:
+            type: string
+            required: true
+            description: "目标节点 ID"
+          phase:
+            type: string
+            required: true
+            description: "转换条件 phase flag（如 arch-done, judge-done_has-badcase）"
+          condition:
+            type: object
+            required: false
+            description: "条件分支（可选）"
+            fields:
+              field:
+                type: string
+                required: true
+              operator:
+                type: string
+                required: true
+                enum: ["<", ">", "<=", ">=", "==", "!="]
+              value:
+                type: any
+                required: true
+
+    handoff:
+      type: object
+      required: false
+      description: "交接工单配置"
+      fields:
+        enabled:
+          type: boolean
+          required: false
+          default: true
+        storage_path:
+          type: string
+          required: false
+          default: ".reasonix/handoffs/"

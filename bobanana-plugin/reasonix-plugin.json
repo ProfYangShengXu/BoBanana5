@@ -1,0 +1,39 @@
+{
+  "name": "bobanana5",
+  "version": "5.0.0",
+  "description": "Bobanana 5.0 — 可编程状态机管线 + 角色卡系统 + GUI 仪表盘。在 Reasonix 对话框打指令或在桌面端 GUI 点按钮就能用。",
+  "homepage": "https://reasonix.io",
+  "repository": "https://github.com/ProfYangShengXu/BoBanana5",
+
+  "skills": "skills",
+  "commands": ["commands"],
+
+  "mcpServers": {
+    "bobanana5": {
+      "type": "stdio",
+      "command": "C:\\Windows\\System32\\cmd.exe",
+      "args": ["/c", "cd", "/d", "C:\\Users\\45140\\OneDrive\\Desktop\\code\\BoBanana5", "&&", "python", "-m", "mcp_server"],
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      },
+      "auto_start": true,
+      "tier": "background",
+      "call_timeout_seconds": 600
+    }
+  },
+
+  "hooks": {
+    "SessionStart": [
+      {
+        "description": "检查 cycle-bridge MCP 插件状态",
+        "command": "C:\\Windows\\System32\\cmd.exe",
+        "args": ["/c", "cd", "/d", "C:\\Users\\45140\\OneDrive\\Desktop\\code\\BoBanana5", "&&", "python", "hooks/check_mcp.py"]
+      },
+      {
+        "description": "启动 Bobanana 仪表盘（实时数据）",
+        "command": "C:\\Windows\\System32\\cmd.exe",
+        "args": ["/c", "cd", "/d", "C:\\Users\\45140\\OneDrive\\Desktop\\code\\BoBanana5", "&&", "start", "Bobanana 5.0", "C:\\Users\\45140\\AppData\\Local\\Programs\\Python\\Python312\\python.exe", "gui_dashboard.py"]
+      }
+    ]
+  }
+}

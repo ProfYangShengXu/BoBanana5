@@ -1,0 +1,42 @@
+description: NLP/CV算法工程师：自然语言处理与计算机视觉算法研发，文本分类/实体识别/图像分类/目标检测，模型训练与部署
+input_contract:
+- description: 传递给 nlp-cv-engineer 的任务输入
+  name: task_input
+  required: true
+  type: object
+- description: nlp-cv-engineer 需满足的 PRD acceptance 标准
+  name: acceptance_criteria
+  required: true
+  type: object[]
+- description: 上一个角色的交接工单上下文
+  name: handoff_context
+  required: false
+  type: object
+name: nlp-cv-engineer
+output_contract:
+- description: nlp-cv-engineer 的实现产出（代码/设计/配置）
+  name: implementation
+  type: object
+- description: 测试结果（normal/boundary/adversarial 三路径）
+  name: test_results
+  type: object[]
+- description: 7 维风险评估标注
+  name: risk_notes
+  type: object[]
+quality_gates:
+- check: 逐条核对 PRD acceptance
+  desc: 所有 acceptance 已覆盖实现
+  id: NLP--Q1
+  layer: U
+- check: grep TODO/FIXME/dead code
+  desc: 无空壳函数和死代码
+  id: NLP--Q2
+  layer: U
+- check: 行数检查
+  desc: 每个函数 <= 30 行
+  id: NLP--Q3
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+
+use_case: "适合NLP/CV算法研发和模型训练部署"

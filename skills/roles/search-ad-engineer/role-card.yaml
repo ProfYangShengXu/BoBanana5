@@ -1,0 +1,42 @@
+description: 搜索/广告算法工程师：搜索引擎索引与排序，广告竞价与CTR预估，召回/粗排/精排/重排全链路，特征工程与AB测试
+input_contract:
+- description: 传递给 search-ad-engineer 的任务输入
+  name: task_input
+  required: true
+  type: object
+- description: search-ad-engineer 需满足的 PRD acceptance 标准
+  name: acceptance_criteria
+  required: true
+  type: object[]
+- description: 上一个角色的交接工单上下文
+  name: handoff_context
+  required: false
+  type: object
+name: search-ad-engineer
+output_contract:
+- description: search-ad-engineer 的实现产出（代码/设计/配置）
+  name: implementation
+  type: object
+- description: 测试结果（normal/boundary/adversarial 三路径）
+  name: test_results
+  type: object[]
+- description: 7 维风险评估标注
+  name: risk_notes
+  type: object[]
+quality_gates:
+- check: 逐条核对 PRD acceptance
+  desc: 所有 acceptance 已覆盖实现
+  id: SEAR-Q1
+  layer: U
+- check: grep TODO/FIXME/dead code
+  desc: 无空壳函数和死代码
+  id: SEAR-Q2
+  layer: U
+- check: 行数检查
+  desc: 每个函数 <= 30 行
+  id: SEAR-Q3
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+
+use_case: "适合搜索引擎和广告竞价算法"

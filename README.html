@@ -1,0 +1,46 @@
+<![CDATA[<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reasonix Cyclic Workflow 插件</title>
+<style>body{font:16px/1.6 system-ui,sans-serif;max-width:720px;margin:2rem auto;padding:0 1rem;color:#1e293b}a{color:#6366f1}pre{background:#f1f5f9;padding:1rem;border-radius:6px;overflow-x:auto}code{font-size:.9em}</style></head>
+<body>
+<h1>🎴 Reasonix Cyclic Workflow Plugin</h1>
+<p><strong>版本</strong>: 1.0.0 · <strong>三阶段</strong>: 设计 → 编码 → 验证</p>
+
+<h2>安装</h2>
+<ol>
+<li>把 <code>bin/</code> 目录复制到你项目的 <code>.reasonix/../</code> 或放到 PATH 中</li>
+<li>在项目根目录运行 <code>install.bat</code>（或手动复制 <code>skills/</code> 和 <code>commands/</code> 到 <code>.reasonix/</code> 下）</li>
+<li>在 <code>reasonix.toml</code> 添加插件配置</li>
+</ol>
+
+<h2>文件清单</h2>
+<pre>
+dist/cycle-plugin/
+├── bin/
+│   ├── cycle-bridge.exe    ← MCP 插件（状态管理：queue_next_prompt / signal_done）
+│   └── reasonix.exe         ← 主程序（含 cycle 子命令）
+├── skills/
+│   ├── cyclic-workflow/
+│   │   └── SKILL.md         ← 三阶段元指令（17KB）
+│   └── cycle-install/
+│       └── SKILL.md         ← 安装器 skill（2KB）
+├── commands/
+│   └── cycle.md              ← /cycle 斜杠命令（渲染为 run_skill 调用）
+├── install.bat               ← 一键安装脚本
+└── README.html               ← 本文件
+</pre>
+
+<h2>使用</h2>
+<ul>
+<li><strong>TUI / 桌面端</strong>: 输入 <code>/cycle 你的目标</code></li>
+<li><strong>终端</strong>: <code>reasonix cycle "你的目标"</code></li>
+<li><strong>全局安装</strong>: <code>/skill cycle-install</code>（在任意 workspace 的 TUI 中）</li>
+</ul>
+
+<h2>构建</h2>
+<pre><code>go build -o bin/reasonix.exe  ./cmd/reasonix/
+go build -o bin/cycle-bridge.exe ./cmd/cycle-bridge/</code></pre>
+
+<p><em>构建依赖：Go 1.25+</em></p>
+</body>
+</html>]]>

@@ -1,0 +1,42 @@
+description: 全栈开发工程师：前后端全栈开发，数据库设计，API设计与实现，DevOps，从需求到上线全链路负责
+input_contract:
+- description: 传递给 fullstack-dev 的任务输入
+  name: task_input
+  required: true
+  type: object
+- description: fullstack-dev 需满足的 PRD acceptance 标准
+  name: acceptance_criteria
+  required: true
+  type: object[]
+- description: 上一个角色的交接工单上下文
+  name: handoff_context
+  required: false
+  type: object
+name: fullstack-dev
+output_contract:
+- description: fullstack-dev 的实现产出（代码/设计/配置）
+  name: implementation
+  type: object
+- description: 测试结果（normal/boundary/adversarial 三路径）
+  name: test_results
+  type: object[]
+- description: 7 维风险评估标注
+  name: risk_notes
+  type: object[]
+quality_gates:
+- check: 逐条核对 PRD acceptance
+  desc: 所有 acceptance 已覆盖实现
+  id: FULL-Q1
+  layer: U
+- check: grep TODO/FIXME/dead code
+  desc: 无空壳函数和死代码
+  id: FULL-Q2
+  layer: U
+- check: 行数检查
+  desc: 每个函数 <= 30 行
+  id: FULL-Q3
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+
+use_case: "全栈开发，前后端通吃，适合中小型项目全链路负责"

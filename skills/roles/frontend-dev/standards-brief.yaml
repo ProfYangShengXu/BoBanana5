@@ -1,0 +1,36 @@
+deliverables:
+  output_types:
+  - 设计文档
+  - 实现代码
+  - 测试用例
+  - 使用手册
+  quality_criteria:
+  - 功能完整
+  - 性能达标
+  - 可维护性强
+  - 文档齐全
+meta:
+  description: '预先定义的角色卡: Frontend developer: web/mobile UI, component libraries,
+    interaction optimization. React/Vue/TypeScript'
+  research_date: '2026-07-13T20:07:01.768891'
+  role_name: frontend-dev
+  subagents_completed: 0
+pitfalls_and_risks:
+  anti_patterns:
+  - 过早优化
+  - 镀金
+  - silos 孤岛
+  common_mistakes:
+  - 需求理解偏差
+  - 技术选型过度设计
+standards:
+- name: frontend-dev 工作准则
+  summary: 'Frontend developer: web/mobile UI, component libraries, interaction optimization.
+    React/Vue/TypeScript'
+tools_and_methods:
+  software:
+  - 标准 IDE
+  - 版本控制工具
+  - CI/CD 工具
+  workflow:
+  - 需求分析 -> 设计 -> 实现 -> 测试 -> 评审 -> 发布

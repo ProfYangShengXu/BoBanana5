@@ -1,0 +1,101 @@
+# Bobanana 5.0 — 游戏开发管线示例
+# OP 编写人: 技术经理
+# 适用: Unity/UE 游戏项目
+
+version: 1
+entry_point: "technical-director"
+max_loops: 60
+
+nodes:
+  - id: "technical-director"
+    label: "技术总监"
+    description: "技术方案、管线设计、资源规划"
+    config:
+      is_op_role: true
+
+  - id: "game-designer"
+    label: "游戏策划"
+    description: "玩法设计、数值模型、关卡设计"
+
+  - id: "concept-artist"
+    label: "概念美术"
+    description: "角色/场景原画、氛围图"
+
+  - id: "tech-artist"
+    label: "技术美术(TA)"
+    description: "Shader、DCC工具链、资源优化"
+
+  - id: "client-dev"
+    label: "客户端开发"
+    description: "游戏逻辑、UI、技能系统"
+
+  - id: "game-tester"
+    label: "游戏测试"
+    description: "功能/兼容性/性能测试"
+
+  - id: "client-gate"
+    label: "甲方终审"
+    description: "游戏体验评审、1-10打分"
+    is_exit: true
+
+  - id: "hr-recruiter"
+    label: "HR 招聘专员"
+    description: "紧急招聘缺失角色"
+    is_temporary: true
+
+edges:
+  - from: "technical-director"
+    to: "game-designer"
+    phase: "td-done"
+
+  - from: "game-designer"
+    to: "concept-artist"
+    phase: "design-done"
+
+  - from: "concept-artist"
+    to: "tech-artist"
+    phase: "concept-done"
+
+  - from: "tech-artist"
+    to: "client-dev"
+    phase: "ta-done"
+
+  # 客户端开发迭代
+  - from: "client-dev"
+    to: "client-dev"
+    phase: "dev-done_task-remain"
+  - from: "client-dev"
+    to: "game-tester"
+    phase: "dev-done_task-done"
+
+  # 测试分支
+  - from: "game-tester"
+    to: "client-dev"
+    phase: "test-done_has-bug"
+  - from: "game-tester"
+    to: "client-gate"
+    phase: "test-done_all-pass"
+
+  # HR 紧急招聘（OP 检测到缺少角色时插入）
+  - from: "technical-director"
+    to: "hr-recruiter"
+    phase: "td-needs-hiring"
+  - from: "hr-recruiter"
+    to: "technical-director"
+    phase: "hr-done"
+
+  # CL 终审
+  - from: "client-gate"
+    to: "__terminal__"
+    phase: "cl-done_pass"
+    condition:
+      field: "score"
+      operator: ">="
+      value: 9
+  - from: "client-gate"
+    to: "technical-director"
+    phase: "cl-done_fail"
+    condition:
+      field: "score"
+      operator: "<"
+      value: 9

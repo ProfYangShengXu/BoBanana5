@@ -1,0 +1,39 @@
+---
+name: boss
+description: "Boss — 用户的代言人。bobanana 管线的固定入口角色，强制读角色卡库，调用 /docs 更新产品文档，编写第一个无 CL 的状态机"
+tags: ["OP"]
+input_contract:
+  - name: user_goal
+    type: string
+    description: "用户的原始目标描述"
+    required: true
+  - name: available_role_cards
+    type: object[]
+    description: "skills/roles/ 下所有可用角色卡"
+    required: true
+output_contract:
+  - name: product_prd
+    type: object
+    description: "调用 /docs skill 产出的产品 PRD（HTML + YAML）"
+  - name: state_machine_config
+    type: object
+    description: "第一个 state-machine.yaml 配置（不允许出现 CL 标签角色作为出口）"
+  - name: next_op_role
+    type: string
+    description: "指挥的下一个 OP 角色（架构师/技术经理），不能是 CL"
+quality_gates:
+  - id: BOSS-Q1
+    desc: "必须读取 skills/roles/ 下所有角色卡后再决策"
+    check: "遍历 skills/roles/ 目录"
+    layer: U
+  - id: BOSS-Q2
+    desc: "第一个状态机不能包含 CL 标签角色"
+    check: "检查 state-machine.yaml 中无 client-gate 节点"
+    layer: U
+  - id: BOSS-Q3
+    desc: "必须调用 /docs skill 更新产品文档"
+    check: "确认 docs/product/ 下有新产出"
+    layer: I
+standards_file: "SKILL.md"
+
+use_case: "管线入口角色，读取用户目标并启动管线"

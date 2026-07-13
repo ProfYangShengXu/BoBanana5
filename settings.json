@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "command": "cmd.exe /c cd /d C:\\Users\\45140\\OneDrive\\Desktop\\code\\BoBanana5 && C:\\Users\\45140\\AppData\\Local\\Programs\\Python\\Python312\\python.exe hooks/check_mcp.py",
+        "description": "Check cycle-bridge MCP plugin"
+      }
+    ]
+  }
+}

@@ -1,0 +1,65 @@
+# Bobanana 5.0 — 极速原型管线（最小化流程）
+# OP 编写人: 个人开发者
+# 适用: 快速验证/hackathon/MVP 原型
+
+version: 1
+entry_point: "architect"
+max_loops: 20
+
+nodes:
+  - id: "architect"
+    label: "架构师"
+    description: "功能拆解、技术选型、一份 PRD"
+    config:
+      is_op_role: true
+
+  - id: "developer"
+    label: "全栈开发"
+    description: "一人全栈，前端+后端+DB"
+
+  - id: "tester"
+    label: "测试"
+    description: "关键路径测试"
+
+  - id: "client-gate"
+    label: "甲方终审"
+    description: "验收打分"
+    is_exit: true
+
+edges:
+  # 架构 -> 开发
+  - from: "architect"
+    to: "developer"
+    phase: "arch-done"
+
+  # 开发自环
+  - from: "developer"
+    to: "developer"
+    phase: "dev-done_task-remain"
+  - from: "developer"
+    to: "tester"
+    phase: "dev-done_task-done"
+
+  # 测试
+  - from: "tester"
+    to: "developer"
+    phase: "test-done_has-bug"
+  - from: "tester"
+    to: "client-gate"
+    phase: "test-done_all-pass"
+
+  # CL 终审
+  - from: "client-gate"
+    to: "__terminal__"
+    phase: "cl-done_pass"
+    condition:
+      field: "score"
+      operator: ">="
+      value: 9
+  - from: "client-gate"
+    to: "architect"
+    phase: "cl-done_fail"
+    condition:
+      field: "score"
+      operator: "<"
+      value: 9

@@ -1,0 +1,74 @@
+---
+name: architect
+description: "架构师 — 管线的编排者。读取项目目标和角色卡库，设计状态机拓扑，触发紧急招聘，制定技术方案"
+tags: ["OP"]
+input_contract:
+  - name: project_goal
+    type: string
+    description: "项目目标描述"
+    required: true
+  - name: available_role_cards
+    type: object[]
+    description: "当前角色卡库中的所有可用角色卡"
+    required: true
+  - name: current_state
+    type: object
+    description: "当前项目状态（已有产出物、进度、badcase）"
+    required: false
+output_contract:
+  - name: technical_prd
+    type: object
+    description: "结构化技术 PRD（模块划分、接口定义、验收标准）"
+  - name: task_list
+    type: object[]
+    description: "任务清单（依赖、复杂度、涉及文件）"
+  - name: state_machine_config
+    type: object
+    description: "状态机 YAML 配置（节点、边、转换条件）"
+  - name: architecture_doc
+    type: string
+    description: "docs/prd/<版本>/architecture.html — 技术方案文档"
+  - name: adr_doc
+    type: string[]
+    description: "docs/adr/<编号>-<标题>.html — 架构决策记录，每次关键决策追加一条"
+  - name: sm_doc
+    type: string
+    description: "docs/sm/<版本>/state-machine.html — 状态机可读说明（节点表+边表+流转示例）"
+  - name: test_report
+    type: string
+    description: "docs/test/<版本>-report.html — 测试报告（终审前产出）"
+  - name: changelog
+    type: string
+    description: "docs/changelog/<版本>.html — 变更日志（终审前产出）"
+  - name: security_summary
+    type: string
+    description: "docs/security/<版本>-summary.html — 安全审查摘要（终审前产出）"
+quality_gates:
+  - id: ARCH-Q1
+    desc: "模块划分必须符合高内聚低耦合原则"
+    check: "每个模块可以用一句话说清职责"
+    layer: U
+  - id: ARCH-Q2
+    desc: "每个模块至少标注一个风险点"
+    check: "对照 7 维风险逐模块检查"
+    layer: U
+  - id: ARCH-Q3
+    desc: "接口定义必须包含输入/输出/副作用"
+    check: "检查每个 interface 的完整度"
+    layer: U
+  - id: ARCH-Q4
+    desc: "终审前必须产出完整交付文档（测试报告+变更日志+安全摘要）"
+    check: "docs/test/ docs/changelog/ docs/security/ 存在且有内容"
+    layer: I
+standards_file: "SKILL.md"
+example_state_machine:
+  entry_phase: "arch-done"
+  exit_phase: "dev-done_task-done"
+  description: "架构师读取PRD后设计技术方案，分配任务给fullstack-dev，验收后交给CL终审"
+  typical_pipeline:
+    - "Boss"
+    - "architect"
+    - "fullstack-dev"
+    - "architect(验收)"
+    - "client-gate(CL)"
+use_case: "适合技术方案设计、任务拆分、质量验收阶段，可替代fullstack-dev的架构决策工作"

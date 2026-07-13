@@ -1,0 +1,42 @@
+description: 推荐算法工程师：设计实现推荐系统，协同过滤/深度学习排序，特征工程，AB测试，离线评估
+input_contract:
+- description: 传递给 recommendation-engineer 的任务输入
+  name: task_input
+  required: true
+  type: object
+- description: recommendation-engineer 需满足的 PRD acceptance 标准
+  name: acceptance_criteria
+  required: true
+  type: object[]
+- description: 上一个角色的交接工单上下文
+  name: handoff_context
+  required: false
+  type: object
+name: recommendation-engineer
+output_contract:
+- description: recommendation-engineer 的实现产出（代码/设计/配置）
+  name: implementation
+  type: object
+- description: 测试结果（normal/boundary/adversarial 三路径）
+  name: test_results
+  type: object[]
+- description: 7 维风险评估标注
+  name: risk_notes
+  type: object[]
+quality_gates:
+- check: 逐条核对 PRD acceptance
+  desc: 所有 acceptance 已覆盖实现
+  id: RECO-Q1
+  layer: U
+- check: grep TODO/FIXME/dead code
+  desc: 无空壳函数和死代码
+  id: RECO-Q2
+  layer: U
+- check: 行数检查
+  desc: 每个函数 <= 30 行
+  id: RECO-Q3
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+
+use_case: "适合推荐系统设计和AB测试"

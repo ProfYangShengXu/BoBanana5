@@ -1,0 +1,47 @@
+---
+name: client-gate
+description: "甲方终审 — 管线的唯一终结出口。在所有技术角色完成后执行，使用隔离 subagent 全量审查项目代码并打分"
+tags: ["CL"]
+input_contract:
+  - name: project_path
+    type: string
+    description: "项目根目录路径"
+    required: true
+  - name: pipeline_id
+    type: string
+    description: "当前管线 ID，用于追溯上下文"
+    required: true
+  - name: completion_report
+    type: object
+    description: "技术链完成报告（已通过的角色、测试覆盖、badcase）"
+    required: false
+output_contract:
+  - name: score
+    type: integer
+    description: "1-10 整数评分。>= 9 通过，< 9 打回"
+  - name: review_report
+    type: object
+    description: "全量审查报告（逐项评分 + 问题列表 + 改进建议）"
+  - name: pass
+    type: boolean
+    description: "是否通过终审"
+quality_gates:
+  - id: CL-Q1
+    desc: "必须启动全新的隔离 subagent 执行审查"
+    check: "验证 subagent 无 pipeline 历史上下文"
+    layer: I
+  - id: CL-Q2
+    desc: "审查报告必须包含 1-10 整数评分"
+    check: "评分字段存在且为 1-10 整数"
+    layer: U
+  - id: CL-Q3
+    desc: "评分 < 9 时自动打回给最近的 OP 角色"
+    check: "handoff ticket 发送到 OP 角色"
+    layer: I
+  - id: CL-Q4
+    desc: "审查覆盖六维度：可读性、可维护性、可扩展性、可靠性、安全性、整洁度"
+    check: "逐项核查并评分"
+    layer: U
+standards_file: "SKILL.md"
+
+use_case: "管线最终出口，所有角色完成后执行隔离审查"

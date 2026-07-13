@@ -1,0 +1,48 @@
+deliverables:
+  output_types:
+  - 设计文档
+  - 实现代码
+  - 测试用例
+  - 使用手册
+  quality_criteria:
+  - 功能完整
+  - 性能达标
+  - 可维护性强
+  - 文档齐全
+meta:
+  description: 运维/SRE工程师：K8s容器编排与云原生架构，监控告警体系，CI/CD流水线，容灾备份，成本优化
+  research_date: '2026-07-13T14:58:12.259087'
+  role_name: sre-engineer
+  subagents_completed: 4
+pitfalls_and_risks:
+  anti_patterns:
+  - 过早优化
+  - 镀金
+  - silos 孤岛
+  common_mistakes:
+  - 需求理解偏差
+  - 技术选型过度设计
+  - 测试覆盖不足
+  - 文档滞后
+  risk_factors:
+  - 时间估算不足
+  - 依赖变更未同步
+  - 沟通断层
+profession_standards:
+  best_practices:
+  - 使用业界标准工具链
+  - 遵循团队协作规范
+  - 保持文档同步
+  key_standards:
+  - sre-engineer 的标准工作流程
+  - sre-engineer 核心方法论
+  - sre-engineer 交付物规范
+  summary: sre-engineer 职业准则
+tools_and_methods:
+  software:
+  - 标准 IDE
+  - 版本控制工具
+  - CI/CD 工具
+  - 项目管理平台
+  workflow:
+  - 需求分析 -> 设计 -> 实现 -> 测试 -> 评审 -> 发布

@@ -1,0 +1,90 @@
+# Bobanana 5.0 — ML/AI 项目管线示例
+# OP 编写人: 技术经理
+# 适用: 推荐/搜索/NLP/CV 算法项目
+
+version: 1
+entry_point: "tech-lead"
+max_loops: 60
+
+nodes:
+  - id: "tech-lead"
+    label: "技术负责人"
+    description: "技术方案、资源规划、进度管理"
+    config:
+      is_op_role: true
+
+  - id: "data-engineer"
+    label: "数据工程师"
+    description: "数据采集、ETL、特征工程"
+
+  - id: "algorithm-engineer"
+    label: "算法工程师"
+    description: "模型选型、训练调优、离线评估"
+
+  - id: "backend-dev"
+    label: "后端开发"
+    description: "模型服务化、API 封装、性能优化"
+
+  - id: "sre-engineer"
+    label: "SRE"
+    description: "模型部署、监控、A/B实验平台"
+
+  - id: "data-analyst"
+    label: "数据分析师"
+    description: "A/B 实验分析、指标监控"
+
+  - id: "client-gate"
+    label: "甲方终审"
+    description: "全量审查、1-10 打分"
+    is_exit: true
+
+edges:
+  - from: "tech-lead"
+    to: "data-engineer"
+    phase: "lead-done"
+
+  - from: "data-engineer"
+    to: "algorithm-engineer"
+    phase: "data-done"
+  - from: "data-engineer"
+    to: "data-engineer"
+    phase: "data-task-remain"
+
+  # 算法迭代：训练 -> 评估 -> 调优
+  - from: "algorithm-engineer"
+    to: "algorithm-engineer"
+    phase: "algo-need-tune"
+  - from: "algorithm-engineer"
+    to: "backend-dev"
+    phase: "algo-done"
+
+  - from: "backend-dev"
+    to: "sre-engineer"
+    phase: "backend-done"
+
+  - from: "sre-engineer"
+    to: "data-analyst"
+    phase: "sre-done"
+
+  - from: "data-analyst"
+    to: "algorithm-engineer"
+    phase: "ab-test-need-improve"
+  - from: "data-analyst"
+    to: "client-gate"
+    phase: "ab-test-pass"
+
+  # CL 终审
+  - from: "client-gate"
+    to: "__terminal__"
+    phase: "cl-done_pass"
+    condition:
+      field: "score"
+      operator: ">="
+      value: 9
+  - from: "client-gate"
+    to: "tech-lead"
+    phase: "cl-done_fail"
+    condition:
+      field: "score"
+      operator: "<"
+      value: 9

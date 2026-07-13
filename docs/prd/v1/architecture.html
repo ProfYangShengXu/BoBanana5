@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bobanana 5.0 — 技术 PRD 架构文档</title>
+<style>
+:root { --primary: #1a1a2e; --secondary: #16213e; --accent: #e94560; --bg: #f8f9fa; --card: #fff; --text: #333; --border: #e0e0e0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", monospace; line-height: 1.7; color: var(--text); background: var(--bg); }
+.header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; padding: 2.5rem 2rem; text-align: center; }
+.header h1 { font-size: 1.8rem; }
+.header .meta { font-size: 0.85rem; opacity: 0.7; margin-top: 0.5rem; }
+.wrapper { display: flex; max-width: 1280px; margin: 0 auto; }
+.sidebar { width: 240px; flex-shrink: 0; background: var(--card); border-right: 1px solid var(--border); padding: 1.5rem 1rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.sidebar h3 { font-size: 0.85rem; color: #666; margin-bottom: 0.8rem; }
+.sidebar nav a { display: block; padding: 0.35rem 0.5rem; color: var(--text); text-decoration: none; font-size: 0.88rem; border-radius: 4px; }
+.sidebar nav a:hover { background: var(--bg); color: var(--accent); }
+.sidebar nav a.section { font-weight: 600; margin-top: 0.5rem; }
+.main { flex: 1; padding: 2rem 2.5rem; max-width: 900px; }
+.main h2 { font-size: 1.4rem; color: var(--primary); margin: 2rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--accent); }
+.main h3 { font-size: 1.1rem; color: var(--secondary); margin: 1.3rem 0 0.6rem; }
+.main p { margin-bottom: 0.8rem; }
+.main ul { margin-bottom: 0.8rem; padding-left: 1.3rem; }
+.main li { margin-bottom: 0.25rem; }
+.main code { background: #eef; padding: 0.15rem 0.35rem; border-radius: 3px; font-size: 0.9em; }
+.main .box { background: var(--card); border-left: 4px solid var(--accent); padding: 0.8rem 1.2rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+.main .box.green { border-left-color: #27ae60; }
+.main .box.orange { border-left-color: #f39c12; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; }
+th, td { padding: 0.5rem 0.7rem; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+th { background: var(--primary); color: #fff; font-weight: 600; }
+tr:nth-child(even) td { background: #f5f5f5; }
+details { margin: 0.8rem 0; background: var(--card); border-radius: 6px; border: 1px solid var(--border); overflow: hidden; }
+details summary { padding: 0.6rem 1rem; cursor: pointer; font-weight: 600; color: var(--primary); background: #fafafa; }
+details summary:hover { background: #f0f0f0; }
+details .body { padding: 0.8rem 1.2rem; }
+.tag { display: inline-block; font-size: 0.7rem; padding: 0.1rem 0.4rem; border-radius: 8px; margin-right: 0.2rem; font-weight: 600; }
+.tag-P0 { background: #fee2e2; color: #dc2626; }
+.tag-P1 { background: #fef3c7; color: #d97706; }
+.tag-P2 { background: #dbeafe; color: #1e40af; }
+.tag-high { background: #fee2e2; color: #b91c1c; }
+.tag-mid { background: #fef3c7; color: #92400e; }
+.tag-low { background: #d1fae5; color: #065f46; }
+@media (max-width: 768px) { .wrapper { flex-direction: column; } .sidebar { width: 100%; height: auto; position: static; } .main { padding: 1rem; } }
+@media print { .sidebar { display: none; } .wrapper { display: block; } .main { max-width: 100%; padding: 1rem; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🏗️ Bobanana 5.0 — 技术 PRD</h1>
+  <div class="meta">阶段: 工程实施 · 目标: 代码审查 + 测试覆盖 + 仪表盘修复 · 架构师: v1</div>
+</div>
+<div class="wrapper">
+<aside class="sidebar">
+  <h3>📑 目录</h3>
+  <nav>
+    <a href="#overview" class="section">1. 概述</a>
+    <a href="#modules">2. 模块划分</a>
+    <a href="#core-stable">2.1 核心稳定模块</a>
+    <a href="#core-review">2.2 待审查核心模块</a>
+    <a href="#untested">2.3 无测试模块</a>
+    <a href="#dashboard">2.4 仪表盘模块</a>
+    <a href="#interfaces">3. 接口定义</a>
+    <a href="#risks">4. 风险评估</a>
+    <a href="#tasklist">5. 任务清单</a>
+    <a href="#state-machine">6. 状态机</a>
+    <a href="#acceptance">7. 验收标准</a>
+  </nav>
+</aside>
+<main class="main">
+
+<h2 id="overview">1. 概述</h2>
+
+<p><strong>用户目标：</strong>代码全面审查 + 丰富测试集和真实测试 + 修复仪表盘</p>
+<p><strong>项目：</strong>Bobanana 5.0 — AI Agent 编排引擎，领域无关的可编程状态机 + 可插拔角色卡系统</p>
+<p><strong>代码库概况：</strong>14 个 Python 模块 + EUI-NEO C++ GUI + 55 个现有测试（U/I/S/A 四层）</p>
+
+<h2 id="modules">2. 模块划分</h2>
+
+<h3 id="core-stable">2.1 核心稳定模块（已有测试覆盖，仅需审查）</h3>
+
+<table>
+  <tr><th>模块</th><th>文件</th><th>现有测试</th><th>审查优先级</th></tr>
+  <tr>
+    <td>状态机引擎</td><td><code>state_machine_engine.py</code></td><td>✅ U-4 测试</td><td><span class="tag tag-low">低</span></td>
+  </tr>
+  <tr>
+    <td>状态机解析器</td><td><code>state_machine_parser.py</code></td><td>✅ U-3 测试</td><td><span class="tag tag-low">低</span></td>
+  </tr>
+  <tr>
+    <td>角色卡注册表</td><td><code>role_card_registry.py</code></td><td>✅ U+I 测试</td><td><span class="tag tag-mid">中</span></td>
+  </tr>
+  <tr>
+    <td>交接工单系统</td><td><code>handoff_ticket.py</code></td><td>✅ U-4 测试</td><td><span class="tag tag-mid">中（含 except:pass）</span></td>
+  </tr>
+  <tr>
+    <td>角色标签系统</td><td><code>role_tag_system.py</code></td><td>✅ U-3 测试</td><td><span class="tag tag-mid">中（含 except:pass）</span></td>
+  </tr>
+  <tr>
+    <td>HR 招聘</td><td><code>hr_recruitment.py</code></td><td>✅ U-2 测试</td><td><span class="tag tag-low">低</span></td>
+  </tr>
+  <tr>
+    <td>管线编排器</td><td><code>pipeline_orchestrator.py</code></td><td>✅ U+I+S+A 测试</td><td><span class="tag tag-mid">中（含 except:pass）</span></td>
+  </tr>
+  <tr>
+    <td>角色卡验证器</td><td><code>validate_role_card.py</code></td><td>✅ U 测试</td><td><span class="tag tag-low">低</span></td>
+  </tr>
+</table>
+
+<h3 id="core-review">2.2 待审查核心模块（有测试，但需质量审查）</h3>
+
+<p>以下模块已有测试，但代码中存在 <code>except: pass</code> 等质量问题需修复：</p>
+
+<ul>
+  <li><code>handoff_ticket.py:46</code> — <code>except FileNotFoundError: pass</code> 静默忽略</li>
+  <li><code>handoff_ticket.py:98</code> — <code>except: pass</code> 裸异常捕获</li>
+  <li><code>role_tag_system.py:35</code> — <code>except: pass</code> 静默忽略 YAML 错误</li>
+  <li><code>pipeline_orchestrator.py:213</code> — <code>except: pass</code> 静默忽略 JSON 错误</li>
+  <li><code>bobanana.py:142</code> — <code>os.system()</code> 应替换为 <code>subprocess</code></li>
+</ul>
+
+<h3 id="untested">2.3 无测试模块（需新建测试覆盖）</h3>
+
+<table>
+  <tr><th>模块</th><th>文件</th><th>函数/方法数</th><th>测试优先级</th><th>建议测试层级</th></tr>
+  <tr>
+    <td>MCP 客户端</td><td><code>mcp_client.py</code></td><td>~8</td><td><span class="tag tag-P0">P0</span></td><td>U + I</td>
+  </tr>
+  <tr>
+    <td>MCP 服务器</td><td><code>mcp_server.py</code></td><td>~6</td><td><span class="tag tag-P0">P0</span></td><td>U + I</td>
+  </tr>
+  <tr>
+    <td>MCP 事件系统</td><td><code>mcp_events.py</code></td><td>~5</td><td><span class="tag tag-P0">P0</span></td><td>U</td>
+  </tr>
+  <tr>
+    <td>主启动器</td><td><code>bobanana.py</code></td><td>~15</td><td><span class="tag tag-P1">P1</span></td><td>U</td>
+  </tr>
+  <tr>
+    <td>GUI 仪表盘 (TUI)</td><td><code>gui_dashboard.py</code></td><td>~10</td><td><span class="tag tag-P1">P1</span></td><td>U</td>
+  </tr>
+  <tr>
+    <td>Reasonix 钩子</td><td><code>hooks/check_mcp.py</code></td><td>~3</td><td><span class="tag tag-P2">P2</span></td><td>U</td>
+  </tr>
+  <tr>
+    <td>插件管理</td><td><code>plugin_register.py</code><br><code>plugin_fix.py</code><br><code>plugin_refresh.py</code></td><td>~5 总计</td><td><span class="tag tag-P2">P2</span></td><td>U</td>
+  </tr>
+</table>
+
+<h3 id="dashboard">2.4 仪表盘模块（EUI-NEO C++）</h3>
+
+<table>
+  <tr><th>项目</th><th>现状</th><th>建议</th></tr>
+  <tr>
+    <td>编译状态</td><td>✅ 编译成功（14MB .exe）</td><td>无需修复编译错误</td>
+  </tr>
+  <tr>
+    <td>线程安全</td><td><code>main.cpp:44</code> 使用 <code>std::localtime()</code>（非线程安全）</td><td>替换为 <code>localtime_s()</code> 或 C++20 <code>std::chrono</code></td>
+  </tr>
+  <tr>
+    <td>布局硬编码</td><td>所有尺寸/位置硬编码（col1=200, col2=540, col3=W-col1-col2-48）</td><td>提取为命名常量或配置文件，添加响应式回退</td>
+  </tr>
+  <tr>
+    <td>无事件处理</td><td>纯静态显示，无交互逻辑</td><td>按设计保持静态（Bobanana 5.0 GUI 仅做可视化），可添加自动刷新机制</td>
+  </tr>
+  <tr>
+    <td>C++ 测试</td><td>9 个单元测试 + 11 个手动查看器 + 3 个探针</td><td>将关键查看器转为自动化测试</td>
+  </tr>
+</table>
+
+<h2 id="interfaces">3. 接口定义</h2>
+
+<h3>3.1 MCP 接口</h3>
+<p>MCP 客户端/服务器通过 JSON-RPC 2.0 通信，核心接口：</p>
+<ul>
+  <li><code>call_tool(name, arguments) → ToolResult</code></li>
+  <li><code>list_tools() → ToolDescription[]</code></li>
+  <li><code>subscribe_to_events(filters) → EventStream</code></li>
+</ul>
+
+<h3>3.2 状态机接口</h3>
+<ul>
+  <li><code>StateMachineRuntime.load(config_path) → Runtime</code></li>
+  <li><code>Runtime.transition(phase, data) → (next_node, handoff_ticket)</code></li>
+  <li><code>Runtime.insert_temporary_node(node_def) → bool</code></li>
+</ul>
+
+<h3>3.3 角色卡接口</h3>
+<ul>
+  <li><code>RoleCardRegistry.scan(path) → CardMetadata[]</code></li>
+  <li><code>RoleCardRegistry.validate(card_path) → ValidationResult</code></li>
+  <li><code>HandoffTicket.create(sender, receiver, artifacts) → Ticket</code></li>
+</ul>
+
+<h2 id="risks">4. 风险评估</h2>
+
+<table>
+  <tr><th>模块</th><th>风险类别</th><th>风险描述</th><th>严重度</th><th>缓解</th></tr>
+  <tr>
+    <td>handoff_ticket.py</td><td>🧪 技术债</td><td><code>except: pass</code> 可能隐藏严重 I/O 错误</td><td><span class="tag tag-high">高</span></td><td>改用日志 + 精确异常类型</td>
+  </tr>
+  <tr>
+    <td>role_tag_system.py</td><td>🧪 技术债</td><td>YAML 解析错误被静默忽略，角色可能注册失败而不自知</td><td><span class="tag tag-mid">中</span></td><td>显式异常处理 + 告警</td>
+  </tr>
+  <tr>
+    <td>pipeline_orchestrator.py</td><td>🧪 技术债</td><td>JSON 加载错误完全静默，管线状态可能丢失</td><td><span class="tag tag-high">高</span></td><td>回滚到上次有效状态 + 告警</td>
+  </tr>
+  <tr>
+    <td>bobanana.py</td><td>🔒 安全</td><td><code>os.system()</code> 存在 shell 注入风险</td><td><span class="tag tag-mid">中</span></td><td>替换为 <code>subprocess.run()</code></td>
+  </tr>
+  <tr>
+    <td>mcp_client.py</td><td>🧪 熔断</td><td>无超时/重试机制，服务器崩溃后客户端永久挂起</td><td><span class="tag tag-mid">中</span></td><td>添加超时 + 指数退避重试</td>
+  </tr>
+  <tr>
+    <td>eui_neo_app</td><td>🧪 回滚</td><td>硬编码布局无法适配不同分辨率</td><td><span class="tag tag-low">低</span></td><td>提取为相对布局参数</td>
+  </tr>
+</table>
+
+<h2 id="tasklist">5. 任务清单</h2>
+
+<details open>
+<summary><span class="tag tag-P0">P0</span> 代码审查修复 — 高优先级</summary>
+<div class="body">
+<table>
+  <tr><th>ID</th><th>任务</th><th>角色</th><th>文件</th><th>预估</th><th>依赖</th></tr>
+  <tr><td>T-01</td><td>修复 handoff_ticket.py 中的裸 except 异常处理</td><td>fullstack-dev</td><td><code>handoff_ticket.py:46,98</code></td><td>0.5h</td><td>—</td></tr>
+  <tr><td>T-02</td><td>修复 role_tag_system.py 中的静默 except</td><td>fullstack-dev</td><td><code>role_tag_system.py:35</code></td><td>0.5h</td><td>—</td></tr>
+  <tr><td>T-03</td><td>修复 pipeline_orchestrator.py 中静默 JSON 错误</td><td>fullstack-dev</td><td><code>pipeline_orchestrator.py:213</code></td><td>0.5h</td><td>—</td></tr>
+  <tr><td>T-04</td><td>替换 os.system() 为 subprocess</td><td>fullstack-dev</td><td><code>bobanana.py:142</code></td><td>0.5h</td><td>—</td></tr>
+  <tr><td>T-05</td><td>替换 std::localtime 为线程安全版本</td><td>client-dev</td><td><code>eui_neo_app/src/main.cpp:44</code></td><td>0.5h</td><td>—</td></tr>
+</table>
+</div>
+</details>
+
+<details open>
+<summary><span class="tag tag-P0">P0</span> 新建测试覆盖 — 无测试模块</summary>
+<div class="body">
+<table>
+  <tr><th>ID</th><th>任务</th><th>角色</th><th>文件</th><th>预估</th><th>层级</th></tr>
+  <tr><td>T-06</td><td>MCP 客户端单元测试</td><td>test-dev-engineer</td><td><code>mcp_client.py</code></td><td>3h</td><td>U</td></tr>
+  <tr><td>T-07</td><td>MCP 服务器单元测试</td><td>test-dev-engineer</td><td><code>mcp_server.py</code></td><td>3h</td><td>U</td></tr>
+  <tr><td>T-08</td><td>MCP 事件系统单元测试</td><td>test-dev-engineer</td><td><code>mcp_events.py</code></td><td>2h</td><td>U</td></tr>
+  <tr><td>T-09</td><td>主启动器单元测试</td><td>test-dev-engineer</td><td><code>bobanana.py</code></td><td>2h</td><td>U</td></tr>
+  <tr><td>T-10</td><td>GUI 仪表盘(TUI)单元测试</td><td>test-dev-engineer</td><td><code>gui_dashboard.py</code></td><td>2h</td><td>U</td></tr>
+  <tr><td>T-11</td><td>MCP 客户端+服务器集成测试</td><td>test-dev-engineer</td><td><code>mcp_client.py + mcp_server.py</code></td><td>3h</td><td>I</td></tr>
+</table>
+</div>
+</details>
+
+<details open>
+<summary><span class="tag tag-P1">P1</span> 仪表盘修复</summary>
+<div class="body">
+<table>
+  <tr><th>ID</th><th>任务</th><th>角色</th><th>文件</th><th>预估</th><th>依赖</th></tr>
+  <tr><td>T-12</td><td>提取硬编码布局为命名常量</td><td>frontend-dev</td><td><code>eui_neo_app/src/main.cpp</code></td><td>1h</td><td>T-05</td></tr>
+  <tr><td>T-13</td><td>添加窗口 resize 自适应</td><td>frontend-dev</td><td><code>eui_neo_app/src/main.cpp</code></td><td>2h</td><td>T-12</td></tr>
+  <tr><td>T-14</td><td>将关键探针转为自动化测试</td><td>test-dev-engineer</td><td><code>eui_neo_app/external/EUI-NEO/tests/</code></td><td>4h</td><td>—</td></tr>
+</table>
+</div>
+</details>
+
+<details open>
+<summary><span class="tag tag-P2">P2</span> 扩展测试 — 低优先级</summary>
+<div class="body">
+<table>
+  <tr><th>ID</th><th>任务</th><th>角色</th><th>文件</th><th>预估</th><th>依赖</th></tr>
+  <tr><td>T-15</td><td>hooks/check_mcp.py 单元测试</td><td>test-dev-engineer</td><td><code>hooks/check_mcp.py</code></td><td>1h</td><td>—</td></tr>
+  <tr><td>T-16</td><td>插件管理模块单元测试</td><td>test-dev-engineer</td><td><code>plugin_*.py</code></td><td>2h</td><td>—</td></tr>
+  <tr><td>T-17</td><td>端到端管线场景测试扩展</td><td>test-dev-engineer</td><td><code>tests/s/test_scenario.py</code></td><td>3h</td><td>T-06~T-11</td></tr>
+</table>
+</div>
+</details>
+
+<h2 id="state-machine">6. 状态机更新</h2>
+
+<p>当前状态机已在 <code>state-machine.yaml</code> 中定义，Boss→架构师→frontend-dev→client-dev→test-dev-engineer→security-engineer→fullstack-dev→架构师审核→终端。</p>
+
+<p>本次架构设计后无需修改状态机拓扑，只需确认以下流转条件：</p>
+<ul>
+  <li>架构师设计完成后 → frontend-dev（修复仪表盘 T-05/T-12/T-13）</li>
+  <li>frontend-dev 完成后 → client-dev（C++ 兼容性支持）</li>
+  <li>client-dev 完成后 → test-dev-engineer（T-06~T-11/T-14/T-15~T-17 新建测试）</li>
+  <li>test-dev-engineer 完成后 → security-engineer（安全审查）</li>
+  <li>security-engineer 完成后 → fullstack-dev（修复 except:pass T-01~T-04）</li>
+  <li>fullstack-dev 完成后 → 架构师验收 → 终端</li>
+</ul>
+
+<h2 id="acceptance">7. 验收标准</h2>
+
+<table>
+  <tr><th>ID</th><th>描述</th><th>检查方式</th><th>负责角色</th></tr>
+  <tr>
+    <td>A-01</td><td>所有 <code>except: pass</code> 替换为精确异常处理 + 日志</td><td>grep 'except.*:.*pass' *.py 应为0</td><td>security-engineer</td>
+  </tr>
+  <tr>
+    <td>A-02</td><td>无测试模块覆盖率 ≥ 60%（新建测试）</td><td>运行 <code>pytest tests/ --cov</code></td><td>test-dev-engineer</td>
+  </tr>
+  <tr>
+    <td>A-03</td><td>eui_neo_app 编译通过，所有 C++ 单元测试通过</td><td>cd eui_neo_app && cmake --build build-eui && ctest</td><td>frontend-dev</td>
+  </tr>
+  <tr>
+    <td>A-04</td><td><code>os.system()</code> 全部替换为 <code>subprocess</code></td><td>grep 'os.system(' *.py 应为0</td><td>security-engineer</td>
+  </tr>
+  <tr>
+    <td>A-05</td><td>现有 55 个测试全部通过（回归）</td><td>pytest tests/ -v</td><td>test-dev-engineer</td>
+  </tr>
+  <tr>
+    <td>A-06</td><td>MCP 接口中超时/重试机制到位</td><td>检查 mcp_client.py 中 timeout/retry 参数</td><td>test-dev-engineer</td>
+  </tr>
+</table>
+
+<p style="text-align: center; margin-top: 3rem; color: #666;">— END —<br>Bobanana 5.0 技术 PRD · v1 · 架构师</p>
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+# 状态机 — 外部工具集约定
+# 第一状态机：不含CL，出口为架构师(OP)
+
+version: 14
+entry_point: "boss"
+max_loops: 50
+
+nodes:
+  - id: "boss"
+    label: "Boss"
+    description: "用户代言人，已完成外部工具集约定规划"
+    tags: ["OP"]
+    is_op_role: true
+
+  - id: "architect"
+    label: "架构师"
+    description: "OP编排者。设计外部工具集扫描与路由机制，更新角色遍历流程"
+    tags: ["OP"]
+    is_op_role: true
+
+  - id: "fullstack-dev"
+    label: "全栈开发工程师"
+    description: "实现 kitset 扫描逻辑和角色卡路由"
+    tags: []
+
+  - id: "client-gate"
+    label: "甲方终审"
+    description: "管线的唯一出口。审查外部工具集约定完整性"
+    tags: ["CL"]
+    is_exit: true
+
+edges:
+  - from: "boss"
+    to: "architect"
+    phase: "boss-done"
+    label: "Boss → 架构师"
+
+  - from: "architect"
+    to: "fullstack-dev"
+    phase: "arch-done"
+    label: "架构师 → 全栈实现"
+
+  - from: "fullstack-dev"
+    to: "architect"
+    phase: "dev-done_task-done"
+    label: "全栈完成 → 架构师验收"
+
+  # 第二状态机：architect → client-gate → terminal

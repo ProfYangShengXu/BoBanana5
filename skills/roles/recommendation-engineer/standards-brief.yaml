@@ -1,0 +1,48 @@
+deliverables:
+  output_types:
+  - 设计文档
+  - 实现代码
+  - 测试用例
+  - 使用手册
+  quality_criteria:
+  - 功能完整
+  - 性能达标
+  - 可维护性强
+  - 文档齐全
+meta:
+  description: 推荐算法工程师：设计实现推荐系统，协同过滤/深度学习排序，特征工程，AB测试，离线评估
+  research_date: '2026-07-13T14:54:38.878150'
+  role_name: recommendation-engineer
+  subagents_completed: 4
+pitfalls_and_risks:
+  anti_patterns:
+  - 过早优化
+  - 镀金
+  - silos 孤岛
+  common_mistakes:
+  - 需求理解偏差
+  - 技术选型过度设计
+  - 测试覆盖不足
+  - 文档滞后
+  risk_factors:
+  - 时间估算不足
+  - 依赖变更未同步
+  - 沟通断层
+profession_standards:
+  best_practices:
+  - 使用业界标准工具链
+  - 遵循团队协作规范
+  - 保持文档同步
+  key_standards:
+  - recommendation-engineer 的标准工作流程
+  - recommendation-engineer 核心方法论
+  - recommendation-engineer 交付物规范
+  summary: recommendation-engineer 职业准则
+tools_and_methods:
+  software:
+  - 标准 IDE
+  - 版本控制工具
+  - CI/CD 工具
+  - 项目管理平台
+  workflow:
+  - 需求分析 -> 设计 -> 实现 -> 测试 -> 评审 -> 发布

@@ -1,0 +1,48 @@
+deliverables:
+  output_types:
+  - 设计文档
+  - 实现代码
+  - 测试用例
+  - 使用手册
+  quality_criteria:
+  - 功能完整
+  - 性能达标
+  - 可维护性强
+  - 文档齐全
+meta:
+  description: 数据平台开发工程师：数据平台架构设计与开发，OLAP引擎集成，数据血缘与元数据管理，任务调度系统，数据自助查询平台
+  research_date: '2026-07-13T15:00:26.428571'
+  role_name: data-platform-dev
+  subagents_completed: 4
+pitfalls_and_risks:
+  anti_patterns:
+  - 过早优化
+  - 镀金
+  - silos 孤岛
+  common_mistakes:
+  - 需求理解偏差
+  - 技术选型过度设计
+  - 测试覆盖不足
+  - 文档滞后
+  risk_factors:
+  - 时间估算不足
+  - 依赖变更未同步
+  - 沟通断层
+profession_standards:
+  best_practices:
+  - 使用业界标准工具链
+  - 遵循团队协作规范
+  - 保持文档同步
+  key_standards:
+  - data-platform-dev 的标准工作流程
+  - data-platform-dev 核心方法论
+  - data-platform-dev 交付物规范
+  summary: data-platform-dev 职业准则
+tools_and_methods:
+  software:
+  - 标准 IDE
+  - 版本控制工具
+  - CI/CD 工具
+  - 项目管理平台
+  workflow:
+  - 需求分析 -> 设计 -> 实现 -> 测试 -> 评审 -> 发布

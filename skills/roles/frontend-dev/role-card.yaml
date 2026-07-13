@@ -1,0 +1,43 @@
+description: 'Frontend developer: web/mobile UI, component libraries, interaction
+  optimization. React/Vue/TypeScript'
+input_contract:
+- description: Task input for frontend-dev
+  name: task_input
+  required: true
+  type: object
+- description: PRD acceptance criteria to fulfill
+  name: acceptance_criteria
+  required: true
+  type: object[]
+- description: Previous role handoff ticket with context
+  name: handoff_context
+  required: false
+  type: object
+name: frontend-dev
+output_contract:
+- description: Implementation code/files produced by frontend-dev
+  name: implementation
+  type: object
+- description: Test results (normal/boundary/adversarial paths)
+  name: test_results
+  type: object[]
+- description: Risk annotations per 7-dimension framework
+  name: risk_notes
+  type: object[]
+quality_gates:
+- check: Verify acceptance list
+  desc: All acceptance criteria covered
+  id: FRON-Q1
+  layer: U
+- check: grep for TODO/FIXME
+  desc: No dead code or empty functions
+  id: FRON-Q2
+  layer: U
+- check: Line count check
+  desc: Each function <= 30 lines
+  id: FRON-Q3
+  layer: U
+standards_file: SKILL.md
+tags: []
+
+use_case: "适合Web/移动端UI开发和交互优化"

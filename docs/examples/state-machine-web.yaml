@@ -1,0 +1,124 @@
+# Bobanana 5.0 — Web 全栈开发管线示例
+# OP 编写人: 架构师
+# 适用: Web 应用/API 服务/全栈项目
+
+version: 1
+entry_point: "product-manager"
+max_loops: 50
+
+nodes:
+  - id: "product-manager"
+    label: "产品经理"
+    description: "需求分析、PRD 编写、原型设计"
+    config:
+      is_op_role: true
+
+  - id: "architect"
+    label: "架构师"
+    description: "设计系统架构、技术选型、任务拆解"
+    config:
+      is_op_role: true
+
+  - id: "ux-designer"
+    label: "UX 设计师"
+    description: "UI 设计、交互原型、设计规范"
+
+  - id: "frontend-dev"
+    label: "前端开发"
+    description: "Web UI 实现、组件开发、API 对接"
+
+  - id: "backend-dev"
+    label: "后端开发"
+    description: "API 开发、数据库设计、业务逻辑"
+
+  - id: "tester"
+    label: "测试"
+    description: "功能测试、集成测试、性能测试"
+
+  - id: "security-engineer"
+    label: "安全工程师"
+    description: "安全审计、渗透测试、漏洞修复"
+
+  - id: "sre-engineer"
+    label: "SRE"
+    description: "部署上线、监控告警、容量规划"
+
+  - id: "client-gate"
+    label: "甲方终审"
+    description: "全量审查、1-10 打分"
+    is_exit: true
+
+edges:
+  # 前置阶段：产品设计 -> 架构
+  - from: "product-manager"
+    to: "architect"
+    phase: "pm-done"
+
+  # 架构 -> UX + 前后端开发(并行)
+  - from: "architect"
+    to: "ux-designer"
+    phase: "arch-done"
+
+  # UX 完成后通知前后端开发
+  - from: "ux-designer"
+    to: "frontend-dev"
+    phase: "ux-done"
+  - from: "ux-designer"
+    to: "backend-dev"
+    phase: "ux-done"
+
+  # 前端开发迭代
+  - from: "frontend-dev"
+    to: "frontend-dev"
+    phase: "dev-done_task-remain"
+  - from: "frontend-dev"
+    to: "tester"
+    phase: "dev-done_task-done"
+
+  # 后端开发迭代
+  - from: "backend-dev"
+    to: "backend-dev"
+    phase: "dev-done_task-remain"
+  - from: "backend-dev"
+    to: "tester"
+    phase: "dev-done_task-done"
+
+  # 测试分支：通过 -> 安全，有bug -> 打回
+  - from: "tester"
+    to: "security-engineer"
+    phase: "test-done_all-pass"
+  - from: "tester"
+    to: "frontend-dev"
+    phase: "test-done_has-bug-frontend"
+  - from: "tester"
+    to: "backend-dev"
+    phase: "test-done_has-bug-backend"
+
+  # 安全 -> SRE
+  - from: "security-engineer"
+    to: "sre-engineer"
+    phase: "sec-done"
+  - from: "security-engineer"
+    to: "frontend-dev"
+    phase: "sec-need-fix"
+
+  # SRE -> CL
+  - from: "sre-engineer"
+    to: "client-gate"
+    phase: "sre-done"
+
+  # CL 终审
+  - from: "client-gate"
+    to: "__terminal__"
+    phase: "cl-done_pass"
+    condition:
+      field: "score"
+      operator: ">="
+      value: 9
+  - from: "client-gate"
+    to: "architect"
+    phase: "cl-done_fail"
+    condition:
+      field: "score"
+      operator: "<"
+      value: 9

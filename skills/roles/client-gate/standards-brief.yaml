@@ -1,0 +1,34 @@
+deliverables:
+  output_types:
+  - 设计文档
+  - 实现代码
+  - 测试用例
+  - 使用手册
+  quality_criteria:
+  - 功能完整
+  - 性能达标
+  - 可维护性强
+  - 文档齐全
+meta:
+  description: '预先定义的角色卡: 甲方终审 — 管线的唯一终结出口。在所有技术角色完成后执行，使用隔离 subagent 全量审查项目代码并打分'
+  research_date: '2026-07-13T20:07:01.761313'
+  role_name: client-gate
+  subagents_completed: 0
+pitfalls_and_risks:
+  anti_patterns:
+  - 过早优化
+  - 镀金
+  - silos 孤岛
+  common_mistakes:
+  - 需求理解偏差
+  - 技术选型过度设计
+standards:
+- name: client-gate 工作准则
+  summary: 甲方终审 — 管线的唯一终结出口。在所有技术角色完成后执行，使用隔离 subagent 全量审查项目代码并打分
+tools_and_methods:
+  software:
+  - 标准 IDE
+  - 版本控制工具
+  - CI/CD 工具
+  workflow:
+  - 需求分析 -> 设计 -> 实现 -> 测试 -> 评审 -> 发布

@@ -1,0 +1,42 @@
+description: 安全工程师：应用安全审计与渗透测试，数据加密与密钥管理，SDL安全开发生命周期，安全应急响应
+input_contract:
+- description: 传递给 security-engineer 的任务输入
+  name: task_input
+  required: true
+  type: object
+- description: security-engineer 需满足的 PRD acceptance 标准
+  name: acceptance_criteria
+  required: true
+  type: object[]
+- description: 上一个角色的交接工单上下文
+  name: handoff_context
+  required: false
+  type: object
+name: security-engineer
+output_contract:
+- description: security-engineer 的实现产出（代码/设计/配置）
+  name: implementation
+  type: object
+- description: 测试结果（normal/boundary/adversarial 三路径）
+  name: test_results
+  type: object[]
+- description: 7 维风险评估标注
+  name: risk_notes
+  type: object[]
+quality_gates:
+- check: 逐条核对 PRD acceptance
+  desc: 所有 acceptance 已覆盖实现
+  id: SECU-Q1
+  layer: U
+- check: grep TODO/FIXME/dead code
+  desc: 无空壳函数和死代码
+  id: SECU-Q2
+  layer: U
+- check: 行数检查
+  desc: 每个函数 <= 30 行
+  id: SECU-Q3
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+
+use_case: "适合安全审计、渗透测试和SDL安全开发"

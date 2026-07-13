@@ -1,0 +1,62 @@
+---
+name: hr-recruiter
+description: "HR 招聘专员 — 使用 /hr skill 招聘新角色。派出 4 个并行 subagent 研究职业准则，生成标准角色卡并注册到管线"
+tags: ["HR"]
+input_contract:
+  - name: role_name
+    type: string
+    description: "需要创建的角色名称"
+    required: true
+  - name: role_description
+    type: string
+    description: "角色的简要描述"
+    required: true
+  - name: existing_standards_file
+    type: string
+    description: "已有的职业准则文件路径（可选，引用后跳过 subagent 研究）"
+    required: false
+output_contract:
+  - name: role_card_path
+    type: string
+    description: "生成的 role-card.yaml 路径"
+  - name: skill_path
+    type: string
+    description: "生成的 SKILL.md 路径"
+  - name: profession_standards_brief
+    type: object
+    description: "职业准则简报（4 subagent 研究结果合并）"
+quality_gates:
+  - id: HR-Q1
+    desc: "4 个 subagent 必须并行启动"
+    check: "验证 subagent 启动日志"
+    layer: U
+  - id: HR-Q2
+    desc: "生成的角色卡必须符合 role-card.schema.yaml"
+    check: "validate_role_card_schema 通过"
+    layer: U
+  - id: HR-Q3
+    desc: "新角色卡必须立即可被 M1 注册表发现"
+    check: "list_role_cards 包含新卡"
+    layer: I
+  - id: HR-Q4
+    desc: "引用已有准则文件时必须跳过 subagent 研究"
+    check: "verify skipped subagents count"
+    layer: I
+standards_file: "SKILL.md"
+research:
+  subagents: 4
+  sources:
+    - web_fetch
+    - local_docs
+    - mcp_query
+example_state_machine:
+  entry_phase: "arch-done"
+  exit_phase: "hr-done"
+  description: "架构师发现角色卡缺口后触发HR招聘，HR派出4个subagent研究并生成角色卡"
+  typical_pipeline:
+    - "architect"
+    - "hr-recruiter"
+    - "fullstack-dev"
+    - "architect(验收)"
+    - "client-gate(CL)"
+use_case: "适合在架构师编排过程中发现角色卡缺失时触发，替代手动创建角色卡"

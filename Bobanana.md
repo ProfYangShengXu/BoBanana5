@@ -1,0 +1,56 @@
+# Bobanana.md — 核心工程大纲
+
+> 每次调用 docs / cycle / loop 时，agent 必须读此文件并践行以下原则。
+
+## 1. 禁止面向结果编程
+
+不准用关键词匹配、正则、模式识别替代真正的逻辑处理。遇到问题必须查清根因，从对应层面根本解决，而不是修表面现象。修 bug 前先写一个暴露该 bug 的测试，再修代码。不准写"看起来对了"但经不起推敲的逻辑。
+
+## 2. 架构设计原则（9 条）
+
+高内聚低耦合 · 单一职责 · 开放封闭 · KISS · DRY · 迪米特法则 · 依赖倒置 · 关注点分离 · YAGNI
+
+## 3. 风险与质量意识（7 个维度）
+
+技术债（妥协要标记 TODO） · 回滚（可逆吗 API 兼容吗） · 灰度（feature flag?） · 熔断降级（超时/重试/降级） · 监控告警（有日志吗） · 容错冗余（单点在哪） · 安全（输入消毒/密钥不从代码来）
+
+## 4. 代码规范
+
+- **不随便重构**：不重构没问题的代码。重构必须有明确收益
+- **不写未接线死函数**：定义了就必须有调用方，否则删掉
+- **不自己造轮子**：实现前先搜 GitHub / 标准库 / 项目已有代码
+- **改完即清理**：删未用 import、死变量、残留 TODO
+- **PRD 一致性**：有 PRD 时实现必须一致，不一致时停下来问用户
+
+## 5. 全局管线约定
+
+### 5.1 统一流转入口
+所有角色通过 `state-machine.yaml` + `pipeline_orchestrator.py` 流转，不绕过机制自行调用。每 session 只跑一个角色，通过 queue_next_prompt 交接。禁止：直接写代码完成任务不通过管线角色分配。
+
+### 5.2 CL 唯一出口
+任何管线最终必须经过 `client-gate` 评分 ≥ 9 才能到达 `__terminal__`。评分 < 9 自动打回给最近的 OP 角色。没有其他节点可以直达终点。
+
+### 5.3 角色卡驱动
+每张角色卡必须含 `example_state_machine` + `use_case` 字段，HR 招聘时自动生成。角色池由 `role_card_registry.py` 统一管理，不手工注册。
+
+### 5.4 先复用再新建
+新功能前先 `grep` / `glob` 搜索项目内已有代码，确认无复用可能后再 `web_fetch` 搜 GitHub / 生态（PyPI / NPM / Maven）找成熟方案。不自研已有开源实现的基础组件。
+
+### 5.5 不并行造轮子
+不开发功能重复的工具。如果项目内已有类似实现（如 MCP 客户端、状态机引擎、角色注册表），直接引用扩展，不另起炉灶。统一标准：同一类问题只用一套方案。
+
+### 5.6 SessionStart 检测
+`hooks/check_mcp.py` 在 SessionStart 时检测 `.reasonix/cycle/next_prompt.txt`。有内容 → 自动调用 `pipeline_orchestrator continue` 推进管线。无内容 → 正常进入 `/bobanana` 新管线。
+
+### 5.7 提示词注入
+所有管线目标自动追加「默认目标：通过 CL 终审(score≥9)」。由 `pipeline_orchestrator.init_pipeline()` 执行注入，各角色无需手动添加。
+
+### 5.8 外部工具集（Adaption Kitsets）
+领域特定任务优先引用外部适配集中的角色卡和工具。架构师/Boss 遍历角色卡库时额外扫描 `skills/kitsets/` 或配置的 `kitset_paths`，若用户目标匹配某 kitset 领域（如游戏开发→Godot-kitset），则在状态机中插入该 kitset 提供的角色卡节点。Kitset 角色卡遵循标准 `role-card.schema.yaml` 格式，可含 `kitset_name` 字段标记来源。优先使用 kitset 工具而非自研。
+- Boss/架构师 Step 1 遍历角色卡库时增加 `skills/kitsets/` 扫描
+- 检测用户目标关键词匹配 kitset 领域标签
+- 匹配时在状态机中插入 kitset 角色卡作为执行节点
+- 不匹配时使用默认角色池 < 该约定无需修改代码，由角色执行时遵循>
+
+### 5.9 多文件变更规则
+需求涉及多个文件时，状态机中**禁止使用 fullstack-dev 角色**，必须同时包含 `test-dev-engineer` + `security-engineer` 两个角色。理由：多文件变更意味着跨模块影响，必须有测试覆盖和安全审查兜底，不能由单一角色全包。单文件变更不受此限制。

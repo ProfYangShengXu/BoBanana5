@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>CL 终审报告 v2 — Bobanana 5.0</title>
+<style>
+body { font-family: -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 1rem; background: #f8f9fa; }
+h1 { color: #dc2626; border-bottom: 3px solid #dc2626; padding-bottom: 0.5rem; }
+.score { font-size: 3rem; font-weight: 700; text-align: center; padding: 1rem; }
+.pass { color: #16a34a; } .fail { color: #dc2626; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+th, td { padding: 0.5rem; border: 1px solid #e0e0e0; text-align: left; }
+th { background: #1a1a2e; color: #fff; }
+tr:nth-child(even) { background: #f5f5f5; }
+.box { border-left: 4px solid #dc2626; padding: 0.8rem 1.2rem; margin: 1rem 0; background: #fff; border-radius: 0 6px 6px 0; }
+.fixed { border-left-color: #16a34a; }
+</style>
+</head>
+<body>
+<h1>🔴 CL 终审报告 v2</h1>
+
+<div class="score fail">评分: 7/10 ❌ FAIL</div>
+<p style="text-align:center">仍需修复后重新提交</p>
+
+<h2>上次问题修复状态</h2>
+<table>
+  <tr><th>#</th><th>问题</th><th>状态</th></tr>
+  <tr><td>1</td><td>phase 名称不匹配</td><td class="fixed">✅ 已修复</td></tr>
+  <tr><td>2</td><td>except 缺日志</td><td>⚠️ 6处已修，另有2处用print()</td></tr>
+  <tr><td>3</td><td>start_gui() 连接泄漏</td><td class="fixed">✅ 已修复</td></tr>
+</table>
+
+<h2>新发现问题</h2>
+<div class="box">
+<h3>🔴 4. gui_dashboard.py MCPClient 未 disconnect()</h3>
+<p><code>gui_dashboard.py:46-47</code> 创建并连接 MCPClient，但全文件无 <code>disconnect()</code> 调用，存在资源泄漏。</p>
+</div>
+<div class="box">
+<h3>🟡 5. 2 处 except 仍用 print() 而非 logging</h3>
+<p><code>pipeline_orchestrator.py:267</code> 和 <code>mcp_events.py:104</code> 使用 <code>print()</code> 输出异常，未统一使用 <code>logging.warning()</code>。</p>
+</div>
+
+<h2>各维度评分</h2>
+<table>
+  <tr><th>维度</th><th>评分</th><th>变化</th></tr>
+  <tr><td>PRD 文档</td><td>7/10</td><td>—</td></tr>
+  <tr><td>代码质量</td><td>7/10</td><td>—</td></tr>
+  <tr><td>测试覆盖</td><td>7/10</td><td>📉 -2 (gui_dashboard 无测试)</td></tr>
+  <tr><td>安全修复</td><td>9/10</td><td>📈 +1</td></tr>
+  <tr><td>仪表盘修复</td><td>6/10</td><td>📉 -3</td></tr>
+  <tr><td>架构设计</td><td>8/10</td><td>📈 +2</td></tr>
+</table>
+</body>
+</html>

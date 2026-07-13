@@ -1,0 +1,89 @@
+{
+  "name": "bobanana5",
+  "description": "鲍勃安娜 5.0 — 可编程状态机管线 + 角色卡系统 + GUI 仪表盘",
+  "version": "5.0.0",
+  "tools": [
+    {
+      "name": "bobanana_pipeline",
+      "description": "一键运行完整管线：架构师→开发→测试→评判→挑刺→CL终审",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "goal": {
+            "type": "string",
+            "description": "项目目标描述"
+          }
+        },
+        "required": ["goal"]
+      }
+    },
+    {
+      "name": "bobanana_dashboard",
+      "description": "启动 TUI 仪表盘，显示状态机图、角色卡、管线进度",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "bobanana_cards",
+      "description": "列出所有可用角色卡",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tag": {
+            "type": "string",
+            "description": "按标签过滤：OP/CL/HR"
+          }
+        }
+      }
+    },
+    {
+      "name": "bobanana_test",
+      "description": "运行全部测试并输出报告",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "bobanana_get_state_machine",
+      "description": "获取当前状态机拓扑",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "状态机文件路径，默认 state-machine.yaml"
+          }
+        }
+      }
+    },
+    {
+      "name": "bobanana_get_role_card",
+      "description": "获取角色卡详情",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "角色卡名称"
+          }
+        },
+        "required": ["name"]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "bobanana://state-machine",
+      "name": "当前状态机配置",
+      "description": "state-machine.yaml 的实时内容"
+    },
+    {
+      "uri": "bobanana://dashboard",
+      "name": "完整仪表盘数据",
+      "description": "状态机 + 角色卡 + 管线进度的综合数据"
+    }
+  ]
+}

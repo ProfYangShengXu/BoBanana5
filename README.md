@@ -77,7 +77,7 @@ Adaption Kitsets（领域角色卡 + 工具集）           = 驱动程序
 5. 回到聊天界面，输入：
 
 ```text
-/bobanana 帮我做一个记账软件
+（reasonix 目标模式）/bobanana 帮我做一个记账软件
 ```
 
 🎉 完成。

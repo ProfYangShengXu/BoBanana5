@@ -1,6 +1,6 @@
 <div align="center">
   <h1>🍌 Bobanana 5.0</h1>
-  <p><b>你说话，AI 干活</b> — Meta Agent 编排引擎 · 领域无关的可编程状态机 + 可插拔角色卡系统</p>
+  </b> — Meta Agent 编排引擎 · 领域无关的可编程状态机 + 可插拔角色卡系统</p>
   <p>
     <a href="https://reasonix.io"><img src="https://img.shields.io/badge/Reasonix-0.54%2B-blue?style=flat-square" alt="Reasonix"></a>
     <a href="https://github.com/ProfYangShengXu/BoBanana5/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ProfYangShengXu/BoBanana5?style=flat-square" alt="License"></a>

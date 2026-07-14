@@ -8,9 +8,10 @@ argument-hint: "<目标>"
 
 ## 执行
 
-1. 读 `skills/bobanana/SKILL.md`，按入口 skill 要求进入 Boss 角色
-2. Boss 读角色卡库 → 架构师 → 按贪心状态机 v15 推进
-3. 不询问确认，直接开干
+1. `read_skill("bobanana")` 加载 Bobanana 入口 skill
+2. 按入口 skill 的要求进入 Boss 角色
+3. Boss 读角色卡库 → 架构师 → 按贪心状态机 v15 推进
+4. 不询问确认，直接开干
 
 ## 注意事项
 

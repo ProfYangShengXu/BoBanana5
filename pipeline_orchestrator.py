@@ -304,7 +304,7 @@ def list_pipelines():
 
 
 def advance_pipeline(phase, score=None, pid=None):
-    """推进管线按 phase 流转"""
+    """推进管线按 phase 流转（以 pipeline.json 为唯一权威源）"""
     pipeline = get_pipeline(pid)
     if not pipeline:
         print("无活跃管线")
@@ -314,18 +314,14 @@ def advance_pipeline(phase, score=None, pid=None):
         print(f"错误: 达到最大循环次数 ({pipeline['max_loops']})")
         return None
 
+    # 初始化状态机引擎（从 pipeline.json 读取当前节点，不依赖 machine_state.json）
     from state_machine_engine import StateMachineRuntime
     engine = StateMachineRuntime()
-    state = engine.load_state()
-    if not state:
-        engine.load(STATE_MACHINE_PATH)
-        engine.state['current_node'] = pipeline['current_node']
-        engine._save_state()
-        state = engine.state
-    elif engine.config is None:
-        import yaml as _yaml
-        with open(STATE_MACHINE_PATH, 'r', encoding='utf-8') as _f:
-            engine.config = _yaml.safe_load(_f)
+    engine.load(STATE_MACHINE_PATH)
+    engine.state['current_node'] = pipeline['current_node']
+    engine.state['current_phase'] = pipeline['current_phase']
+    engine.state['loop_count'] = pipeline['loop_count']
+    engine.state['completed_nodes'] = list(pipeline.get('completed_nodes', []))
 
     # 处理 CL 分数
     from state_machine_parser import load_state_machine
@@ -474,21 +470,23 @@ def cmd_advance(args):
 
 
 def cmd_continue(args):
-    """从 cycle-bridge 读取下一 phase 并推进管线"""
+    """从 pipeline.json 读取下一 phase 并推进管线（以 pipeline.json 为权威源）"""
     import json as _json
-    sf = '.reasonix/cycle/state.json'
-    if not os.path.exists(sf):
-        print("无 cycle 状态")
+    # 从 pipeline.json 获取当前状态（权威源），不依赖 cycle/state.json
+    pipeline = get_pipeline()
+    if not pipeline:
+        print("无活跃管线")
         return 1
-    with open(sf, 'r', encoding='utf-8') as f:
-        st = _json.load(f)
-    ph = st.get('phase', '')
+    if pipeline.get('status') == 'completed' or pipeline.get('current_node') == '__terminal__':
+        print(f"管线已结束 (status={pipeline.get('status')})")
+        return 0
+    ph = pipeline.get('current_phase', '')
     if not ph or ph == 'done':
         print(f"管线已结束 (phase={ph})")
         return 0
-    # 修复：phase='init' 是初始化标记，应自动推进到 boss-done
-    if ph == 'init':
-        print("检测到 init phase，自动推进到 boss-done")
+    # phase='init' 是初始化标记，自动推进到 boss-done
+    if ph == 'start':
+        print("检测到初始 phase，自动推进到 boss-done")
         ph = 'boss-done'
     print(f"推进管线: phase={ph}")
     advance_pipeline(ph, score=args.score)
@@ -527,6 +525,9 @@ def main():
 
     sub.add_parser('list', help='列出管线')
 
+    p_r = sub.add_parser('repair', help='从 pipeline.json 重建 cycle/state（修复不一致）')
+    p_r.add_argument('--pipeline', '-p', help='管线 ID（默认最新）')
+
     args = parser.parse_args()
 
     if args.command == 'init':
@@ -537,11 +538,70 @@ def main():
         return cmd_advance(args)
     elif args.command == 'continue':
         return cmd_continue(args)
+    elif args.command == 'repair':
+        return cmd_repair(args)
     elif args.command == 'list':
         return cmd_list(args)
     else:
         parser.print_help()
         return 0
+
+
+def cmd_repair(args):
+    """从 pipeline.json 重建 cycle state 和 machine state（修复不一致）"""
+    pipeline = get_pipeline(args.pipeline)
+    if not pipeline:
+        print("无活跃管线可修复")
+        return 1
+
+    # 从 pipeline.json 重建 cycle/state.json
+    import hashlib
+    cycle_dir = '.reasonix/cycle'
+    os.makedirs(cycle_dir, exist_ok=True)
+    goal_hash = hashlib.sha256(pipeline.get('goal', '').encode()).hexdigest()[:64]
+    phase = pipeline.get('current_phase', 'start')
+    if pipeline.get('status') == 'completed':
+        phase = 'done'
+    cycle_state = {
+        "goal": pipeline.get('goal', ''),
+        "goal_hash": goal_hash,
+        "phase": phase,
+        "iteration": pipeline.get('loop_count', 0),
+        "max_iterations": pipeline.get('max_loops', 50),
+        "next_prompt": f"[GOAL] {pipeline.get('goal', '')}\n[PHASE] {phase}\n[ROLE] {pipeline.get('current_node', '?')}",
+        "summary": f"重建自 pipeline.json | 节点: {pipeline.get('current_node')} | phase: {phase}",
+        "last_updated": datetime.now().isoformat(),
+    }
+    with open(os.path.join(cycle_dir, 'state.json'), 'w', encoding='utf-8') as f:
+        json.dump(cycle_state, f, ensure_ascii=False, indent=2)
+    print(f"[修复] cycle/state.json 已从 pipeline.json 重建")
+
+    # 重建 next_prompt.txt
+    npt = os.path.join(cycle_dir, 'next_prompt.txt')
+    if phase not in ('done', ''):
+        with open(npt, 'w', encoding='utf-8') as f:
+            f.write(cycle_state['next_prompt'])
+    elif os.path.exists(npt):
+        os.remove(npt)
+    print(f"[修复] next_prompt.txt 已{'重建' if phase not in ('done','') else '清理'}")
+
+    # 重建 machine_state.json（从 state-machine.yaml + pipeline 状态）
+    from state_machine_engine import StateMachineRuntime
+    engine = StateMachineRuntime()
+    sm_path = getattr(engine, '_state_machine_path', 'state-machine.yaml')
+    if os.path.exists(sm_path):
+        engine.load(sm_path)
+        engine.state['current_node'] = pipeline.get('current_node', engine.state['current_node'])
+        engine.state['current_phase'] = pipeline.get('current_phase', 'start')
+        engine.state['completed_nodes'] = pipeline.get('completed_nodes', [])
+        engine.state['loop_count'] = pipeline.get('loop_count', 0)
+        engine.state['max_loops'] = pipeline.get('max_loops', 50)
+        engine.state['failed_count'] = pipeline.get('failed_count', 0)
+        engine._save_state()
+        print(f"[修复] machine_state.json 已从 pipeline.json 重建")
+
+    print(f"\n修复完成。当前状态: phase={phase}, node={pipeline.get('current_node')}")
+    return 0
 
 
 if __name__ == '__main__':

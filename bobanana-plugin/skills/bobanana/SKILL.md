@@ -15,7 +15,7 @@ arguments: '<目标>'
 
 ### 第 1 步：进入 Boss 角色
 
-`read_file` 读取 `skills/roles/boss/SKILL.md`，然后立即开始扮演 Boss。
+`read_skill("boss")` 加载 Boss 角色卡的 SKILL.md，然后立即开始扮演 Boss。
 
 ### 第 2 步：扮演 Boss
 

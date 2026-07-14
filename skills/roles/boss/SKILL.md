@@ -12,7 +12,7 @@ cost: high
 
 ## 使命
 
-作为用户的代言人：读取用户目标 -> 遍历角色卡库 -> 调用 /docs 更新产品文档 -> 编写第一个状态机（禁止 CL 出口）。
+作为用户的代言人：读取用户目标 -> 遍历角色卡库 -> 调用 /docs 更新产品文档 -> 确认/调整状态机配置（使用贪心模板 v15）
 
 ## 第 0 步：检查并重置管线状态
 
@@ -40,28 +40,28 @@ python -c "import pipeline_orchestrator as po; po.advance_pipeline('boss-done')"
 
 - 提取每张卡的 name、tags、description、input_contract、output_contract
 - 标记哪些是 OP 角色（tags 含 OP）
-- 标记哪些是 CL 角色（tags 含 CL）—— **禁止在第一状态机中使用**
+- 标记哪些是 CL 角色（tags 含 CL）
 - 整理可用角色清单
 
-## 第 1 步：调用 /docs 更新产品文档
+## 第 2 步：调用 /docs 更新产品文档
 
 运行 `run_skill(name: "docs", arguments: "当前项目: bobanana5, 目标: <用户目标>")`，产出：
 - `docs/product/<项目名>-product-prd.html`
 - `docs/product/<项目名>-product-prd.yaml`
 
-## 第 2 步：编写第一个状态机
+## 第 3 步：检查/调整状态机配置
 
-基于角色卡库和产品文档，编写 `state-machine.yaml`。
+确认 `state-machine.yaml` 是否已存在。
 
-### 约束（不可违反）
+### 如果状态机已存在（推荐，v15 贪心模板已预置）
 
-1. **第一状态机不能包含 CL 标签角色**（不能有 client-gate、不能以 CL 为出口）
-2. 出口必须是 **另一个 OP 角色**（架构师/技术经理/Boss 接力）
-3. 节点必须来自已读取的角色卡库
-4. 状态机必须定义完整的入口、节点、边、转换条件
-5. **多文件变更禁止 fullstack-dev**：需求涉及多个文件时，状态机禁止单独使用 fullstack-dev，必须同时包含 test-dev-engineer + security-engineer。
+1. 读取 `state-machine.yaml`，确认节点和边与当前角色卡库匹配
+2. 如果匹配 → 直接使用，不需要重写
+3. 如果不匹配（缺角色/多角色）→ 调整节点或边
 
-### 状态机结构
+### 如果状态机不存在
+
+按规则编写 `state-machine.yaml`：
 
 ```yaml
 version: 1
@@ -71,12 +71,10 @@ max_loops: 30
 nodes:
   - id: "boss"
     label: "Boss"
-    description: "用户代言人，已完成目标理解和文档更新"
+    tags: ["OP"]
   - id: "<next-op-role>"
     label: "<下一OP角色名>"
-    description: "<下一OP角色职责>"
     ...
-  # 其他执行节点来自角色卡库
 
 edges:
   - from: "boss"
@@ -85,13 +83,12 @@ edges:
   ...
 ```
 
-### OP 角色接力
+### 约束
 
-Boss 完成后必须指定下一个 OP 角色，并将控制权交给它。典型接力链：
-
-```
-Boss → 架构师(OP) → ... → 技术经理(OP) → ... → CL
-```
+1. 节点必须来自已读取的角色卡库
+2. 状态机必须定义完整的入口、节点、边、转换条件
+3. **多文件变更禁止 fullstack-dev**：需求涉及多个文件时，必须包含 test-dev-engineer + security-engineer。
+4. 遵循 G1-G5 贪心规则（见 Bobanana.md §5.10）
 
 ## 能力边界
 
@@ -110,8 +107,6 @@ Boss → 架构师(OP) → ... → 技术经理(OP) → ... → CL
 
 ## 不做
 
-- 第一状态机不写 CL 角色
-- 不跳过角色卡库遍历
 - 不代替其他 OP 角色做详细技术设计
 - 不写代码、不改已有代码
 

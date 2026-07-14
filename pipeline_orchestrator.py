@@ -75,7 +75,7 @@ def init_pipeline(goal):
         "pipeline_id": pid,
         "goal": injected_goal,
         "status": "initialized",
-        "current_node": "architect",
+        "current_node": "boss",
         "current_phase": "start",
         "completed_nodes": [],
         "failed_count": 0,

@@ -81,3 +81,9 @@ network = true
 name    = "cycle-bridge"
 command = 'C:\Users\45140\.reasonix\bin\cycle-bridge.exe'
 call_timeout_seconds = 600
+
+# Bobanana 5.0 — 可编程状态机管线
+[[plugins]]
+name    = "bobanana5"
+command = "python C:/Users/45140/OneDrive/Desktop/code/BoBanana5/mcp_server.py"
+call_timeout_seconds = 600

@@ -106,8 +106,8 @@ def copy_skills_and_commands():
             shutil.copy2(src, os.path.join(dst_dir, 'SKILL.md'))
             print(f"  [+] skill: {skill}")
 
-    # Commands
-    for cmd in ['bobanana.md', 'cycle.md']:
+    # Commands — 新增 bb.md 作为 /bb 快捷指令
+    for cmd in ['bb.md', 'bobanana.md', 'cycle.md']:
         src = os.path.join(PROJECT_DIR, 'commands', cmd)
         dst = os.path.join(REASONIX_HOME, 'commands', cmd)
         if os.path.exists(src):

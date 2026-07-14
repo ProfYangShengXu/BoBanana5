@@ -31,6 +31,8 @@ copy /Y "%USER_DIR%\commands\cycle.md" "%USER_DIR%\commands\pipeline.md" >nul
 if exist "%USER_DIR%\commands\pipeline.md" echo   + %USER_DIR%\commands\pipeline.md
 if exist "%SOURCE_DIR%commands\bobanana.md" copy /Y "%SOURCE_DIR%commands\bobanana.md" "%USER_DIR%\commands\bobanana.md" >nul
 if exist "%USER_DIR%\commands\bobanana.md" echo   + %USER_DIR%\commands\bobanana.md
+if exist "%SOURCE_DIR%commands\bb.md" copy /Y "%SOURCE_DIR%commands\bb.md" "%USER_DIR%\commands\bb.md" >nul
+if exist "%USER_DIR%\commands\bb.md" echo   + %USER_DIR%\commands\bb.md
 
 echo [4/5] Global binaries ...
 if not exist "%USER_DIR%\bin" mkdir "%USER_DIR%\bin" >nul

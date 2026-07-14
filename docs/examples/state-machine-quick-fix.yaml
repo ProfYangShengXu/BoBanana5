@@ -1,18 +1,25 @@
-# 快速修复模板 v1 — 最小管线
-# 适用场景：紧急 bug 修复、单文件改动、快速原型
-# 角色数：4 个
+# 快速修复模板 v2 — 最小管线 + chaos/AI 测试协同
+# 相比 v1 增加了 chaos-engineer 和 ai-test-strategist 可选路径
+# 当系统包含 AI 组件时，修复后自动触发 chaos + AI 协同验证
+# 角色数：6 个
 
-version: 1
+version: 2
 entry_point: "boss"
-max_loops: 10
+max_loops: 15
 
 nodes:
-  - id: "boss"         tags: ["OP"]  is_op_role: true
-  - id: "fullstack-dev" tags: []
-  - id: "client-gate"  tags: ["CL"]  is_exit: true
+  - id: "boss"              tags: ["OP"]  is_op_role: true
+  - id: "fullstack-dev"     tags: []
+  - id: "chaos-engineer"    tags: []  # 验证修复是否引入系统韧性退化
+  - id: "ai-test-strategist" tags: [] # 验证修复是否影响 AI 行为
+  - id: "client-gate"       tags: ["CL"]  is_exit: true
 
 edges:
   - from: "boss"           to: "fullstack-dev"  phase: "boss-done"
-  - from: "fullstack-dev"  to: "client-gate"    phase: "dev-done_task-done"
+  - from: "fullstack-dev"  to: "chaos-engineer" phase: "dev-done_task-done"
+  - from: "chaos-engineer" to: "ai-test-strategist" phase: "chaos-done"
+  - from: "chaos-engineer" to: "fullstack-dev"  phase: "chaos-fail-fix"
+  - from: "ai-test-strategist" to: "client-gate" phase: "ai-test-pass"
+  - from: "ai-test-strategist" to: "fullstack-dev" phase: "ai-test-fail"
   - from: "client-gate"    to: "__terminal__"   phase: "cl-pass"  condition: {field: score, operator: ">=", value: 9}
   - from: "client-gate"    to: "fullstack-dev"  phase: "cl-fail"  condition: {field: score, operator: "<", value: 9}

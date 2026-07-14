@@ -1,10 +1,10 @@
-# 标准开发模板 v15-chaos — 贪心状态机 + chaos/AI 测试协同
-# 在 v15 基础上嵌入 chaos-engineer 和 ai-test-strategist
-# 协同模式：常规测试通过 → chaos 故障注入 → AI 测试验证 → 安全审计
-# 适用场景：中小型项目、标准 Web/API 开发（需要高可靠性）
+# 混沌就绪模板 v1-chaos — standard + 混沌工程 + AI 测试策略
+# 在标准 v15 基础上嵌入 chaos-engineer 和 ai-test-strategist 协同路径
+# 协同模式：chaos-engineer 注入故障 → ai-test-strategist 验证 AI 行为是否退化
+# 适用场景：需要高可靠性的 AI 系统、分布式系统
 # 角色数：14 个
 
-version: 15
+version: 1
 entry_point: "boss"
 max_loops: 60
 
@@ -17,8 +17,8 @@ nodes:
   - id: "code-reviewer"     tags: []
   - id: "integration-tester" tags: []
   - id: "test-dev-engineer" tags: []
-  - id: "chaos-engineer"    tags: []    # 故障注入验证系统韧性
-  - id: "ai-test-strategist" tags: []   # AI 行为验证
+  - id: "chaos-engineer"    tags: []    # 注入故障，验证系统韧性
+  - id: "ai-test-strategist" tags: []   # 验证 AI 行为
   - id: "security-engineer" tags: []
   - id: "tech-writer"       tags: []
   - id: "client-gate"       tags: ["CL"]  is_exit: true
@@ -32,30 +32,34 @@ edges:
   - from: "database-engineer" to: "code-reviewer"    phase: "db-done"
   - from: "code-reviewer"   to: "frontend-dev"       phase: "cr-pass"
   - from: "frontend-dev"    to: "code-reviewer"      phase: "frontend-done"
-  - from: "code-reviewer"   to: "backend-dev"        phase: "cr-fail-backend"
-  - from: "code-reviewer"   to: "frontend-dev"       phase: "cr-fail-frontend"
   - from: "code-reviewer"   to: "integration-tester" phase: "all-dev-done"
   - from: "integration-tester" to: "test-dev-engineer" phase: "integration-done"
-  - from: "test-dev-engineer" to: "integration-tester" phase: "test-fail"
 
-  # 常规测试通过 → chaos 故障注入
-  - from: "test-dev-engineer" to: "chaos-engineer"  phase: "test-all-pass"
+  # 测试通过 → chaos-engineer 注入故障
+  - from: "test-dev-engineer" to: "chaos-engineer"   phase: "test-all-pass"
 
-  # chaos → AI 测试协同
+  # chaos-engineer 完成 → ai-test-strategist 验证 AI 行为
   - from: "chaos-engineer"    to: "ai-test-strategist" phase: "chaos-done"
-  - from: "chaos-engineer"    to: "backend-dev"       phase: "chaos-fail-backend"
-  - from: "chaos-engineer"    to: "integration-tester" phase: "chaos-fail-int"
 
-  # AI 测试通过 → 安全审计
+  # ai-test-strategist 验证完成 → security
   - from: "ai-test-strategist" to: "security-engineer" phase: "ai-test-pass"
-  - from: "ai-test-strategist" to: "chaos-engineer"    phase: "ai-test-fail-chaos"
-  - from: "ai-test-strategist" to: "backend-dev"       phase: "ai-test-fail-model"
+
+  # 如果 AI 测试发现模型在混沌下退化 → 打回后端修复
+  - from: "ai-test-strategist" to: "backend-dev"     phase: "ai-test-fail-model"
+
+  # 如果混沌测试发现基础设施问题 → 打回集成测试
+  - from: "chaos-engineer"    to: "integration-tester" phase: "chaos-fail-infra"
+
+  # 打回路径
+  - from: "code-reviewer"   to: "backend-dev"        phase: "cr-fail-backend"
+  - from: "code-reviewer"   to: "frontend-dev"       phase: "cr-fail-frontend"
+  - from: "test-dev-engineer" to: "integration-tester" phase: "test-fail"
+  - from: "ai-test-strategist" to: "chaos-engineer"   phase: "ai-test-fail-verify"
 
   # 正常链路
-  - from: "security-engineer" to: "tech-writer"        phase: "security-done"
+  - from: "security-engineer" to: "tech-writer"      phase: "security-done"
   - from: "tech-writer"      to: "architect"          phase: "docs-done"
   - from: "architect"       to: "client-gate"         phase: "arch-gate-pass"
   - from: "architect"       to: "backend-dev"         phase: "arch-gate-fail-backend"
-  - from: "architect"       to: "frontend-dev"        phase: "arch-gate-fail-frontend"
   - from: "client-gate"     to: "__terminal__"        phase: "cl-pass"  condition: {field: score, operator: ">=", value: 9}
   - from: "client-gate"     to: "architect"           phase: "cl-fail"  condition: {field: score, operator: "<", value: 9}

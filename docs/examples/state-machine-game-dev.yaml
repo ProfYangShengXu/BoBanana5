@@ -1,0 +1,50 @@
+# 游戏开发模板 v1-game — 游戏管线 + chaos + AI 测试
+# chaos-engineer 验证游戏服务器韧性（DDoS、高延迟、掉线）
+# ai-test-strategist 验证游戏 AI（NPC 行为、难度平衡、作弊检测）
+# 适用场景：游戏开发、游戏服务器、AI NPC 系统
+# 角色数：14 个
+
+version: 1
+entry_point: "boss"
+max_loops: 60
+
+nodes:
+  - id: "boss"                tags: ["OP"]  is_op_role: true
+  - id: "architect"           tags: ["OP"]  is_op_role: true
+  - id: "cpp-backend-dev"     tags: []   # 游戏引擎/服务器
+  - id: "client-dev"          tags: []   # 客户端
+  - id: "webgl-visual-dev"    tags: []   # 3D 渲染
+  - id: "database-engineer"   tags: []   # 玩家数据
+  - id: "code-reviewer"       tags: []
+  - id: "test-dev-engineer"   tags: []   # 传统游戏测试
+  - id: "chaos-engineer"      tags: []   # 服务器韧性测试
+  - id: "ai-test-strategist"  tags: []   # NPC AI/难度平衡测试
+  - id: "security-engineer"   tags: []   # 反作弊/安全
+  - id: "tech-writer"         tags: []
+  - id: "client-gate"         tags: ["CL"]  is_exit: true
+
+edges:
+  - from: "boss"              to: "architect"       phase: "boss-done"
+  - from: "architect"         to: "cpp-backend-dev"  phase: "arch-done"
+  - from: "cpp-backend-dev"   to: "client-dev"       phase: "cpp-done"
+  - from: "client-dev"        to: "webgl-visual-dev" phase: "client-done"
+  - from: "webgl-visual-dev"  to: "database-engineer" phase: "webgl-done"
+  - from: "database-engineer" to: "code-reviewer"    phase: "db-done"
+  - from: "code-reviewer"     to: "test-dev-engineer" phase: "cr-pass"
+  - from: "test-dev-engineer" to: "chaos-engineer"   phase: "test-done"
+
+  # chaos 注入服务器故障 → AI 测试验证 NPC/难度
+  - from: "chaos-engineer"    to: "ai-test-strategist" phase: "chaos-done"
+  - from: "chaos-engineer"    to: "cpp-backend-dev"   phase: "chaos-fail-server"
+  - from: "chaos-engineer"    to: "test-dev-engineer" phase: "chaos-fail-test"
+
+  # AI 测试通过 → 安全
+  - from: "ai-test-strategist" to: "security-engineer" phase: "ai-test-pass"
+  - from: "ai-test-strategist" to: "webgl-visual-dev" phase: "ai-test-fail-npc"
+  - from: "ai-test-strategist" to: "chaos-engineer"    phase: "ai-test-fail-chaos"
+
+  - from: "security-engineer" to: "tech-writer"       phase: "security-done"
+  - from: "tech-writer"       to: "architect"         phase: "docs-done"
+  - from: "architect"         to: "client-gate"       phase: "arch-gate-pass"
+  - from: "client-gate"       to: "__terminal__"      phase: "cl-pass"  condition: {field: score, operator: ">=", value: 9}
+  - from: "client-gate"       to: "architect"         phase: "cl-fail"  condition: {field: score, operator: "<", value: 9}

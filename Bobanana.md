@@ -75,11 +75,21 @@
 
 | 模板 | 角色数 | 适用场景 | 文件 |
 |------|--------|---------|------|
-| 🐣 **quick-fix** | 4 | 紧急 bug 修复、单文件改动 | `docs/examples/state-machine-quick-fix.yaml` |
-| 🏗️ **standard** | 11 | 中小型项目、标准 Web/API（**默认推荐**） | `state-machine.yaml` |
-| 🏙️ **fullstack-web** | 22 | 大型 Web 项目、前后端分离、多技术栈 | `docs/examples/state-machine-fullstack-web.yaml` |
-| 📊 **data-science** | 12 | 数据分析、ML 训练、推荐系统、NLP/CV | `docs/examples/state-machine-data-science.yaml` |
+| 🐣 **quick-fix** | 6 | 紧急 bug 修复（含 chaos + AI 测试验证） | `docs/examples/state-machine-quick-fix.yaml` |
+| 🏗️ **standard** | 14 | 中小型项目、标准 Web/API（**默认推荐**） | `state-machine.yaml` |
+| 🛡️ **chaos-ready** | 14 | 高可靠系统，chaos + AI 测试深度协同 | `docs/examples/state-machine-chaos-ready.yaml` |
+| 🤖 **ai-native** | 14 | AI/LLM 原生项目，全链路 AI 质量验证 | `docs/examples/state-machine-ai-native.yaml` |
+| 🏙️ **fullstack-web** | 22 | 大型 Web 全栈 | `docs/examples/state-machine-fullstack-web.yaml` |
+| 🌐 **fullstack-chaos** | 26 | 全栈 + chaos + AI 测试（最大规模） | `docs/examples/state-machine-fullstack-chaos.yaml` |
+| 🏗️ **microservices** | 18 | 微服务架构、分布式系统 | `docs/examples/state-machine-microservices.yaml` |
+| 🎮 **game-dev** | 14 | 游戏开发、AI NPC、服务器韧性 | `docs/examples/state-machine-game-dev.yaml` |
+| 📊 **data-science** | 12 | 数据分析、ML 训练、推荐系统 | `docs/examples/state-machine-data-science.yaml` |
 | 🔒 **security-audit** | 9 | 安全审计、渗透测试、合规检查 | `docs/examples/state-machine-security-audit.yaml` |
+
+**chaos-engineer + ai-test-strategist 协同模式**：在所有含此二角色的模板中，它们构成"质量双核"——
+1. chaos-engineer 先注入故障（网络中断、服务宕机、高延迟）验证系统韧性
+2. ai-test-strategist 随后验证 AI 模型在故障下的行为是否符合预期
+3. 任一发现退化，打回对应角色修复，修复后重新从该环节执行
 
 **切换模板**：将目标模板内容覆盖 `state-machine.yaml` 即可。架构师在执行时会自动验证节点是否与角色卡库匹配。
 

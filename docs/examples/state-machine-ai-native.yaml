@@ -1,0 +1,54 @@
+# AI 原生模板 v1-ai — AI 优先开发管线
+# chaos-engineer + ai-test-strategist 深度协同，贯穿全链路
+# 协同模式：开发→AI测试→混沌注入→AI重测→安全→部署
+# 适用场景：LLM 应用、RAG 系统、AI Agent、模型微调项目
+# 角色数：14 个
+
+version: 1
+entry_point: "boss"
+max_loops: 60
+
+nodes:
+  - id: "boss"                tags: ["OP"]  is_op_role: true
+  - id: "architect"           tags: ["OP"]  is_op_role: true
+  - id: "data-engineer"       tags: []   # 数据准备 + ETL
+  - id: "llm-app-engineer"    tags: []   # LLM 应用开发
+  - id: "nlp-cv-engineer"     tags: []   # 模型微调/优化
+  - id: "code-reviewer"       tags: []
+  - id: "test-dev-engineer"   tags: []   # 传统测试
+  - id: "ai-test-strategist"  tags: []   # AI 模型验证
+  - id: "chaos-engineer"      tags: []   # 注入故障验证韧性
+  - id: "security-engineer"   tags: []
+  - id: "devops-engineer"     tags: []   # 部署
+  - id: "tech-writer"         tags: []
+  - id: "client-gate"         tags: ["CL"]  is_exit: true
+
+edges:
+  - from: "boss"              to: "architect"       phase: "boss-done"
+  - from: "architect"         to: "data-engineer"   phase: "arch-done"
+  - from: "data-engineer"     to: "llm-app-engineer" phase: "data-done"
+  - from: "llm-app-engineer"  to: "nlp-cv-engineer" phase: "llm-done"
+  - from: "nlp-cv-engineer"   to: "code-reviewer"   phase: "nlp-done"
+  - from: "code-reviewer"     to: "test-dev-engineer" phase: "cr-pass"
+  - from: "test-dev-engineer" to: "ai-test-strategist" phase: "test-all-pass"
+
+  # AI 测试 → chaos 混沌注入
+  - from: "ai-test-strategist" to: "chaos-engineer" phase: "ai-test-done"
+
+  # chaos 注入后 → AI 重测（验证模型在故障下的行为）
+  - from: "chaos-engineer"    to: "ai-test-strategist" phase: "chaos-done"
+  - from: "chaos-engineer"    to: "llm-app-engineer"  phase: "chaos-fail-model"
+
+  # AI 重测通过 → security
+  - from: "ai-test-strategist" to: "security-engineer" phase: "ai-test-final-pass"
+  - from: "ai-test-strategist" to: "nlp-cv-engineer"   phase: "ai-test-fail-retrain"
+  - from: "ai-test-strategist" to: "chaos-engineer"     phase: "ai-test-fail-chaos"
+
+  # 正常链路
+  - from: "security-engineer" to: "devops-engineer"  phase: "security-done"
+  - from: "devops-engineer"  to: "tech-writer"       phase: "devops-done"
+  - from: "tech-writer"      to: "architect"         phase: "docs-done"
+  - from: "architect"        to: "client-gate"       phase: "arch-gate-pass"
+  - from: "architect"        to: "data-engineer"     phase: "arch-gate-fail"
+  - from: "client-gate"      to: "__terminal__"      phase: "cl-pass"  condition: {field: score, operator: ">=", value: 9}
+  - from: "client-gate"      to: "architect"         phase: "cl-fail"  condition: {field: score, operator: "<", value: 9}

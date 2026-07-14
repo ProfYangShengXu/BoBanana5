@@ -1,0 +1,62 @@
+# 微服务混沌模板 v1-ms — 微服务架构 + 混沌工程深度集成
+# chaos-engineer 在每层服务间执行故障注入，验证服务韧性
+# ai-test-strategist 验证微服务间 AI 编排的正确性
+# 适用场景：微服务架构、分布式系统、Service Mesh
+# 角色数：18 个
+
+version: 1
+entry_point: "boss"
+max_loops: 80
+
+nodes:
+  - id: "boss"                tags: ["OP"]  is_op_role: true
+  - id: "architect"           tags: ["OP"]  is_op_role: true
+  - id: "java-backend-dev"    tags: []   # 核心服务
+  - id: "go-backend-dev"      tags: []   # 网关/高性能服务
+  - id: "python-backend-dev"  tags: []   # 数据服务
+  - id: "middleware-engineer" tags: []   # 消息队列
+  - id: "api-gateway-engineer" tags: []  # 网关
+  - id: "dba-engineer"        tags: []   # 数据库
+  - id: "code-reviewer"       tags: []
+  - id: "integration-test-eng" tags: []  # 集成测试
+  - id: "perf-test-engineer"  tags: []   # 压测
+  - id: "chaos-engineer"      tags: []   # 故障注入
+  - id: "ai-test-strategist"  tags: []   # AI 编排验证
+  - id: "cloud-native-eng"    tags: []   # K8s/Service Mesh
+  - id: "security-engineer"   tags: []
+  - id: "tech-writer"         tags: []
+  - id: "client-gate"         tags: ["CL"]  is_exit: true
+
+edges:
+  - from: "boss"              to: "architect"       phase: "boss-done"
+  - from: "architect"         to: "java-backend-dev" phase: "arch-be-start"
+  - from: "java-backend-dev"  to: "go-backend-dev"   phase: "java-done"
+  - from: "go-backend-dev"    to: "python-backend-dev" phase: "go-done"
+  - from: "python-backend-dev" to: "middleware-engineer" phase: "py-done"
+  - from: "middleware-engineer" to: "api-gateway-engineer" phase: "mw-done"
+  - from: "api-gateway-engineer" to: "dba-engineer"  phase: "gw-done"
+  - from: "dba-engineer"      to: "code-reviewer"    phase: "dba-done"
+  - from: "code-reviewer"     to: "integration-test-eng" phase: "cr-pass"
+  - from: "integration-test-eng" to: "perf-test-engineer" phase: "int-done"
+
+  # 压测通过 → chaos 全链路故障注入
+  - from: "perf-test-engineer" to: "chaos-engineer"   phase: "perf-done"
+
+  # chaos 验证 → AI 测试（验证 AI 分布式编排是否正确）
+  - from: "chaos-engineer"    to: "ai-test-strategist" phase: "chaos-done"
+
+  # chaos 打回
+  - from: "chaos-engineer"    to: "integration-test-eng" phase: "chaos-fail-int"
+  - from: "chaos-engineer"    to: "java-backend-dev"   phase: "chaos-fail-be"
+
+  # AI 测试 → 云原生部署
+  - from: "ai-test-strategist" to: "cloud-native-eng" phase: "ai-test-pass"
+  - from: "ai-test-strategist" to: "chaos-engineer"   phase: "ai-test-fail-chaos"
+  - from: "ai-test-strategist" to: "python-backend-dev" phase: "ai-test-fail-model"
+
+  - from: "cloud-native-eng"  to: "security-engineer" phase: "cloud-done"
+  - from: "security-engineer" to: "tech-writer"       phase: "security-done"
+  - from: "tech-writer"       to: "architect"         phase: "docs-done"
+  - from: "architect"         to: "client-gate"       phase: "arch-gate-pass"
+  - from: "client-gate"       to: "__terminal__"      phase: "cl-pass"  condition: {field: score, operator: ">=", value: 9}
+  - from: "client-gate"       to: "architect"         phase: "cl-fail"  condition: {field: score, operator: "<", value: 9}

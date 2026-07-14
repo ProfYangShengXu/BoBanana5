@@ -1,0 +1,107 @@
+# 全栈混沌模板 v1-fs-chaos — 全栈 v17 + chaos + AI 测试深度协同
+# chaos-engineer 和 ai-test-strategist 组成"质量二人组"，在每层测试后协同验证
+# 适用场景：大型全栈项目、AI 驱动 Web 应用、高可靠性要求
+# 角色数：26 个
+
+version: 17
+entry_point: "boss"
+max_loops: 100
+
+nodes:
+  - id: "boss"                tags: ["OP"]  is_op_role: true
+  - id: "architect"           tags: ["OP"]  is_op_role: true
+  # 前端链
+  - id: "web-frontend-dev"    tags: []
+  - id: "cross-platform-dev"  tags: []
+  - id: "mini-program-dev"    tags: []
+  - id: "webgl-visual-dev"    tags: []
+  - id: "frontend-infra-dev"  tags: []
+  # 后端链
+  - id: "java-backend-dev"    tags: []
+  - id: "go-backend-dev"      tags: []
+  - id: "python-backend-dev"  tags: []
+  - id: "middleware-engineer" tags: []
+  - id: "api-gateway-engineer" tags: []
+  # 数据库链
+  - id: "dba-engineer"        tags: []
+  - id: "nosql-engineer"      tags: []
+  - id: "data-warehouse-eng"  tags: []
+  # 质量链
+  - id: "code-reviewer"       tags: []
+  - id: "unit-test-engineer"  tags: []
+  - id: "integration-test-eng" tags: []
+  - id: "perf-test-engineer"  tags: []
+  - id: "chaos-engineer"      tags: []    # 故障注入
+  - id: "ai-test-strategist"  tags: []    # AI 行为验证
+  - id: "pentest-engineer"    tags: []
+  - id: "sdl-engineer"        tags: []
+  # 运维链
+  - id: "devops-engineer"     tags: []
+  - id: "cloud-native-eng"    tags: []
+  - id: "tech-writer"         tags: []
+  - id: "client-gate"         tags: ["CL"]  is_exit: true
+
+edges:
+  - from: "boss"              to: "architect"          phase: "boss-done"
+  - from: "architect"         to: "architect"          phase: "arch-self-review"
+
+  # 前端链
+  - from: "architect"         to: "web-frontend-dev"    phase: "arch-fr-start"
+  - from: "web-frontend-dev"  to: "cross-platform-dev"  phase: "web-fr-done"
+  - from: "cross-platform-dev" to: "mini-program-dev"   phase: "cross-done"
+  - from: "mini-program-dev"  to: "webgl-visual-dev"    phase: "mini-done"
+  - from: "webgl-visual-dev"  to: "frontend-infra-dev"  phase: "webgl-done"
+  - from: "frontend-infra-dev" to: "code-reviewer"      phase: "infra-done"
+
+  # 后端链
+  - from: "architect"         to: "java-backend-dev"    phase: "arch-be-start"
+  - from: "java-backend-dev"  to: "go-backend-dev"      phase: "java-done"
+  - from: "go-backend-dev"    to: "python-backend-dev"  phase: "go-done"
+  - from: "python-backend-dev" to: "middleware-engineer" phase: "py-done"
+  - from: "middleware-engineer" to: "api-gateway-engineer" phase: "mw-done"
+  - from: "api-gateway-engineer" to: "code-reviewer"    phase: "gw-done"
+
+  # 数据库链
+  - from: "architect"         to: "dba-engineer"        phase: "arch-db-start"
+  - from: "dba-engineer"      to: "nosql-engineer"      phase: "dba-done"
+  - from: "nosql-engineer"    to: "data-warehouse-eng"  phase: "nosql-done"
+  - from: "data-warehouse-eng" to: "code-reviewer"      phase: "dw-done"
+
+  # CR 打回
+  - from: "code-reviewer"     to: "web-frontend-dev"    phase: "cr-fail-fr"
+  - from: "code-reviewer"     to: "java-backend-dev"    phase: "cr-fail-be"
+  - from: "code-reviewer"     to: "dba-engineer"        phase: "cr-fail-db"
+
+  # 测试链：常规测试 → chaos → AI 测试
+  - from: "code-reviewer"     to: "unit-test-engineer"  phase: "cr-pass"
+  - from: "unit-test-engineer" to: "integration-test-eng" phase: "unit-done"
+  - from: "integration-test-eng" to: "perf-test-engineer" phase: "int-done"
+  - from: "unit-test-engineer" to: "code-reviewer"      phase: "unit-fail"
+
+  # 性能通过 → chaos 故障注入
+  - from: "perf-test-engineer" to: "chaos-engineer"     phase: "perf-done"
+
+  # chaos → AI 测试（验证 AI 在故障下行为）
+  - from: "chaos-engineer"    to: "ai-test-strategist"  phase: "chaos-done"
+  - from: "chaos-engineer"    to: "web-frontend-dev"    phase: "chaos-fail-fe"
+  - from: "chaos-engineer"    to: "java-backend-dev"    phase: "chaos-fail-be"
+
+  # AI 测试 → 安全链
+  - from: "ai-test-strategist" to: "pentest-engineer"   phase: "ai-test-pass"
+  - from: "ai-test-strategist" to: "chaos-engineer"     phase: "ai-test-fail-chaos"
+  - from: "ai-test-strategist" to: "python-backend-dev" phase: "ai-test-fail-model"
+
+  # 安全链
+  - from: "pentest-engineer"  to: "sdl-engineer"        phase: "pentest-done"
+  - from: "pentest-engineer"  to: "code-reviewer"       phase: "pentest-fail"
+
+  # 运维链
+  - from: "sdl-engineer"      to: "devops-engineer"     phase: "sdl-done"
+  - from: "devops-engineer"   to: "cloud-native-eng"    phase: "devops-done"
+
+  # 文档 + 终验
+  - from: "cloud-native-eng"  to: "tech-writer"         phase: "cloud-done"
+  - from: "tech-writer"       to: "architect"           phase: "docs-done"
+  - from: "architect"         to: "client-gate"         phase: "arch-gate-pass"
+  - from: "client-gate"       to: "__terminal__"        phase: "cl-pass"  condition: {field: score, operator: ">=", value: 9}
+  - from: "client-gate"       to: "architect"           phase: "cl-fail"  condition: {field: score, operator: "<", value: 9}

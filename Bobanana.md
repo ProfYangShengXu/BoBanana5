@@ -67,6 +67,25 @@
 | **G4** | 安全不省略 | 任何涉及数据处理 / 网络 / 用户输入的项目，security-engineer 强制插入。不准"项目小就不做安全" |
 | **G5** | 验收不跳过 | Architect 在 CL 之前必须做一次完整终验，检查所有模块的产出物完整性。不准"直接交给 CL 过" |
 
-**默认状态机模板**（`state-machine.yaml` v15+）已按以上规则编排：Boss → Architect(自审) → 后端→CR→数据库→CR→前端→CR → 集成测试 → 全量测试 → 安全审计 → 文档整理 → Architect终验 → CL → 出口。
+**默认状态机模板**（`state-machine.yaml` v15）已按以上规则编排：Boss → Architect(自审) → 后端→CR→数据库→CR→前端→CR → 集成测试 → 全量测试 → 安全审计 → 文档整理 → Architect终验 → CL → 出口。
 
-**v17 超细粒度模板**（可选大型项目）：进一步拆分专业角色，前端拆 web/cross-platform/mini-program，后端拆 Java/Go/Python，数据库拆 DBA/NoSQL/数仓，测试拆 U/集成/性能，安全拆渗透/SDL，运维拆 DevOps/云原生。
+### 模板选择指南
+
+`docs/examples/` 下预置了多级模板，按项目复杂度选择：
+
+| 模板 | 角色数 | 适用场景 | 文件 |
+|------|--------|---------|------|
+| 🐣 **quick-fix** | 4 | 紧急 bug 修复、单文件改动 | `docs/examples/state-machine-quick-fix.yaml` |
+| 🏗️ **standard** | 11 | 中小型项目、标准 Web/API（**默认推荐**） | `state-machine.yaml` |
+| 🏙️ **fullstack-web** | 22 | 大型 Web 项目、前后端分离、多技术栈 | `docs/examples/state-machine-fullstack-web.yaml` |
+| 📊 **data-science** | 12 | 数据分析、ML 训练、推荐系统、NLP/CV | `docs/examples/state-machine-data-science.yaml` |
+| 🔒 **security-audit** | 9 | 安全审计、渗透测试、合规检查 | `docs/examples/state-machine-security-audit.yaml` |
+
+**切换模板**：将目标模板内容覆盖 `state-machine.yaml` 即可。架构师在执行时会自动验证节点是否与角色卡库匹配。
+
+**Boss 自动选择逻辑**：Boss 读取用户目标后，根据关键词匹配推荐模板：
+- 含"修复"/"热修"/"bug"/"hotfix" → 推荐 quick-fix
+- 含"数据"/"分析"/"模型"/"训练"/"ML"/"AI" → 推荐 data-science
+- 含"安全"/"审计"/"渗透" → 推荐 security-audit
+- 含"前端"/"后端"/"全栈"/"Web" → 根据团队规模推荐 standard 或 fullstack-web
+- 其他 → 默认 standard

@@ -1,0 +1,40 @@
+# 数据/AI 项目模板 v1-data — 数据科学专用管线
+# 适用场景：数据分析、ML 模型训练、推荐系统、NLP/CV 项目
+# 角色数：12 个，无前端/后端开发角色
+
+version: 1
+entry_point: "boss"
+max_loops: 50
+
+nodes:
+  - id: "boss"                tags: ["OP"]  is_op_role: true
+  - id: "architect"           tags: ["OP"]  is_op_role: true
+  - id: "data-engineer"       tags: []
+  - id: "data-warehouse-eng"  tags: []
+  - id: "data-analyst"        tags: []
+  - id: "data-platform-dev"   tags: []
+  - id: "recommendation-engineer" tags: []
+  - id: "nlp-cv-engineer"     tags: []
+  - id: "llm-app-engineer"    tags: []
+  - id: "search-ad-engineer"  tags: []
+  - id: "ai-test-strategist"  tags: []
+  - id: "tech-writer"         tags: []
+  - id: "client-gate"         tags: ["CL"]  is_exit: true
+
+edges:
+  - from: "boss"              to: "architect"          phase: "boss-done"
+  - from: "architect"         to: "data-engineer"      phase: "arch-done"
+  - from: "data-engineer"     to: "data-warehouse-eng" phase: "de-done"
+  - from: "data-warehouse-eng" to: "data-analyst"      phase: "dw-done"
+  - from: "data-analyst"      to: "data-platform-dev"  phase: "da-done"
+  - from: "data-platform-dev" to: "recommendation-engineer" phase: "dp-done"
+  - from: "recommendation-engineer" to: "nlp-cv-engineer"   phase: "rec-done"
+  - from: "nlp-cv-engineer"   to: "llm-app-engineer"   phase: "nlp-done"
+  - from: "llm-app-engineer"  to: "search-ad-engineer" phase: "llm-done"
+  - from: "search-ad-engineer" to: "ai-test-strategist" phase: "sa-done"
+  - from: "ai-test-strategist" to: "tech-writer"        phase: "ai-test-done"
+  - from: "tech-writer"       to: "architect"           phase: "docs-done"
+  - from: "architect"         to: "client-gate"         phase: "arch-gate-pass"
+  - from: "architect"         to: "data-engineer"       phase: "arch-gate-fail"
+  - from: "client-gate"       to: "__terminal__"        phase: "cl-pass"  condition: {field: score, operator: ">=", value: 9}
+  - from: "client-gate"       to: "architect"           phase: "cl-fail"  condition: {field: score, operator: "<", value: 9}

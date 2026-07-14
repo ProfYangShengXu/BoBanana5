@@ -1,12 +1,6 @@
-# 标准开发模板 v15 — 默认推荐
+# 标准开发模板 v15 — 贪心状态机
 # 适用场景：中小型项目、标准 Web/API 开发
-# 角色数：11 个，含架构设计→开发→CR→测试→安全→文档→CL 全链路
-# 其他模板见 docs/examples/：
-#   quick-fix        — 最小管线（4角色，紧急修复）
-#   standard         — 本模板（11角色，默认推荐）
-#   fullstack-web    — 全栈Web（22角色，前后端分离）
-#   data-science     — 数据/AI项目（12角色）
-#   security-audit   — 安全审计（9角色，纯审查）
+# 角色数：11 个，含 code-reviewer 质量门
 
 version: 15
 entry_point: "boss"

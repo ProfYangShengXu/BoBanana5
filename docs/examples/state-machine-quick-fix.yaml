@@ -1,0 +1,18 @@
+# 快速修复模板 v1 — 最小管线
+# 适用场景：紧急 bug 修复、单文件改动、快速原型
+# 角色数：4 个
+
+version: 1
+entry_point: "boss"
+max_loops: 10
+
+nodes:
+  - id: "boss"         tags: ["OP"]  is_op_role: true
+  - id: "fullstack-dev" tags: []
+  - id: "client-gate"  tags: ["CL"]  is_exit: true
+
+edges:
+  - from: "boss"           to: "fullstack-dev"  phase: "boss-done"
+  - from: "fullstack-dev"  to: "client-gate"    phase: "dev-done_task-done"
+  - from: "client-gate"    to: "__terminal__"   phase: "cl-pass"  condition: {field: score, operator: ">=", value: 9}
+  - from: "client-gate"    to: "fullstack-dev"  phase: "cl-fail"  condition: {field: score, operator: "<", value: 9}

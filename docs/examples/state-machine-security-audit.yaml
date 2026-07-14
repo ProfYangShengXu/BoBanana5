@@ -1,0 +1,33 @@
+# 安全审计模板 v1-sec — 纯安全审查管线
+# 适用场景：安全审计、渗透测试、合规检查、代码审计
+# 角色数：8 个，无开发角色，纯审查链路
+
+version: 1
+entry_point: "boss"
+max_loops: 30
+
+nodes:
+  - id: "boss"                tags: ["OP"]  is_op_role: true
+  - id: "architect"           tags: ["OP"]  is_op_role: true
+  - id: "code-reviewer"       tags: []
+  - id: "security-engineer"   tags: []
+  - id: "pentest-engineer"    tags: []
+  - id: "sdl-engineer"        tags: []
+  - id: "security-ops-engineer" tags: []
+  - id: "tech-writer"         tags: []
+  - id: "client-gate"         tags: ["CL"]  is_exit: true
+
+edges:
+  - from: "boss"              to: "architect"          phase: "boss-done"
+  - from: "architect"         to: "code-reviewer"      phase: "arch-done"
+  - from: "code-reviewer"     to: "security-engineer"  phase: "cr-pass"
+  - from: "security-engineer" to: "pentest-engineer"   phase: "sec-done"
+  - from: "pentest-engineer"  to: "sdl-engineer"        phase: "pentest-done"
+  - from: "sdl-engineer"      to: "security-ops-engineer" phase: "sdl-done"
+  - from: "security-ops-engineer" to: "tech-writer"     phase: "secops-done"
+  - from: "tech-writer"       to: "architect"           phase: "docs-done"
+  - from: "architect"         to: "client-gate"         phase: "arch-gate-pass"
+  - from: "code-reviewer"     to: "architect"           phase: "cr-fail"
+  - from: "pentest-engineer"  to: "architect"           phase: "pentest-fail"
+  - from: "client-gate"       to: "__terminal__"        phase: "cl-pass"  condition: {field: score, operator: ">=", value: 9}
+  - from: "client-gate"       to: "architect"           phase: "cl-fail"  condition: {field: score, operator: "<", value: 9}

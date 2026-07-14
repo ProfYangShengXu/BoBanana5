@@ -15,11 +15,16 @@ nodes:
   - id: "web-frontend-dev"    tags: []  # React/Vue/Angular, SPA/SSR
   - id: "cross-platform-dev"  tags: []  # Flutter/React Native
   - id: "mini-program-dev"    tags: []  # 微信/支付宝小程序
+  - id: "webgl-visual-dev"    tags: []  # Three.js/WebGL/3D可视化
+  - id: "frontend-infra-dev"  tags: []  # Webpack/Vite/前端基建
 
   # ── 后端专业拆分（原 backend-dev）──
   - id: "java-backend-dev"    tags: []  # Spring Boot/Cloud
   - id: "go-backend-dev"      tags: []  # Go/Gin/Beego
   - id: "python-backend-dev"  tags: []  # Django/FastAPI
+  - id: "cpp-backend-dev"     tags: []  # C++高性能服务
+  - id: "middleware-engineer" tags: []  # Kafka/RabbitMQ/ES
+  - id: "api-gateway-engineer" tags: [] # 流量路由/限流
 
   # ── 数据库专业拆分（原 database-engineer）──
   - id: "dba-engineer"        tags: []  # MySQL/PostgreSQL 运维优化
@@ -28,16 +33,22 @@ nodes:
 
   # ── 测试专业拆分（原 test-dev-engineer）──
   - id: "unit-test-engineer"  tags: []  # U 层单元测试
-  - id: "integration-test-eng" tags: [] # I 层集成测试（需新建）
+  - id: "integration-test-eng" tags: [] # I 层集成测试
   - id: "perf-test-engineer"  tags: []  # 性能/压测
+  - id: "automation-test-engineer" tags: []  # Selenium/Playwright
+  - id: "chaos-engineer"      tags: []  # 混沌工程/故障注入
+  - id: "security-test-engineer" tags: [] # 安全测试
 
   # ── 安全专业拆分（原 security-engineer）──
   - id: "pentest-engineer"    tags: []  # 渗透测试/红队
   - id: "sdl-engineer"        tags: []  # 安全开发/SDL
+  - id: "security-ops-engineer" tags: [] # 蓝队/应急响应
+  - id: "cloud-security-engineer" tags: [] # 云安全
 
   # ── 运维专业拆分（原 sre-engineer）──
   - id: "devops-engineer"     tags: []  # CI/CD 流水线
   - id: "cloud-native-eng"    tags: []  # K8s/Docker/Service Mesh
+  - id: "aiops-engineer"      tags: []  # 智能运维
 
   # ── 通用质检层 ──
   - id: "code-reviewer"       tags: []
@@ -58,13 +69,18 @@ edges:
   - from: "architect"         to: "web-frontend-dev"     phase: "arch-fr-start"
   - from: "web-frontend-dev"  to: "cross-platform-dev"   phase: "web-fr-done"
   - from: "cross-platform-dev" to: "mini-program-dev"    phase: "cross-done"
-  - from: "mini-program-dev"  to: "code-reviewer"        phase: "mini-done"
+  - from: "mini-program-dev"  to: "webgl-visual-dev"     phase: "mini-done"
+  - from: "webgl-visual-dev"  to: "frontend-infra-dev"   phase: "webgl-done"
+  - from: "frontend-infra-dev" to: "code-reviewer"       phase: "infra-done"
 
   # 后端分支
   - from: "architect"         to: "java-backend-dev"     phase: "arch-be-start"
   - from: "java-backend-dev"  to: "go-backend-dev"       phase: "java-done"
   - from: "go-backend-dev"    to: "python-backend-dev"   phase: "go-done"
-  - from: "python-backend-dev" to: "code-reviewer"       phase: "py-done"
+  - from: "python-backend-dev" to: "cpp-backend-dev"     phase: "py-done"
+  - from: "cpp-backend-dev"   to: "middleware-engineer"  phase: "cpp-done"
+  - from: "middleware-engineer" to: "api-gateway-engineer" phase: "mw-done"
+  - from: "api-gateway-engineer" to: "code-reviewer"     phase: "gw-done"
 
   # 数据库分支
   - from: "architect"         to: "dba-engineer"         phase: "arch-db-start"
@@ -83,7 +99,10 @@ edges:
   # 测试链路
   - from: "unit-test-engineer" to: "integration-test-eng" phase: "unit-done"
   - from: "integration-test-eng" to: "perf-test-engineer" phase: "int-done"
-  - from: "perf-test-engineer" to: "pentest-engineer"     phase: "perf-done"
+  - from: "perf-test-engineer" to: "automation-test-engineer" phase: "perf-done"
+  - from: "automation-test-engineer" to: "chaos-engineer"  phase: "auto-done"
+  - from: "chaos-engineer"    to: "security-test-engineer" phase: "chaos-done"
+  - from: "security-test-engineer" to: "pentest-engineer" phase: "sec-test-done"
 
   # 测试打回
   - from: "unit-test-engineer" to: "code-reviewer"       phase: "unit-fail"
@@ -91,12 +110,15 @@ edges:
 
   # 安全链路
   - from: "pentest-engineer"  to: "sdl-engineer"         phase: "pentest-done"
-  - from: "sdl-engineer"      to: "devops-engineer"      phase: "sdl-done"
+  - from: "sdl-engineer"      to: "security-ops-engineer" phase: "sdl-done"
+  - from: "security-ops-engineer" to: "cloud-security-engineer" phase: "secops-done"
+  - from: "cloud-security-engineer" to: "devops-engineer" phase: "cloud-sec-done"
   - from: "pentest-engineer"  to: "code-reviewer"        phase: "pentest-fail"
 
   # 运维链路
   - from: "devops-engineer"   to: "cloud-native-eng"     phase: "devops-done"
-  - from: "cloud-native-eng"  to: "tech-writer"          phase: "cloud-done"
+  - from: "cloud-native-eng"  to: "aiops-engineer"       phase: "cloud-done"
+  - from: "aiops-engineer"    to: "tech-writer"          phase: "aiops-done"
 
   # 文档 → 架构师终验 → CL
   - from: "tech-writer"       to: "architect"            phase: "docs-done"

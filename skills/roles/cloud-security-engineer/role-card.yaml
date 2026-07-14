@@ -1,0 +1,19 @@
+description: '云安全：云上安全架构、容器安全、K8s安全策略'
+input_contract:
+- description: Task input for cloud-security-engineer
+  name: task_input
+  required: true
+  type: object
+name: cloud-security-engineer
+output_contract:
+- description: Implementation code/files
+  name: implementation
+  type: object
+quality_gates:
+- check: 逐条核对PRD acceptance
+  desc: 所有acceptance已覆盖
+  id: CLOUD--Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: '适合云上安全架构、容器安全、K8s安全策略'

@@ -1,0 +1,19 @@
+description: 'AIOps：智能告警、日志分析、异常检测自动化'
+input_contract:
+- description: Task input for aiops-engineer
+  name: task_input
+  required: true
+  type: object
+name: aiops-engineer
+output_contract:
+- description: Implementation code/files
+  name: implementation
+  type: object
+quality_gates:
+- check: 逐条核对PRD acceptance
+  desc: 所有acceptance已覆盖
+  id: AIOPS--Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: '适合智能告警、日志分析、异常检测自动化'

@@ -1,0 +1,16 @@
+deliverables:
+  output_types:
+  - 实现代码
+  - 测试用例
+  quality_criteria:
+  - 功能完整
+  - 性能达标
+  - 可维护性强
+meta:
+  description: 云安全：云上安全架构、容器安全、K8s安全策略
+  role_name: cloud-security-engineer
+profession_standards:
+  summary: cloud-security-engineer职业准则
+tools_and_methods:
+  workflow:
+  - 需求分析->设计->实现->测试->评审->发布

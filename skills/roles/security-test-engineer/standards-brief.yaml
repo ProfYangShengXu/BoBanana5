@@ -1,0 +1,16 @@
+deliverables:
+  output_types:
+  - 实现代码
+  - 测试用例
+  quality_criteria:
+  - 功能完整
+  - 性能达标
+  - 可维护性强
+meta:
+  description: 安全测试：渗透测试、代码审计、漏洞扫描
+  role_name: security-test-engineer
+profession_standards:
+  summary: security-test-engineer职业准则
+tools_and_methods:
+  workflow:
+  - 需求分析->设计->实现->测试->评审->发布

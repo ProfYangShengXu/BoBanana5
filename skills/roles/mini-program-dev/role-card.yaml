@@ -1,0 +1,19 @@
+description: '小程序开发：微信/支付宝/抖音小程序开发与发布'
+input_contract:
+- description: Task input for mini-program-dev
+  name: task_input
+  required: true
+  type: object
+name: mini-program-dev
+output_contract:
+- description: Implementation code/files
+  name: implementation
+  type: object
+quality_gates:
+- check: 逐条核对PRD acceptance
+  desc: 所有acceptance已覆盖
+  id: MINI-P-Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: '适合微信/支付宝/抖音小程序开发与发布'

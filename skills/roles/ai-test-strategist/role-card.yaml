@@ -1,0 +1,19 @@
+description: 'AI测试策略师：AI模型验证、生成式测试用例、模型公平性评估'
+input_contract:
+- description: Task input for ai-test-strategist
+  name: task_input
+  required: true
+  type: object
+name: ai-test-strategist
+output_contract:
+- description: Implementation code/files
+  name: implementation
+  type: object
+quality_gates:
+- check: 逐条核对PRD acceptance
+  desc: 所有acceptance已覆盖
+  id: AI-TES-Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: '适合AI模型验证、生成式测试用例、模型公平性评估'

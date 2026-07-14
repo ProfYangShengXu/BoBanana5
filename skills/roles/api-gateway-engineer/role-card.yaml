@@ -1,0 +1,19 @@
+description: 'API网关：流量路由、限流降级、协议转换'
+input_contract:
+- description: Task input for api-gateway-engineer
+  name: task_input
+  required: true
+  type: object
+name: api-gateway-engineer
+output_contract:
+- description: Implementation code/files
+  name: implementation
+  type: object
+quality_gates:
+- check: 逐条核对PRD acceptance
+  desc: 所有acceptance已覆盖
+  id: API-GA-Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: '适合流量路由、限流降级、协议转换'

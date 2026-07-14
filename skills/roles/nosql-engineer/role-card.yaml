@@ -1,0 +1,19 @@
+description: 'NoSQL工程师：Redis/MongoDB/Cassandra/HBase运维与开发'
+input_contract:
+- description: Task input for nosql-engineer
+  name: task_input
+  required: true
+  type: object
+name: nosql-engineer
+output_contract:
+- description: Implementation code/files
+  name: implementation
+  type: object
+quality_gates:
+- check: 逐条核对PRD acceptance
+  desc: 所有acceptance已覆盖
+  id: NOSQL--Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: '适合Redis/MongoDB/Cassandra/HBase运维与开发'

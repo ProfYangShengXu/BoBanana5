@@ -1,0 +1,19 @@
+description: '前端基建：Webpack/Vite构建工具、CI前端链路、组件库搭建'
+input_contract:
+- description: Task input for frontend-infra-dev
+  name: task_input
+  required: true
+  type: object
+name: frontend-infra-dev
+output_contract:
+- description: Implementation code/files
+  name: implementation
+  type: object
+quality_gates:
+- check: 逐条核对PRD acceptance
+  desc: 所有acceptance已覆盖
+  id: FRONTE-Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: '适合Webpack/Vite构建工具、CI前端链路、组件库搭建'

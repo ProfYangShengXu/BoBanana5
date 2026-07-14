@@ -1,0 +1,19 @@
+description: '中间件工程师：消息队列Kafka/RabbitMQ、缓存Redis、搜索引擎ES'
+input_contract:
+- description: Task input for middleware-engineer
+  name: task_input
+  required: true
+  type: object
+name: middleware-engineer
+output_contract:
+- description: Implementation code/files
+  name: implementation
+  type: object
+quality_gates:
+- check: 逐条核对PRD acceptance
+  desc: 所有acceptance已覆盖
+  id: MIDDLE-Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: '适合消息队列Kafka/RabbitMQ、缓存Redis、搜索引擎ES'

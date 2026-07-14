@@ -1,0 +1,19 @@
+description: '安全开发工程师：SDL安全开发生命周期、代码审计、DevSecOps'
+input_contract:
+- description: Task input for sdl-engineer
+  name: task_input
+  required: true
+  type: object
+name: sdl-engineer
+output_contract:
+- description: Implementation code/files
+  name: implementation
+  type: object
+quality_gates:
+- check: 逐条核对PRD acceptance
+  desc: 所有acceptance已覆盖
+  id: SDL-EN-Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: '适合SDL安全开发生命周期、代码审计、DevSecOps'

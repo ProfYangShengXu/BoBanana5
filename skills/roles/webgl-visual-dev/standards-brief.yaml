@@ -1,0 +1,16 @@
+deliverables:
+  output_types:
+  - 实现代码
+  - 测试用例
+  quality_criteria:
+  - 功能完整
+  - 性能达标
+  - 可维护性强
+meta:
+  description: WebGL/3D可视化：Three.js、WebGL、3D地图、大屏可视化
+  role_name: webgl-visual-dev
+profession_standards:
+  summary: webgl-visual-dev职业准则
+tools_and_methods:
+  workflow:
+  - 需求分析->设计->实现->测试->评审->发布

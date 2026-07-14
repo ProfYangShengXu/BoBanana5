@@ -1,0 +1,19 @@
+description: '安全测试：渗透测试、代码审计、漏洞扫描'
+input_contract:
+- description: Task input for security-test-engineer
+  name: task_input
+  required: true
+  type: object
+name: security-test-engineer
+output_contract:
+- description: Implementation code/files
+  name: implementation
+  type: object
+quality_gates:
+- check: 逐条核对PRD acceptance
+  desc: 所有acceptance已覆盖
+  id: SECURI-Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: '适合渗透测试、代码审计、漏洞扫描'

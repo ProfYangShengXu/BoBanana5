@@ -1,0 +1,16 @@
+deliverables:
+  output_types:
+  - 实现代码
+  - 测试用例
+  quality_criteria:
+  - 功能完整
+  - 性能达标
+  - 可维护性强
+meta:
+  description: 自动化测试：Selenium/Playwright脚本、接口自动化框架
+  role_name: automation-test-engineer
+profession_standards:
+  summary: automation-test-engineer职业准则
+tools_and_methods:
+  workflow:
+  - 需求分析->设计->实现->测试->评审->发布

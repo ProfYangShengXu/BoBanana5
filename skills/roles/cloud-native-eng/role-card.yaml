@@ -1,0 +1,19 @@
+description: '云原生运维工程师：K8s集群管理、Docker、Service Mesh、Helm'
+input_contract:
+- description: Task input for cloud-native-eng
+  name: task_input
+  required: true
+  type: object
+name: cloud-native-eng
+output_contract:
+- description: Implementation code/files
+  name: implementation
+  type: object
+quality_gates:
+- check: 逐条核对PRD acceptance
+  desc: 所有acceptance已覆盖
+  id: CLOUD--Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: '适合K8s集群管理、Docker、Service Mesh、Helm'

@@ -1,0 +1,19 @@
+description: '数据安全：GDPR/PIPL合规、数据脱敏、分类分级'
+input_contract:
+- description: Task input for data-security-engineer
+  name: task_input
+  required: true
+  type: object
+name: data-security-engineer
+output_contract:
+- description: Implementation code/files
+  name: implementation
+  type: object
+quality_gates:
+- check: 逐条核对PRD acceptance
+  desc: 所有acceptance已覆盖
+  id: DATA-S-Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: '适合GDPR/PIPL合规、数据脱敏、分类分级'

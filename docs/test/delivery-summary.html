@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>BoBanana5 代码深度体检 — 交付摘要</title>
+<style>
+body{font:16px/1.6 system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem}
+h1{color:#1a1a2e;border-bottom:2px solid #e94560;padding-bottom:.5rem}
+h2{color:#16213e;margin-top:1.5rem}
+table{width:100%;border-collapse:collapse;margin:1rem 0}
+th,td{border:1px solid #ddd;padding:.5rem;text-align:left}
+th{background:#1a1a2e;color:#fff}
+.b{color:#e74c3c;font-weight:700}
+.w{color:#f39c12;font-weight:700}
+.i{color:#3498db}
+.g{color:#27ae60}
+</style></head>
+<body>
+<h1>📋 BoBanana5 项目代码深度体检 — 交付摘要</h1>
+<p>生成日期: 2026-07-14 | 管线: 审查 v16</p>
+
+<h2>审查链路</h2>
+<p>Boss → Architect(方案) → <strong>code-reviewer</strong> → <strong>security-engineer</strong> → <strong>test-dev-engineer</strong> → <strong>integration-tester</strong> → <strong>tech-writer</strong> → Architect(终验) → CL(终审)</p>
+
+<h2>审查结果汇总</h2>
+<table>
+<tr><th>审查节点</th><th>产出</th><th>BLOCKER</th><th>WARNING</th><th>INFO</th></tr>
+<tr><td>code-reviewer</td><td>docs/cr/code-review.html</td><td>2</td><td>5</td><td>4</td></tr>
+<tr><td>security-engineer</td><td>docs/security/audit-report.html</td><td>0</td><td>3</td><td>2</td></tr>
+<tr><td>test-dev-engineer</td><td>docs/test/coverage-report.html</td><td>0</td><td>1</td><td>3</td></tr>
+<tr><td>integration-tester</td><td>docs/test/integration-health-report.html</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td><strong>合计</strong></td><td></td><td><strong>2</strong></td><td><strong>10</strong></td><td><strong>9</strong></td></tr>
+</table>
+
+<h2>2 个 BLOCKER 明细</h2>
+<ol>
+<li><strong>commands/bobanana.md 调用 legacy bobanana.py 启动管线</strong> — bobanana.py 已 @legacy 只支持 --gui，应改为 skill→Boss 路径</li>
+<li><strong>advance_pipeline 中 phase 名不匹配</strong> — CL 出口 phase 在代码和 state-machine 中不一致</li>
+</ol>
+
+<h2>docs/ 目录完整性</h2>
+<table>
+<tr><th>路径</th><th>状态</th></tr>
+<tr><td>docs/cr/code-review.html</td><td><span class="g">✅ 已生成</span></td></tr>
+<tr><td>docs/security/audit-report.html</td><td><span class="g">✅ 已生成</span></td></tr>
+<tr><td>docs/test/coverage-report.html</td><td><span class="g">✅ 已生成</span></td></tr>
+<tr><td>docs/test/integration-health-report.html</td><td><span class="g">✅ 已生成</span></td></tr>
+<tr><td>docs/product/ 产品文档</td><td><span class="g">✅ 已存在</span></td></tr>
+<tr><td>docs/prd/ 技术 PRD</td><td><span class="g">✅ 已存在</span></td></tr>
+</table>
+
+<h2>综合评估</h2>
+<p>项目整体健康，无架构级问题。核心运行时覆盖良好，主要技术债为 bare except 捕获和 phase 命名兼容性。</p>
+<p><strong>建议优先修复</strong>：2 个 BLOCKER（bobanana.md 入口 + CL phase 不匹配）</p>
+</body>
+</html>

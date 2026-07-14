@@ -1,0 +1,19 @@
+description: 'Go后端开发：Go/Gin/Beego，高性能 API，并发编程，中间件开发'
+input_contract:
+- description: Task input
+  name: task_input
+  required: true
+  type: object
+name: go-backend-dev
+output_contract:
+- description: Go backend implementation
+  name: implementation
+  type: object
+quality_gates:
+- check: 接口签名对齐 PRD
+  desc: 所有 acceptance 已覆盖
+  id: GOB-Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: "适合 Go 高性能后端和微服务开发"

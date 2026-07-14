@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>BoBanana5 测试覆盖报告</title>
+<style>
+body{font:16px/1.6 system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem}
+h1{color:#1a1a2e;border-bottom:2px solid #e94560;padding-bottom:.5rem}
+table{width:100%;border-collapse:collapse;margin:1rem 0}
+th,td{border:1px solid #ddd;padding:.5rem;text-align:left}
+th{background:#1a1a2e;color:#fff}
+tr:nth-child(even){background:#f5f5f5}
+.ok{color:#27ae60;font-weight:700}
+.warn{color:#f39c12;font-weight:700}
+</style></head>
+<body>
+<h1>🧪 BoBanana5 测试覆盖报告</h1>
+<p>日期: 2026-07-14 | 角色: test-dev-engineer</p>
+
+<h2>四层测试结构</h2>
+<table>
+<tr><th>层</th><th>文件数</th><th>代码行数</th><th>覆盖模块</th><th>评估</th></tr>
+<tr><td>U (单元测试)</td><td>4</td><td>1255</td><td>core, mcp_client, mcp_events, mcp_server</td><td><span class="ok">✅ 良好</span></td></tr>
+<tr><td>I (集成测试)</td><td>2</td><td>425</td><td>pipeline_orchestrator, mcp 集成</td><td><span class="ok">✅ 良好</span></td></tr>
+<tr><td>S (场景测试)</td><td>1</td><td>179</td><td>全管线场景模拟</td><td><span class="warn">⚠️ 单一</span></td></tr>
+<tr><td>A (验收测试)</td><td>1</td><td>364</td><td>CL 验收流程</td><td><span class="ok">✅ 良好</span></td></tr>
+<tr><td><strong>总计</strong></td><td><strong>8</strong></td><td><strong>2223</strong></td><td></td><td></td></tr>
+</table>
+
+<h2>未覆盖的模块</h2>
+<ul>
+<li>bobanana.py — 无独立测试（仅 --gui 入口）</li>
+<li>gui_dashboard.py — TUI 界面无法自动化测试</li>
+<li>plugin_fix.py / plugin_refresh.py / plugin_register.py — 安装工具脚本</li>
+<li>handoff_ticket.py — 未包含在单元测试中</li>
+<li>hr_recruitment.py — HR 招聘逻辑未测试</li>
+<li>role_tag_system.py — 角色标签系统未直接测试</li>
+<li>state_machine_engine.py — 仅在集成测试中间接覆盖</li>
+<li>state_machine_parser.py — 未覆盖</li>
+</ul>
+
+<h2>评估</h2>
+<p>核心运行时（mcp_server, pipeline_orchestrator, state_machine_engine）有良好的覆盖。</p>
+<p>缺口主要在工具脚本和辅助模块（handoff_ticket, hr_recruitment, role_tag_system, plugin_*）。</p>
+<p><strong>建议</strong>：增加 4 个 U 层测试覆盖 handoff_ticket, hr_recruitment, role_tag_system, state_machine_parser。</p>
+</body>
+</html>

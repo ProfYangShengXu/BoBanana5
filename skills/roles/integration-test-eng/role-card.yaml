@@ -1,0 +1,19 @@
+description: '集成测试工程师（专项）：I 层集成测试，模块间交互验证，接口契约测试'
+input_contract:
+- description: 各模块接口定义
+  name: interface_specs
+  required: true
+  type: object[]
+name: integration-test-eng
+output_contract:
+- description: 集成测试报告
+  name: integration_report
+  type: object
+quality_gates:
+- check: 核心集成链路通过
+  desc: 模块间交互正常
+  id: INTEG-Q1
+  layer: I
+standards_file: standards-brief.yaml
+tags: []
+use_case: "适合集成测试专项，替代 integration-tester 的 I 层工作"

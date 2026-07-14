@@ -1,0 +1,19 @@
+description: '单元测试工程师：U 层单元测试，Mock 外部依赖，normal/boundary/adversarial 三路径覆盖'
+input_contract:
+- description: 待测试的代码模块
+  name: code_module
+  required: true
+  type: object
+name: unit-test-engineer
+output_contract:
+- description: 单元测试用例 + 测试报告
+  name: test_suite
+  type: object
+quality_gates:
+- check: 核心函数 100% 覆盖
+  desc: 所有分支路径覆盖
+  id: UT-Q1
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: "适合单元测试专项，替代 test-dev-engineer 的 U 层工作"

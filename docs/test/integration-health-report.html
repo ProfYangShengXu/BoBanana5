@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>BoBanana5 架构健康度报告</title>
+<style>
+body{font:16px/1.6 system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem}
+h1{color:#1a1a2e;border-bottom:2px solid #e94560;padding-bottom:.5rem}
+table{width:100%;border-collapse:collapse;margin:1rem 0}
+th,td{border:1px solid #ddd;padding:.5rem;text-align:left}
+th{background:#1a1a2e;color:#fff}
+.ok{color:#27ae60;font-weight:700}
+.warn{color:#f39c12;font-weight:700}
+</style></head>
+<body>
+<h1>🏗️ BoBanana5 架构健康度报告</h1>
+<p>日期: 2026-07-14 | 角色: integration-tester</p>
+
+<h2>模块依赖图</h2>
+<pre>
+pipeline_orchestrator ← mcp_server ←── mcp_client
+       ↕                             ↕
+state_machine_engine ←── gui_dashboard
+       ↕
+state_machine_parser
+       ↕
+handoff_ticket ←── mcp_events
+       ↕
+role_tag_system ←── hooks/check_mcp ←── scripts/pre_boss_check
+</pre>
+
+<h2>评估</h2>
+<table>
+<tr><th>维度</th><th>结果</th></tr>
+<tr><td>模块间耦合度</td><td><span class="ok">✅ 低耦合</span> — 通过 YAML/JSON 文件交换数据，无循环依赖</td></tr>
+<tr><td>接口一致性</td><td><span class="ok">✅ 一致</span> — state-machine.yaml 定义了统一的状态契约</td></tr>
+<tr><td>配置文件一致性</td><td><span class="ok">✅ 一致</span> — reasonix-plugin.json / .mcp.json 指向正确的路径和命令</td></tr>
+<tr><td>hook 链路完整性</td><td><span class="ok">✅ 完整</span> — hooks/check_mcp.py → pre_boss_check.py → pipeline_orchestrator.py 链路正常</td></tr>
+<tr><td>向后兼容性</td><td><span class="warn">⚠️ 部分兼容</span> — 旧版 phase 命名（dev-done_task-done）仍在测试和角色卡中使用</td></tr>
+</table>
+
+<h2>总结</h2>
+<p>整体架构健康，无阻塞性问题。v16 审查状态机与现有角色卡匹配。建议下一迭代清理旧版 phase 命名的兼容性层。</p>
+</body>
+</html>

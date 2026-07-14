@@ -43,9 +43,10 @@ def _set_goal_mode(goal):
             with open(topic_file, 'r', encoding='utf-8') as f:
                 titles = json.load(f)
             titles = {k: v for k, v in titles.items() if 'bobanana_c_' not in k}
-        except:
+        except Exception:
             pass
     titles[tid] = goal[:120]
+    os.makedirs(os.path.join(PROJECT_ROOT, '.reasonix'), exist_ok=True)
     with open(topic_file, 'w', encoding='utf-8') as f:
         json.dump(titles, f, ensure_ascii=False, indent=2)
 

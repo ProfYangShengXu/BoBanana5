@@ -1,0 +1,30 @@
+description: 'Java后端开发：Spring Boot/Cloud，微服务架构，API 设计，业务逻辑实现'
+input_contract:
+- description: Task input
+  name: task_input
+  required: true
+  type: object
+- description: PRD acceptance criteria
+  name: acceptance_criteria
+  required: true
+  type: object[]
+name: java-backend-dev
+output_contract:
+- description: Java backend implementation
+  name: implementation
+  type: object
+- description: Test results
+  name: test_results
+  type: object[]
+quality_gates:
+- check: 逐条核对 PRD acceptance
+  desc: 所有 acceptance 已覆盖
+  id: JAVAB-Q1
+  layer: U
+- check: API 遵循 RESTful 规范
+  desc: 接口设计规范
+  id: JAVAB-Q2
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: "适合 Spring Boot/Cloud 微服务后端开发"

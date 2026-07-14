@@ -223,5 +223,77 @@ cards:
   registered_at: ''
   tags: []
   use_case: 适合Test role for unit testing，可替代fullstack-dev在该领域的专门工作
+- description: Web前端开发：React/Vue/Angular，SPA/SSR，组件库搭建，交互优化
+  has_example_sm: false
+  id: web-frontend-dev
+  kitset: ''
+  name: web-frontend-dev
+  path: web-frontend-dev/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合 Web 前端应用开发，替代 frontend-dev 的 Web 专项
+- description: Java后端开发：Spring Boot/Cloud，微服务架构，API 设计
+  has_example_sm: false
+  id: java-backend-dev
+  kitset: ''
+  name: java-backend-dev
+  path: java-backend-dev/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合 Java 后端开发，替代 backend-dev 的 Java 专项
+- description: Go后端开发：Go/Gin/Beego，高性能 API，并发编程
+  has_example_sm: false
+  id: go-backend-dev
+  kitset: ''
+  name: go-backend-dev
+  path: go-backend-dev/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合 Go 后端开发，替代 backend-dev 的 Go 专项
+- description: 单元测试工程师：U 层单元测试，Mock，三路径覆盖
+  has_example_sm: false
+  id: unit-test-engineer
+  kitset: ''
+  name: unit-test-engineer
+  path: unit-test-engineer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合单元测试专项，替代 test-dev-engineer 的 U 层工作
+- description: 集成测试工程师（专项）：I 层集成测试，模块间交互验证
+  has_example_sm: false
+  id: integration-test-eng
+  kitset: ''
+  name: integration-test-eng
+  path: integration-test-eng/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合集成测试专项，与 integration-tester 互补
+- description: 性能测试工程师：JMeter/Locust，高并发压测，瓶颈分析
+  has_example_sm: false
+  id: perf-test-engineer
+  kitset: ''
+  name: perf-test-engineer
+  path: perf-test-engineer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合性能压测和容量规划
+- description: 渗透测试工程师：模拟攻击、漏洞挖掘、渗透测试
+  has_example_sm: false
+  id: pentest-engineer
+  kitset: ''
+  name: pentest-engineer
+  path: pentest-engineer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合安全渗透测试专项
+- description: DevOps工程师：CI/CD 流水线，自动化发布，平台工程
+  has_example_sm: false
+  id: devops-engineer
+  kitset: ''
+  name: devops-engineer
+  path: devops-engineer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合 CI/CD 和自动化运维
 last_scan: ''
 version: 1

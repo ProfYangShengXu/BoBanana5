@@ -1,0 +1,19 @@
+description: '性能测试工程师：JMeter/Locust，高并发压测，瓶颈分析，容量规划'
+input_contract:
+- description: 待压测的系统和接口列表
+  name: system_under_test
+  required: true
+  type: object
+name: perf-test-engineer
+output_contract:
+- description: 压测报告 + 瓶颈分析 + 优化建议
+  name: perf_report
+  type: object
+quality_gates:
+- check: 核心接口压测通过
+  desc: QPS/TP99 达标
+  id: PERF-Q1
+  layer: I
+standards_file: standards-brief.yaml
+tags: []
+use_case: "适合性能压测和瓶颈分析"

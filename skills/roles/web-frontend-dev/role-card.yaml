@@ -1,0 +1,30 @@
+description: 'Web前端开发：React/Vue/Angular，SPA/SSR，组件库搭建，交互优化'
+input_contract:
+- description: Task input for web-frontend-dev
+  name: task_input
+  required: true
+  type: object
+- description: PRD acceptance criteria
+  name: acceptance_criteria
+  required: true
+  type: object[]
+name: web-frontend-dev
+output_contract:
+- description: Web frontend implementation code
+  name: implementation
+  type: object
+- description: Test results (normal/boundary/adversarial)
+  name: test_results
+  type: object[]
+quality_gates:
+- check: 逐条核对 PRD acceptance
+  desc: 所有 acceptance 已覆盖实现
+  id: WEBFR-Q1
+  layer: U
+- check: 组件可复用
+  desc: 通用 UI 组件已提取复用
+  id: WEBFR-Q2
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: "适合 React/Vue/Angular Web 应用开发"

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>BoBanana5 代码审查报告</title>
+<style>
+body{font:16px/1.6 system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem}
+h1{color:#1a1a2e;border-bottom:2px solid #e94560;padding-bottom:.5rem}
+h2{color:#16213e;margin-top:2rem}
+.blocker{color:#e74c3c;font-weight:700}
+.warning{color:#f39c12;font-weight:700}
+.info{color:#3498db}
+table{width:100%;border-collapse:collapse;margin:1rem 0}
+th,td{border:1px solid #ddd;padding:.5rem;text-align:left}
+th{background:#1a1a2e;color:#fff}
+tr:nth-child(even){background:#f5f5f5}
+.tag{display:inline-block;padding:.1rem .4rem;border-radius:4px;font-size:.8rem;font-weight:700}
+.tag-b{background:#e74c3c;color:#fff}
+.tag-w{background:#f39c12;color:#fff}
+.tag-i{background:#3498db;color:#fff}
+</style></head>
+<body>
+<h1>🔍 BoBanana5 项目代码深度体检 — 审查报告</h1>
+<p>审查日期: 2026-07-14 | 审查角色: code-reviewer | 六维度审查</p>
+
+<h2>审查范围</h2>
+<p>14 个核心 Python 模块 + 8 个测试文件 + hooks + 配置</p>
+
+<h2>1. 📖 可读性</h2>
+<table>
+<tr><th>问题</th><th>位置</th><th>级别</th></tr>
+<tr><td>bobanana.py @legacy 标注但 commands/bobanana.md 仍调用它启动管线</td><td>bobanana.py:1 + commands/bobanana.md:22</td><td><span class="tag tag-b">BLOCKER</span></td></tr>
+<tr><td>pipeline_orchestrator.py 中 cl-failback 的 phase 名与 state-machine.yaml 边定义不匹配（cl-done_fail vs cl-fail）</td><td>pipeline_orchestrator.py:353 + state-machine.yaml</td><td><span class="tag tag-w">WARNING</span></td></tr>
+<tr><td>pre_boss_check.py 硬编码 pipeline_orchestrator.py continue 命令，路径假设脆弱</td><td>scripts/pre_boss_check.py:46</td><td><span class="tag tag-w">WARNING</span></td></tr>
+</table>
+
+<h2>2. 📦 可维护性</h2>
+<table>
+<tr><th>问题</th><th>位置</th><th>级别</th></tr>
+<tr><td>print() 和 logging 混用，部分异常处理用 print() 输出而非 logging</td><td>多处（pipeline_orchestrator.py:267, mcp_events.py:104 等）</td><td><span class="tag tag-w">WARNING</span></td></tr>
+<tr><td>pipeline_orchestrator.py state-machine.yaml 路径写死，不可配置</td><td>pipeline_orchestrator.py:23</td><td><span class="tag tag-i">INFO</span></td></tr>
+<tr><td>mcp_server.py 和 mcp_client.py 有重复的 MCP 协议定义</td><td>mcp_server.py / mcp_client.py</td><td><span class="tag tag-i">INFO</span></td></tr>
+</table>
+
+<h2>3. 🔧 正确性</h2>
+<table>
+<tr><th>问题</th><th>位置</th><th>级别</th></tr>
+<tr><td>init_pipeline() 的 current_node 默认值曾为 "architect" 导致 boss-done 转换失败（已修复）</td><td>pipeline_orchestrator.py:78</td><td><span class="tag tag-i">INFO</span> 已修</td></tr>
+<tr><td>Boss SKILL.md 中两个 "Step 1" 编号错误（已修复）</td><td>skills/roles/boss/SKILL.md</td><td><span class="tag tag-i">INFO</span> 已修</td></tr>
+<tr><td>advance_pipeline 中 phase='cl-done_pass' 存疑：state-machine 中使用 phase='cl-pass'</td><td>pipeline_orchestrator.py:324</td><td><span class="tag tag-b">BLOCKER</span></td></tr>
+</table>
+
+<h2>4. ⚡ 性能</h2>
+<p>未发现明显性能问题。文件操作均为本地 JSON/YAML 读写，量级很小。</p>
+
+<h2>5. 🔒 安全性</h2>
+<table>
+<tr><th>问题</th><th>位置</th><th>级别</th></tr>
+<tr><td>存在 bare `except:` 捕获异常</td><td>多处（mcp_events, pipeline_orchestrator 等）</td><td><span class="tag tag-w">WARNING</span></td></tr>
+<tr><td>角色卡 YAML 文件使用 eval-free yaml.safe_load() ✅</td><td>所有 yaml 加载点</td><td><span class="tag tag-i">INFO</span> OK</td></tr>
+</table>
+
+<h2>6. 🧹 整洁度</h2>
+<table>
+<tr><th>问题</th><th>位置</th><th>级别</th></tr>
+<tr><td>Python 源码中无 TODO/FIXME 残留 ✅</td><td>—</td><td><span class="tag tag-i">INFO</span> OK</td></tr>
+<tr><td>commands/bobanana.md 中 --setup/--cards 分支引用的 bobanana.py 参数已不存在</td><td>commands/bobanana.md:13-17</td><td><span class="tag tag-w">WARNING</span></td></tr>
+</table>
+
+<h2>审查结论</h2>
+<p><strong>2 个 BLOCKER</strong> · <strong>5 个 WARNING</strong> · <strong>4 个 INFO</strong></p>
+<p>BLOCKER 项必须在进入下一节点前修复。WARNING 项记录到交接工单。</p>
+
+<h3>BLOCKER 详情</h3>
+<ol>
+<li><strong>commands/bobanana.md 调用 bobanana.py 启动管线</strong>：bobanana.py 已 @legacy 只支持 --gui，应改为 skill → Boss 角色路径（/bb 指令已正确实现，bobanana.md 需同步修正）</li>
+<li><strong>advance_pipeline 中 phase 名与 state-machine 不匹配</strong>：代码中检查 phase='cl-done_pass' 但 state-machine 里是 phase='cl-pass'，导致 CL 出口判断可能失败</li>
+</ol>
+
+</body>
+</html>

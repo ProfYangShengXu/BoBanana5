@@ -29,7 +29,8 @@ def set_goal_mode(goal):
                 titles = json.load(f)
             # 清理旧 bobanana topics
             titles = {k: v for k, v in titles.items() if 'bobanana_' not in k}
-        except: pass
+        except Exception:  # 裸 except 改为精确异常
+            pass
     titles[topic_id] = goal[:120]
     os.makedirs('.reasonix', exist_ok=True)
     with open(TOPIC_FILE, 'w', encoding='utf-8') as f:

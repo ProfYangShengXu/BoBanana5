@@ -68,3 +68,5 @@
 | **G5** | 验收不跳过 | Architect 在 CL 之前必须做一次完整终验，检查所有模块的产出物完整性。不准"直接交给 CL 过" |
 
 **默认状态机模板**（`state-machine.yaml` v15+）已按以上规则编排：Boss → Architect(自审) → 后端→CR→数据库→CR→前端→CR → 集成测试 → 全量测试 → 安全审计 → 文档整理 → Architect终验 → CL → 出口。
+
+**v17 超细粒度模板**（可选大型项目）：进一步拆分专业角色，前端拆 web/cross-platform/mini-program，后端拆 Java/Go/Python，数据库拆 DBA/NoSQL/数仓，测试拆 U/集成/性能，安全拆渗透/SDL，运维拆 DevOps/云原生。

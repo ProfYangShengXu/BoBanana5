@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>变更日志 — 管线自动推进修复</title>
+<style>
+body{font:16px/1.6 system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem}
+</style></head>
+<body>
+<h1>📋 变更日志</h1>
+<p>日期: 2026-07-14 | 管线: v15 贪心开发</p>
+<h2>变更清单</h2>
+<ul>
+<li><strong>pipeline_orchestrator.py</strong> — cmd_continue: phase='init' 自动转为 'boss-done'，修复管线初始化后不自动推进的问题</li>
+<li><strong>hooks/check_mcp.py</strong> — except 精度修复 + 增加 os.makedirs 确保 topic 目录存在</li>
+<li><strong>bobanana-plugin/hooks/check_mcp.py</strong> — 同步修复 except 精度</li>
+<li><strong>scripts/pre_boss_check.py</strong> — except Exception 替代 bare except</li>
+</ul>
+<h2>修复说明</h2>
+<p>根因：init_pipeline() 在 .reasonix/cycle/state.json 中写入 phase='init'，但 state-machine 中没有 'init' 边。
+hook 调用 pipeline_orchestrator continue 时用 phase='init' 查找转换，找不到匹配边，静默失败。
+修复：continue 检测到 phase='init' 时自动转换为 'boss-done'（第一个合法转换）。</p>
+</body>
+</html>

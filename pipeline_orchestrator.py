@@ -465,6 +465,10 @@ def cmd_continue(args):
     if not ph or ph == 'done':
         print(f"管线已结束 (phase={ph})")
         return 0
+    # 修复：phase='init' 是初始化标记，应自动推进到 boss-done
+    if ph == 'init':
+        print("检测到 init phase，自动推进到 boss-done")
+        ph = 'boss-done'
     print(f"推进管线: phase={ph}")
     advance_pipeline(ph, score=args.score)
     return 0

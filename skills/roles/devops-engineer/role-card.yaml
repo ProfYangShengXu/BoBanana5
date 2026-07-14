@@ -1,0 +1,19 @@
+description: 'DevOps工程师：CI/CD 流水线搭建，自动化发布，基础设施即代码，平台工程'
+input_contract:
+- description: 项目技术栈和部署环境
+  name: project_info
+  required: true
+  type: object
+name: devops-engineer
+output_contract:
+- description: CI/CD 配置 + 部署文档 + 自动化脚本
+  name: cicd_deliverables
+  type: object
+quality_gates:
+- check: CI 流水线通过
+  desc: 构建/测试/部署全链路
+  id: DEVOPS-Q1
+  layer: I
+standards_file: standards-brief.yaml
+tags: []
+use_case: "适合 CI/CD 流水线搭建和自动化运维"

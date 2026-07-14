@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# @legacy 旧版实现，优先使用角色卡管线替代
 # -*- coding: utf-8 -*-
 """Bobanana 5.0 — 仅保留 TUI 仪表盘"""
 

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """
-# @legacy 旧版实现，优先使用角色卡管线替代
 Bobanana 5.0 — State Machine Runtime Engine
 状态机运行时引擎，管理状态流转、临时节点插入、循环检测。
 

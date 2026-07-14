@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """
-# @legacy 旧版实现，优先使用角色卡管线替代
 Bobanana 5.0 — MCP Server (JSON-RPC 2.0 over stdio)
 为 EUI-NEO 桌面端提供 Reasonix MCP 协议通信层。
 

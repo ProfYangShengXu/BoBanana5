@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """
-# @legacy 旧版实现，优先使用角色卡管线替代
 Bobanana 5.0 — Event Subscription Mechanism
 事件订阅机制，为 GUI 提供实时管线状态推送。
 EUI-NEO C++ 端应通过命名管道或 WebSocket 替代此实现。

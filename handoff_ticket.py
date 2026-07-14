@@ -30,22 +30,8 @@ def _ticket_path(ticket_id):
 
 
 def _next_version(role_name):
-    """计算某个角色的下一个工单版本号"""
-    _ensure_dir()
-    max_ver = 0
-    if os.path.exists(HANDOFF_DIR):
-        for f in os.listdir(HANDOFF_DIR):
-            if f.endswith('.json'):
-                try:
-                    with open(os.path.join(HANDOFF_DIR, f), 'r', encoding='utf-8') as fh:
-                        ticket = json.load(fh)
-                        if ticket.get('sender_id') == role_name:
-                            v = ticket.get('version', 0)
-                            if v > max_ver:
-                                max_ver = v
-                except (FileNotFoundError, json.JSONDecodeError):
-                    logging.warning("跳过损坏的工单文件: %s", f)
-    return max_ver + 1
+    """使用毫秒时间戳作为版本号，避免 O(n) 全目录扫描"""
+    return int(time.time() * 1000)
 
 
 def create_handoff_ticket(sender_id, receiver_id, artifacts=None, pending_decisions=None,

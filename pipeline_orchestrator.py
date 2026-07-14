@@ -68,12 +68,13 @@ def init_pipeline(goal):
     pid = _next_pipeline_id()
     _ensure_dirs()
 
-    # 提示词注入：所有管线默认目标包含 CL 过审
-    injected_goal = goal + " 【默认目标: 通过CL终审(score>=9)】"
+    # 框架约束（不污染用户目标字段）
+    constraints = {"exit_criteria": "CL终审(score>=9)"}
 
     pipeline = {
         "pipeline_id": pid,
-        "goal": injected_goal,
+        "goal": goal,
+        "constraints": constraints,
         "status": "initialized",
         "current_node": "boss",
         "current_phase": "start",
@@ -372,10 +373,7 @@ def advance_pipeline(phase, score=None, pid=None):
                           artifacts=[],
                           pending_decisions=[])
 
-    save_json(_pipeline_path(pipeline['pipeline_id']), pipeline)
-    engine._save_state()
-
-    # 同步到 cycle-bridge 格式（让 reasonix cycle --resume 能找到状态）
+    # 先写 cycle state（辅助数据）
     import hashlib
     cycle_dir = '.reasonix/cycle'
     os.makedirs(cycle_dir, exist_ok=True)
@@ -394,6 +392,10 @@ def advance_pipeline(phase, score=None, pid=None):
         cycle_state['phase'] = 'done'
     with open(os.path.join(cycle_dir, 'state.json'), 'w', encoding='utf-8') as f:
         json.dump(cycle_state, f, ensure_ascii=False, indent=2)
+
+    # pipeline.json 最后写——崩溃恢复时以此为准
+    save_json(_pipeline_path(pipeline['pipeline_id']), pipeline)
+    engine._save_state()
 
     status = "完成" if result['is_terminal'] else f"进行中 (-> {next_node})"
     print(f"管线流转: {current} -> {next_node}")

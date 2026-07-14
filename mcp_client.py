@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """
-# @legacy 旧版实现，优先使用角色卡管线替代
 Bobanana 5.0 — MCP Client Library
 完整的 MCP 客户端封装。提供 10 个 hooks 的类型化方法。
 EUI-NEO 桌面端通过此类与 reasonix.exe 通信。

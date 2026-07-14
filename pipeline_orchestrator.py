@@ -235,15 +235,27 @@ def handle_cl_failback(pipeline_id, cl_report=None):
 
 
 def has_pending_pipeline():
-    """检查是否有未完成的管线（next_prompt 非空）"""
+    """检查是否有未完成的管线（next_prompt 非空 + state 未结束）"""
     cycle_dir = '.reasonix/cycle'
     next_file = os.path.join(cycle_dir, 'next_prompt.txt')
     state_file = os.path.join(cycle_dir, 'state.json')
-    if os.path.exists(next_file) and os.path.exists(state_file):
-        with open(next_file, 'r', encoding='utf-8') as f:
-            if len(f.read().strip()) > 0:
-                return True
-    return False
+    if not (os.path.exists(next_file) and os.path.exists(state_file)):
+        return False
+    with open(next_file, 'r', encoding='utf-8') as f:
+        if len(f.read().strip()) == 0:
+            return False
+    # 二次确认：检查 state.json 的 phase，防止崩溃后残留
+    try:
+        import json
+        with open(state_file, 'r', encoding='utf-8') as f:
+            st = json.load(f)
+        ph = st.get('phase', '')
+        # done=已完成, init=刚初始化还没跑 → 都不算 pending
+        if ph in ('done', 'init', ''):
+            return False
+    except Exception:
+        pass  # 文件损坏/格式错误 → 保守起见不允许
+    return True
 
 
 
@@ -396,6 +408,13 @@ def advance_pipeline(phase, score=None, pid=None):
     # pipeline.json 最后写——崩溃恢复时以此为准
     save_json(_pipeline_path(pipeline['pipeline_id']), pipeline)
     engine._save_state()
+
+    # 管线完成时清理 next_prompt.txt，防止 has_pending_pipeline 误判
+    if result['is_terminal']:
+        npt = os.path.join('.reasonix', 'cycle', 'next_prompt.txt')
+        if os.path.exists(npt):
+            with open(npt, 'w', encoding='utf-8') as f:
+                f.write('')
 
     status = "完成" if result['is_terminal'] else f"进行中 (-> {next_node})"
     print(f"管线流转: {current} -> {next_node}")

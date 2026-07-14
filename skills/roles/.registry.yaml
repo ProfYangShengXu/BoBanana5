@@ -187,6 +187,33 @@ cards:
   registered_at: ''
   tags: []
   use_case: 适合集成测试和跨模块交互验证
+- description: 代码审查员：对每个开发角色的产出做六维度独立审查，产出审查报告后放行或打回
+  has_example_sm: false
+  id: code-reviewer
+  kitset: ''
+  name: code-reviewer
+  path: code-reviewer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合所有开发产出的独立审查环节，贪心状态机的核心质量角色
+- description: 集成测试工程师：跨模块集成验证，检查接口一致性、数据流完整性、端到端功能可用性
+  has_example_sm: false
+  id: integration-tester
+  kitset: ''
+  name: integration-tester
+  path: integration-tester/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合多模块协作项目，在各专业角色产出后进行集成验证
+- description: 技术文档工程师：在交付前整理产出技术文档，确保 docs/ 目录完整性，产出交付摘要
+  has_example_sm: false
+  id: tech-writer
+  kitset: ''
+  name: tech-writer
+  path: tech-writer/role-card.yaml
+  registered_at: ''
+  tags: []
+  use_case: 适合所有需要正式交付的项目，在 CL 终审前完成文档完整性检查
 - description: Test role for unit testing
   has_example_sm: true
   id: test-role

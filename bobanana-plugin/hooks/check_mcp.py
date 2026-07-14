@@ -52,7 +52,7 @@ def main():
         for line in r.stdout.strip().split('\n'):
             if line.strip(): print(f"  > {line.strip()}")
     else:
-        print("[Bobanana Hook] 就绪。/bobanana <目标> 启动新管线.")
+        print("[Bobanana Hook] 就绪。/bb <目标> 启动新管线.")
     return 0
 
 

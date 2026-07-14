@@ -1,0 +1,41 @@
+description: "技术文档工程师：在交付前整理产出技术文档，确保 docs/ 目录完整性，产出交付摘要"
+input_contract:
+- description: 所有角色的交接工单集合
+  name: handoff_tickets
+  required: true
+  type: object[]
+- description: 当前 docs/ 目录文件清单
+  name: docs_inventory
+  required: true
+  type: string[]
+- description: PRD 中声明的交付物清单
+  name: deliverables_list
+  required: true
+  type: string[]
+name: tech-writer
+output_contract:
+- description: docs/ 目录完整性报告
+  name: completeness_report
+  type: object
+- description: 补充/修正后的文档列表
+  name: updated_docs
+  type: string[]
+- description: 交付摘要文档（合并各角色产出）
+  name: delivery_summary
+  type: string
+quality_gates:
+- check: 所有 PRD 声明的交付物文档都存在
+  desc: 缺文档 = 缺交付
+  id: DOC-Q1
+  layer: I
+- check: 所有 docs/ 文件有交叉引用链接
+  desc: 文档间可导航
+  id: DOC-Q2
+  layer: U
+- check: 每个文档有版本号和变更日期
+  desc: 文档可追溯
+  id: DOC-Q3
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: "适合所有需要正式交付的项目，在 CL 终审前完成文档完整性检查"

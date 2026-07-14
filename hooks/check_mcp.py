@@ -70,7 +70,7 @@ def main():
                 if line.strip():
                     print(f"  > {line.strip()}")
     else:
-        print("[Bobanana Hook] 无待办管线。/bobanana <目标> 启动新管线.")
+        print("[Bobanana Hook] 无待办管线。/bb <目标> 启动新管线.")
     return 0
 
 

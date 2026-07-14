@@ -68,7 +68,7 @@ def refresh():
 
     print()
     print("  刷新完成！")
-    print("  下次在 Reasonix 对话框输入 /bobanana 即可使用。")
+    print("  下次在 Reasonix 对话框输入 /bb 即可使用。")
     print("  新角色卡通过 HR 招聘创建：")
     print("    python hr_recruitment.py recruit \"角色名\" \"描述\"")
     print("    python hr_recruitment.py generate <recruitment_id>")

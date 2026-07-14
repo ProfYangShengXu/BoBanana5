@@ -40,7 +40,7 @@
 不开发功能重复的工具。如果项目内已有类似实现（如 MCP 客户端、状态机引擎、角色注册表），直接引用扩展，不另起炉灶。统一标准：同一类问题只用一套方案。
 
 ### 5.6 SessionStart 检测
-`hooks/check_mcp.py` 在 SessionStart 时检测 `.reasonix/cycle/next_prompt.txt`。有内容 → 自动调用 `pipeline_orchestrator continue` 推进管线。无内容 → 正常进入 `/bobanana` 新管线。
+`hooks/check_mcp.py` 在 SessionStart 时检测 `.reasonix/cycle/next_prompt.txt`。有内容 → 自动调用 `pipeline_orchestrator continue` 推进管线。无内容 → 正常进入 `/bb` 新管线。
 
 ### 5.7 提示词注入
 所有管线目标自动追加「默认目标：通过 CL 终审(score≥9)」。由 `pipeline_orchestrator.init_pipeline()` 执行注入，各角色无需手动添加。
@@ -54,3 +54,17 @@
 
 ### 5.9 多文件变更规则
 需求涉及多个文件时，状态机中**禁止使用 fullstack-dev 角色**，必须同时包含 `test-dev-engineer` + `security-engineer` 两个角色。理由：多文件变更意味着跨模块影响，必须有测试覆盖和安全审查兜底，不能由单一角色全包。单文件变更不受此限制。
+
+### 5.10 贪心状态机规则（G1-G5）
+
+所有状态机编排必须遵守以下 5 条贪心规则，倾向拆分更多角色而非压缩管线：
+
+| 规则 | 名称 | 强制要求 |
+|------|------|---------|
+| **G1** | 领域拆分贪心 | Architect 识别目标涉及 N 个领域，就在状态机中插入 N 个专业开发角色，不准合并成一个 fullstack-dev。默认拆分：后端 / 前端 / 数据库 |
+| **G2** | 计划评审贪心 | 每个 OP 节点产出方案后必须先经 code-reviewer 审查再分配执行。不准"边写边想"。开发角色完成后也必须经 CR 才能进入下一节点 |
+| **G3** | 测试不合并 | 只要变更 > 1 个模块，必须插入 test-dev-engineer 作为独立节点，不给开发角色兼职。禁止"顺手测一下代替" |
+| **G4** | 安全不省略 | 任何涉及数据处理 / 网络 / 用户输入的项目，security-engineer 强制插入。不准"项目小就不做安全" |
+| **G5** | 验收不跳过 | Architect 在 CL 之前必须做一次完整终验，检查所有模块的产出物完整性。不准"直接交给 CL 过" |
+
+**默认状态机模板**（`state-machine.yaml` v15+）已按以上规则编排：Boss → Architect(自审) → 后端→CR→数据库→CR→前端→CR → 集成测试 → 全量测试 → 安全审计 → 文档整理 → Architect终验 → CL → 出口。

@@ -1,244 +1,275 @@
 product:
   name: "bobanana5.0"
-  one_liner: "Meta Agent 编排层 — 领域无关的可编程状态机 + 可插拔角色卡系统。CL(client-gate)为唯一出口，bobanana.py自动弹出仪表盘。"
-  created_at: "2026-07-13T18:30:00+08:00"
+  one_liner: "Meta Agent 跨 session 长编排引擎 — 可编程状态机 + 可插拔 skill 角色卡系统"
+  created_at: "2026-07-13T20:00:00+08:00"
 
-architecture:
-  summary: "三层架构：EUI-NEO 桌面端（C++17 GPU UI）+ 核心编排层（领域无关）+ 外部 Adaption Kitsets（领域专用）"
-  core_layer:
-    name: "Bobanana 5.0 核心"
-    description: "Meta Agent 编排引擎，领域无关。只负责按状态机定义调度 Agent 角色，维护上下文一致性，确保质量门通过。不包含任何领域知识。"
-    components:
-      - "状态机引擎 — 读取 YAML 定义的状态机配置，驱动 Agent 在角色间流转。支持串行/并行/分支/循环。"
-      - "角色卡注册表 — 角色卡的元数据描述库。编排层只读元数据，不执行业务逻辑。"
-      - "交接工单系统 — 结构化上下文传递机制。工单含：产出物列表、未决决策、显式假设、风险标注。"
-  role_tags:
-    description: "每个角色卡可以带一个或多个标签，决定了角色在管线中的层级行为"
-    tags:
-      - name: "OP"
-        full_name: "Orchestration — 编排者标签"
-        applies_to:
-          - "架构师"
-          - "技术经理"
-          - "Project Lead"
-          - "技术总监"
-        behavior: "OP 角色不仅产出领域交付物，还动态编写或更新 state-machine.yaml，包括设置下一个 OP 角色、出口条件、循环/分支逻辑。引擎在 OP session 结束后重新加载状态机配置。"
-      - name: "CL"
-        full_name: "Client Gate — 甲方终审标签"
-        applies_to:
-          - "甲方代表"
-          - "业务方审核员"
-          - "产品总监"
-        behavior: "CL 是整个管线的唯一终结出口。在所有技术性角色完成后执行。必须启动一个全新的、隔离的 subagent（无 pipeline 历史上下文）。对整个项目代码全量审查并打分 1-10。分数 < 9 则通过 handoff ticket 打回给最近的 OP 角色；分数 ≥ 9 触发 signal_done。"
-      - name: "HR"
-        full_name: "招聘专员标签"
-        applies_to:
-          - "HR 招聘专员"
-        behavior: "HR 是一张特殊的服务角色卡，仅响应 OP 的紧急招聘请求。不被用户或其他角色直接调用，不被 OP 选作出口或普通节点。OP 遍历角色卡库发现缺口时在状态机中插入 HR 临时节点，HR 创建角色卡后控制权回到 OP。"
-  flow_pipeline:
-    description: "完整管线流程：OP 角色动态定义状态机 -> 技术性角色链执行 -> CL 甲方终审"
-    stages:
-      - "OP 编排阶段：架构师等 OP 角色读取项目目标和可用角色卡，发现缺口时触发紧急招聘（OP->HR->OP），产出 PRD + 任务拆解，动态编写 state-machine.yaml"
-      - "紧急招聘阶段：OP 发现角色库缺少所需角色时，在状态机中插入 HR 临时节点，HR 执行 4 subagent 职业研究并生成角色卡，完成后控制权回 OP"
-      - "技术执行阶段：按 OP 定义的状态机执行 开发 -> 测试 -> 评判 -> 挑刺 等角色链，有 badcase 则打回修复"
-      - "CL 终审阶段：所有技术角色完成后，启动隔离 subagent 做全项目审查和 1-10 打分"
-      - "出口判断：分数 < 9 打回给最近 OP 角色；分数 >= 9 signal_done"
-  role_research:
-    description: "HR Skill 负责在创建角色卡时对一个职业进行深度研究，产出标准化的角色卡文件，立即可在当前管线中使用"
-    behavior: "HR Skill 被调用时派出 4 个并行 read-only subagent 研究该职业的工作准则、工作内容、工具方法、常见坑与风险，合并为职业准则简报，产出 role-card.yaml + SKILL.md"
-    reference_examples:
-      - name: "docs skill"
-        role: "产品经理"
-        path: "~/.reasonix/skills/docs/SKILL.md"
-        content: "定义产品经理的工作方法：不写代码、只回答 WHAT/WHY、输出 HTML+YAML、使用固定模板。HR Skill 可直接引用此文件跳过 subagent 研究。"
-      - name: "Bobanana.md"
-        role: "架构师 / 开发"
-        path: "Bobanana.md"
-        content: "定义工程原则：9 条架构原则、禁止面向结果编程、不重构没问题代码。HR Skill 可直接引用此文件跳过 subagent 研究。"
-    design_principles:
-      - "研究发生在招聘时，不发生在上班时 — 职业研究是一次性的成本，在创建角色卡时完成"
-      - "角色卡立即可用 — 写入 skills/roles/ 后状态机引擎立刻能发现它"
-      - "预置准则 = 省成本 — 适配集作者可预置准则文件，HR Skill 直接引用不启动 subagent"
-  desktop_gui:
-    framework: "EUI-NEO"
-    url: "https://github.com/sudoevolve/EUI-NEO"
-    language: "C++17"
-    renderer: "OpenGL / Vulkan (GPU 加速)"
-    window_backend: "GLFW / SDL2"
-    license: "Apache 2.0"
-    communication: "通过 Reasonix MCP 协议（JSON-RPC 2.0 over stdio）与 reasonix.exe 通信"
-    hooks:
-      - "get_state_machine — 获取状态机拓扑图"
-      - "get_role_cards — 获取角色卡库列表"
-      - "queue_next_prompt — 推进管线"
-      - "signal_done — 管线完成"
-      - "get_pipeline_status — 当前进度"
-      - "get_handoff_tickets — 交接工单历史"
-      - "trigger_hr_recruit — HR 紧急招聘"
-      - "get_cl_report — CL 审查报告"
-      - "run_skill — 执行 skill"
-      - "文件系统: read_file / write_file / grep / glob"
-    views:
-      - "状态机图：节点=角色卡，边=转换条件，GPU 加速"
-      - "OP 编排工作台：拖拽角色卡 -> 画布 -> 连线"
-      - "角色卡浏览器：按标签分组，展开详情"
-      - "管线仪表盘：进度条 + 计时器 + 工单时间线"
-      - "CL 审查面板：10 项打分 + 最终评分"
-      - "HR 招聘对话框：输入角色描述，预览研究结果"
-  kitset_layer:
-    name: "Adaption Kitsets（外部适配集）"
-    description: "独立的 Git 仓库，作为外部项目存在。负责提供领域特有的角色定义、工具实现、状态机模板和质量门规则。"
-    contents_per_kitset:
-      - "角色卡文件 — YAML + Markdown 格式定义本领域角色"
-      - "工具实现 — CLI/MCP/脚本工具，Agent 在该领域干活时调用"
-      - "预设状态机模板 — 推荐管线拓扑"
-      - "质量门规则 — 领域特定验收标准"
-      - "文档和模板 — 适配集使用说明 + 新手快速上手模板"
-  existing_kitset:
-    name: "Godot-adaption-kitset"
-    status: "⚪ 已规划，适配集仓库尚未创建（计划重构 bobanana4.0 的 Godot 相关技能为角色卡格式）"
-    description: "Godot 4.x 游戏开发适配集，含 4 个 Reasonix skill、11 个 TypeScript 工具模块、Godox 编辑器插件、3 个游戏模板、4 层测试体系"
-    note: "代码库中已有 Skills（godot-dev/godot-debug/godot-test/godot-docs），需重构为标准角色卡格式放入独立仓库"
+sources:
+  - url: "https://github.com/ProfYangShengXu/BoBanana5"
+    section: "全部"
+    accessed_at: "2026-07-13"
+  - url: "https://github.com/geekan/MetaGPT"
+    section: "竞品对比"
+    accessed_at: "2026-07-13"
+  - url: "https://github.com/OpenBMB/ChatDev"
+    section: "竞品对比"
+    accessed_at: "2026-07-13"
+  - url: "https://github.com/crewAIInc/crewAI"
+    section: "竞品对比"
+    accessed_at: "2026-07-13"
+  - url: "https://github.com/langchain-ai/langgraph"
+    section: "竞品对比"
+    accessed_at: "2026-07-13"
+  - url: "https://github.com/Significant-Gravitas/AutoGPT"
+    section: "竞品对比"
+    accessed_at: "2026-07-13"
+  - url: "https://hn.algolia.com"
+    section: "社区声音"
+    accessed_at: "2026-07-13"
 
-success_metrics:
-  north_star: "编排管线完整成功率 ≥ 85%（目标输入 → signal_done，目标轮次内无人工干预）"
-  key_results:
-    - name: "KR-0"
-      description: "代码库全面审查 + 测试覆盖 — 当前工程阶段焦点"
-      target: "四层测试覆盖率 ≥ 80%（U/I/S/A），修复仪表盘编译错误"
-      measure: "测试覆盖率报告 + 仪表盘编译通过率"
-    - name: "KR-1"
-      description: "适配集生态 — 覆盖至少 3 个不同领域"
-      target: "发布 ≥ 3 个官方适配集（Godot / Web 全栈 / 数据科学）"
-      measure: "独立仓库数量 + install.bat 一键接入通过率"
-    - name: "KR-2"
-      description: "状态机声明式配置 — 不修改核心引擎代码"
-      target: "100% 状态机定义可通过 YAML 完成"
-      measure: "用户自定义状态机配置测试通过率"
-    - name: "KR-3"
-      description: "社区贡献适配集"
-      target: "每月至少 2 个社区提交的适配集 issue/PR"
-      measure: "GitHub issue/PR 标签统计（kitset 标签）"
+interview:
+  target_users:
+    - "AI 开发者 / 技术 Lead — 使用 AI 辅助开发，需要多 Agent 协作和长任务编排"
+    - "产品 / 项目经理 — 用 AI 做需求分析、文档生成，需要质量门"
+    - "领域专家（非技术）— 游戏策划、数据分析师，想让 AI 按行业标准干活"
+  recruitment_criteria:
+    - "过去 3 个月内使用过至少一种 AI 编程工具"
+    - "有至少一次 AI 做了但不可用的经历"
+    - "每周使用 AI 工具 ≥ 3 次"
+  questions:
+    - q: "你目前在用什么 AI 工具辅助开发/工作？每天用多久？"
+      type: "open"
+    - q: "描述一次 AI 帮你完成复杂任务的经历。成功/失败的原因是什么？"
+      type: "behavioral"
+    - q: "AI 输出代码/文档后，你一般花多少时间检查和修改？"
+      type: "quantitative"
+    - q: "有没有遇到过 AI 做了一半丢了/前后不一致的情况？"
+      type: "behavioral"
+    - q: "如果 AI 可以有角色，你最想要什么角色？"
+      type: "opinion"
+    - q: "你愿意让 AI 自动推进 3 小时以上的长任务链吗？担心什么？"
+      type: "opinion"
+    - q: "你对 AI 产出质量的最低要求是几分（1-10）？"
+      type: "quantitative"
+    - q: "有你希望 AI 做但现有工具做不到的事情吗？"
+      type: "open"
+    - q: "你愿意为 AI 团队协作工具付费吗？每月多少？"
+      type: "pricing"
+    - q: "还有什么想说的？"
+      type: "open"
 
-personas:
-  - name: "适配集开发者"
-    scenario: "AI 工具开发者/社区贡献者，想为某领域写适配集（游戏开发/Web/数据）"
-    pain_point: "写角色卡没有标准格式；角色间上下文传递要自己拼字符串；没有验证器确认格式正确"
-    frequency: "周期性地：创建/更新适配集时密集使用"
-    need: "让我能用 YAML 定义角色卡，用 YAML 定义状态机，验证器帮我检查定义是否正确"
-    tech_level: "高（能写 Go/Python/TypeScript，理解 MCP 协议）"
-  - name: "管线高级用户"
-    scenario: "深度使用 AI 管线的技术用户，熟悉 Reasonix，想自定义工作流"
-    pain_point: "现有管线角色太少、状态机固定；想加专属角色但做不到"
-    frequency: "每天使用，经常调整配置和角色组合"
-    need: "让我能像搭积木一样搭状态机，像写函数一样写角色卡"
-    tech_level: "中-高（了解管线原理，能写 YAML 配置）"
-  - name: "端用户（领域专家）"
-    scenario: "不懂技术的领域专家（游戏策划/数据分析师），只想用 AI 完成特定产出"
-    pain_point: "想让 AI 按自己行业的标准干活，但不知道怎么配置"
-    frequency: "每周 3-5 次，使用预制模板，不碰配置"
-    need: "给我一个模板，告诉我安装适配集，直接开用"
-    tech_level: "低-中（会用命令行安装，不写代码）"
+value_proposition:
+  canvas:
+    - task: "用 AI 完成完整软件开发任务"
+      pain: "现有工具单 session，长任务无法保持一致性"
+      gain: "跨 session 自动流转"
+      solution: "可编程状态机编排，每角色独立 session，queue_next_prompt 推进"
+    - task: "让 AI 按质量门标准产出"
+      pain: "AI 产出质量波动大，需要人工大量审查"
+      gain: "内置质量门减少人工审查"
+      solution: "CL 终审机制，隔离 subagent 评分 ≥ 9 才放行"
+    - task: "自定义 AI 团队角色"
+      pain: "现有框架角色固定"
+      gain: "按项目需要组 AI 团队"
+      solution: "角色卡系统，21 张预制 + 可编写新角色卡"
+    - task: "跨领域复用工作流"
+      pain: "换领域要重学重配"
+      gain: "换领域只换适配集"
+      solution: "Adaption Kitsets，领域知识外置，核心编排层不变"
 
-mvp:
-  must_have:
-    - "角色卡系统（Role Card Registry）：标准化角色卡片格式 YAML Schema，含角色 ID/名称/描述/输入契约/输出契约/适用阶段/标签"
-    - "可编程状态机（Programmable State Machine）：YAML 配置文件 state-machine.yaml，支持节点/边/条件分支/并行 fork-join/循环反馈"
-    - "交接工单系统（Handoff Ticket）：结构化 JSON 格式上下文传递，含发送者/接收者/产出物列表/未决决策/假设/风险标注，存储在 .reasonix/handoffs/"
-    - "角色卡验证器：安装时自动校验角色卡 YAML 格式，不符合 Schema 的给出具体错误位置和修复建议"
-    - "状态机图形化输出：每轮角色转换后输出 Mermaid 格式进度图，显示已过/当前/待过角色及重试次数"
-    - "向后兼容：bobanana4.0 的 /pipeline、/loop、/cycle 命令继续可用，内置通用软件开发状态机模板"
-    - "首个官方适配集（Godot-adaption-kitset）：重构现有实现为角色卡格式，作为参考实现和验证案例"
-  role_tag_must_have:
-    - "[OP] 编排者标签支持：角色卡 Schema 允许 tags: [op]，OP 角色运行时有权读取和写入 state-machine.yaml，动态添加/删除角色节点和转换边"
-    - "[CL] 甲方终审标签支持：角色卡 Schema 允许 tags: [cl]，CL 角色定义为管线的唯一出口"
-    - "[CL] 隔离 subagent 审查：到达 CL 角色时引擎自动启动全新隔离 subagent（无 pipeline 历史上下文），从头审查整个项目代码"
-    - "[CL] 打分 + 打回机制：CL 强制输出 1-10 整数评分，< 9 分通过 handoff ticket 打回给最近的 OP 角色；≥ 9 分触发 signal_done"
-  role_research_must_have:
-    - "HR Skill 专用角色：一个专门的 Reasonix skill，负责职业研究 + 角色卡创建，在需要新角色时被调用"
-    - "4 子 agent 并行研究：HR Skill 派出 4 个并行 read-only subagent，研究工作准则/工作内容/工具方法/常见坑"
-    - "标准角色卡生成：产出 role-card.yaml + SKILL.md，写入 skills/roles/，立即可被管线发现和引用"
-    - "可引用已有准则文件：docs skill / Bobanana.md 等预置文件可被 HR Skill 直接引用，跳过 subagent 研究"
-    - "一次研究多次使用：职业研究在创建角色卡时一次性完成，角色卡激活后不再重复研究"
-  nice_to_have:
-    - "角色卡市场 / 适配集仓库索引（从远程拉取）"
-    - "GUI 状态机编辑器（拖拽连线）"
-    - "角色卡版本管理 + 适配集依赖声明"
-    - "管道并行：同一时刻多个 Agent 运行不同角色"
-    - "适配集评分 / 质量评级体系"
-  out_of_scope:
-    - "不内置任何领域的 SDK/编辑器插件/渲染引擎（由适配集提供）"
-    - "不做项目管理工具（非 JIRA/Notion 竞品）"
-    - "不做 AI 模型训练或微调"
-    - "不做无代码平台"
+hypotheses:
+  - id: "H1"
+    description: "跨 session 编排是真实痛点——开发者在长任务中最大痛点是上下文丢失"
+    validation: "访谈 Q4 + 社区帖子分析"
+    success_criteria: "≥ 60% 受访者确认遇到并认为严重"
+    time_window: "MVP 发布前"
+    owner: "产品团队"
+  - id: "H2"
+    description: "CL 质量门能提升用户对 AI 产出的信任"
+    validation: "A/B 测试有/无 CL 的交付质量"
+    success_criteria: "有 CL 的人工评分平均高 1.5 分（10 分制）"
+    time_window: "MVP 后 1 个月"
+    owner: "产品 + 测试"
+  - id: "H3"
+    description: "角色卡生态驱动采用"
+    validation: "GitHub 角色卡提交/下载量"
+    success_criteria: "3 个月内 ≥ 5 个社区角色卡或 ≥ 2 个适配集"
+    time_window: "上线后追踪"
+    owner: "产品 + 社区运营"
+  - id: "H4"
+    description: "开发者愿意为编排层而非模型层付费"
+    validation: "访谈 Q9 + 定价页转化率"
+    success_criteria: "≥ 20% 受访者愿意付费 ≥ $10/月"
+    time_window: "企业版上线前"
+    owner: "产品 + 增长"
 
-competitors:
-  - name: "MetaGPT / ChatDev / AutoGPT"
-    positioning: "多 AI agent 协作框架"
-    strength: "多 agent 对话、角色扮演"
-    weakness: "状态机简单、不支持自定义角色卡、无适配集概念"
-    difference: "Bobanana 5.0 强调可编程状态机 + 可插拔角色卡 + 两层架构"
-  - name: "LangGraph / LangChain"
-    positioning: "Agent 工作流框架"
-    strength: "灵活、Python 生态丰富、复杂图状态机"
-    weakness: "没有'角色'抽象、没有适配集概念、不面向非 Python 场景"
-    difference: "角色卡 + 状态机 = LangGraph 的'信念系统'层之上的抽象"
-  - name: "Claude Code / Reasonix 原生"
-    positioning: "AI agent 编程框架"
-    strength: "强推理、工具链丰富、直接可用"
-    weakness: "角色单一、无多角色编排、无跨 session 状态机"
-    difference: "Bobanana 5.0 在其上叠加编排层"
-  - name: "n8n / Temporal / Airflow"
-    positioning: "工作流编排引擎"
-    strength: "成熟、可配置、企业级"
-    weakness: "不面向 AI Agent 场景、无 LLM 集成、角色概念不同"
-    difference: "专注于 AI Agent 的角色化编排"
-  - name: "用户自己拼（手动组合各种工具）"
-    positioning: "无框架手动实现"
-    strength: "高度灵活"
-    weakness: "没有标准化框架、重复造轮子、维护成本高"
-    difference: "提供标准化的两层架构和开箱即用的适配集"
+journey:
+  stages:
+    - phase: "发现"
+      behavior: "在 GitHub 搜索 AI 编排工具 / Reasonix 插件市场"
+      thought: "又一个 AI 框架？"
+      pain: "星多但不知道实际好不好用"
+      opportunity: "README 一句话定位清晰"
+      emotion: "🤔"
+    - phase: "了解"
+      behavior: "阅读 README、文档、架构图"
+      thought: "跨 session 编排是什么？"
+      pain: "概念太新，需要理解编排层 ≠ 模型层"
+      opportunity: "1 分钟 demo gif + 交互式 quickstart"
+      emotion: "😕"
+    - phase: "首次使用"
+      behavior: "安装 → 运行 /bb"
+      thought: "装好了，怎么开始？"
+      pain: "需要 Reasonix 环境"
+      opportunity: "安装脚本一步到位，首次任务模板化"
+      emotion: "😊 / 😤"
+    - phase: "持续使用"
+      behavior: "日常用 /bb 和 /docs"
+      thought: "比我自己指挥 AI 省心"
+      pain: "管线跑太久需要等"
+      opportunity: "通知 + 打断点 + 进度可视化"
+      emotion: "😌 / 😅"
+    - phase: "推荐"
+      behavior: "向同事推荐"
+      thought: "这个工具帮你组织 AI 团队"
+      pain: "和 Cursor 有什么区别？难以一句话说清"
+      opportunity: "提炼一句话对比"
+      emotion: "😄 / 🤷"
 
-swot:
-  strengths:
-    - "已有成熟的 bobanana4.0 管线体系和用户基础"
-    - "两层架构设计清晰，核心编排层 + 外部适配集解耦"
-    - "已有首个验证案例（Godot-adaption-kitset），证明模式可行"
-    - "继承 Reasonix 的跨 session 机制和 MCP 工具生态"
-  weaknesses:
-    - "状态机从硬编码到可配置需要重构 cycle-bridge 核心组件"
-    - "角色卡 Schema 设计要兼顾通用性和表达能力，权衡很关键"
-    - "适配集生态冷启动问题——第一个适配集好做，第 N 个需要社区"
-    - "项目本身是纯配置+Markdown 仓库，核心引擎代码在 Reasonix 主仓库"
-  opportunities:
-    - "AI Agent 编排市场快速增长，多角色协作仍是蓝海"
-    - "大模型能力提升使多角色专业化分工变得可行"
-    - "不同领域对 AI 工具需求在爆发（游戏/数据/嵌入式/设计）"
-    - "开源社区对'AI 框架'类项目兴趣浓厚"
-  threats:
-    - "大厂快速跟进（LangChain/OpenAI 可能出类似编排层）"
-    - "'编排层'概念对普通用户太抽象，难以理解价值"
-    - "适配集质量参差不齐可能影响核心编排层口碑"
-    - "LLM API 价格波动影响使用成本"
+rice:
+  items:
+    - feature: "跨 session 编排（核心引擎稳定性）"
+      reach: 1000
+      impact: 3
+      confidence: 90
+      effort: 3
+      rice_score: 900
+    - feature: "/docs 产品文档生成"
+      reach: 600
+      impact: 2
+      confidence: 85
+      effort: 2
+      rice_score: 510
+    - feature: "CL 终审评分机制增强"
+      reach: 500
+      impact: 3
+      confidence: 85
+      effort: 3
+      rice_score: 425
+    - feature: "OP 角色动态编排状态机"
+      reach: 800
+      impact: 3
+      confidence: 80
+      effort: 5
+      rice_score: 384
+    - feature: "管线断点恢复/重试"
+      reach: 600
+      impact: 3
+      confidence: 85
+      effort: 4
+      rice_score: 383
+    - feature: "管线可视化（进度/状态图）"
+      reach: 700
+      impact: 2
+      confidence: 80
+      effort: 3
+      rice_score: 373
+    - feature: "Adaption Kitsets 分离"
+      reach: 400
+      impact: 3
+      confidence: 70
+      effort: 4
+      rice_score: 210
+    - feature: "交接工单 UI"
+      reach: 400
+      impact: 2
+      confidence: 75
+      effort: 3
+      rice_score: 200
+    - feature: "通知机制"
+      reach: 500
+      impact: 1
+      confidence: 70
+      effort: 2
+      rice_score: 175
+    - feature: "Kitsets 生态站点"
+      reach: 300
+      impact: 3
+      confidence: 60
+      effort: 5
+      rice_score: 108
 
-risks:
-  - category: "市场风险"
-    description: "编排层赛道变拥挤，大厂（LangChain/OpenAI）出竞品"
-    likelihood: "中"
-    impact: "高"
-    mitigation: "通过角色卡 + 适配集两层抽象建立差异化壁垒；深耕 bobanana4.0 已有用户基础"
-  - category: "认知风险"
-    description: "'两层架构'概念对用户太抽象，难以理解核心和适配集的边界"
-    likelihood: "高"
-    impact: "中"
-    mitigation: "用'操作系统/驱动程序'类比；先推完整的适配集，再逐步开放核心能力"
-  - category: "生态风险"
-    description: "适配集冷启动困难，只有官方适配集，社区不贡献"
-    likelihood: "高"
-    impact: "高"
-    mitigation: "官方同时启动 3 个方向适配集（Godot/Web/Data）作为模板；写详细'如何写适配集'文档；降低贡献门槛"
-  - category: "质量风险"
-    description: "第三方适配集质量参差不齐，用户归咎于核心编排层"
-    likelihood: "中"
-    impact: "中"
-    mitigation: "角色卡 Schema 验证 + 沙箱执行 + 适配集评分体系 + 官方认证徽章"
+competitive_ux:
+  comparison:
+    - product: "Bobanana 5.0"
+      install_steps: 2
+      first_use_min: "5-10"
+      dependencies: "Python 3.12+, Reasonix"
+      rating: "N/A"
+    - product: "MetaGPT"
+      install_steps: 3
+      first_use_min: "15-30"
+      dependencies: "Node.js, pnpm"
+      rating: "3.8/5"
+    - product: "CrewAI"
+      install_steps: 1
+      first_use_min: "5"
+      dependencies: "OpenAI API key"
+      rating: "4.2/5"
+    - product: "LangGraph"
+      install_steps: 2
+      first_use_min: "10-30"
+      dependencies: "LangSmith key"
+      rating: "3.5/5"
+    - product: "ChatDev 2.0"
+      install_steps: 4
+      first_use_min: "10-20"
+      dependencies: "Node.js, Python"
+      rating: "3.6/5"
+  gaps:
+    - description: "跨 session 状态机编排 — LangGraph 有但门槛高，CrewAI 无"
+    - description: "可插拔角色卡生态 — 类似 VSCode 插件市场，竞品都无"
+    - description: "CL 质量门机制 — 所有竞品缺乏交付质量门"
+    - description: "结构化交接工单 — 竞品都是纯自然语言消息传递"
+    - description: "零外部依赖 — 对比竞品需要 Docker/Node.js"
+
+positioning:
+  plans:
+    - name: "方案 A（推荐）"
+      target: "使用 AI 辅助开发的程序员和产品团队"
+      problem: "AI 无法自主完成长任务、跨 session 上下文丢失、输出不可控"
+      differentiation: "唯一支持可编程状态机跨 session 编排 + CL 质量门 + 可插拔角色卡"
+      one_liner: "Bobanana 帮你组建 AI 团队——编排角色、打通 session、把关质量。"
+      opposition: "LangGraph 用户会质疑状态机能力，CrewAI 用户觉得安装不够简单"
+    - name: "方案 B"
+      target: "被 AI 工具碎片化困扰的技术管理者"
+      problem: "AI 工具各自为战，没有统一的质量体系"
+      differentiation: "AI 团队的 Kubernetes——统一编排、统一质量门"
+      one_liner: "AI 工具的 Kubernetes——编排 Agent、管理管线、确保交付质量。"
+      opposition: "编排层概念太抽象"
+    - name: "方案 C"
+      target: "想自定义 AI 工作流的进阶用户"
+      problem: "管线角色固定不能自定义"
+      differentiation: "21 张角色卡 + 可编写新角色 + 可插拔适配集"
+      one_liner: "像搭积木一样搭 AI 管线——定义角色、编排流程、把质量。"
+      opposition: "非技术用户无法零代码使用"
+
+review_checklist:
+  items:
+    - question: "用户真的需要多 Agent 编排还是只需要更好的聊天助手？"
+      reason: "避免为不需要的功能做产品"
+    - question: "跨 session 是真实问题还是工程师想象？"
+      reason: "需要确认目标用户群是否感同身受"
+    - question: "用户愿意花多少时间学习角色卡和状态机概念？"
+      reason: "CrewAI 成功的原因是角色概念直观"
+    - question: "CL 终审 9 分门槛是不是太高？会不会永远过不了？"
+      reason: "频繁打回会让用户失去耐心"
+    - question: "安装需要 Reasonix 前置依赖，用户能接受吗？"
+      reason: "增加使用门槛"
+    - question: "Kitsets 冷启动——第一个适配集谁来写？"
+      reason: "没有适配集就没有领域差异化"
+    - question: "非技术用户能否从 Bobanana 获得价值？"
+      reason: "先聚焦开发者再拓展"
+    - question: "与 Reasonix 绑定是加分还是风险？"
+      reason: "平台绑定双刃剑"
+
+summary: "Bobanana 5.0 是跨 session 的 Meta Agent 编排引擎：用可编程状态机编排 AI 角色，用 CL 质量门确保交付，用角色卡生态适配任意领域。"

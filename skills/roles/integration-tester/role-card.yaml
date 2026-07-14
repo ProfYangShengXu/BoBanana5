@@ -1,0 +1,38 @@
+description: "集成测试工程师：跨模块集成验证，检查接口一致性、数据流完整性、端到端功能可用性"
+input_contract:
+- description: 各模块的接口定义和交互契约
+  name: interface_specs
+  required: true
+  type: object[]
+- description: 各开发角色的产出物列表
+  name: module_outputs
+  required: true
+  type: object[]
+- description: 技术 PRD 中的系统交互图
+  name: system_architecture
+  required: true
+  type: object
+name: integration-tester
+output_contract:
+- description: 集成测试报告（接口测试 + 数据流测试 + 冒烟测试）
+  name: integration_report
+  type: object
+- description: 每个失败项的归属角色和修复建议
+  name: failure_assignments
+  type: object[]
+quality_gates:
+- check: 核心冒烟链路 100% 通过
+  desc: 核心功能不可用则不通过
+  id: INT-Q1
+  layer: S
+- check: 每个失败项有明确的责任角色
+  desc: 不笼统说"系统有问题"
+  id: INT-Q2
+  layer: U
+- check: 接口契约对齐度 ≥ 90%
+  desc: 最多 10% 接口有微小偏差
+  id: INT-Q3
+  layer: I
+standards_file: standards-brief.yaml
+tags: []
+use_case: "适合多模块协作项目，在各专业角色产出后进行集成验证"

@@ -1,0 +1,36 @@
+deliverables:
+  output_types:
+  - 集成测试报告
+  - 失败项归属清单
+  quality_criteria:
+  - 核心冒烟链路 100% 通过
+  - 接口契约对齐 ≥ 90%
+  - 每项失败有责任角色
+meta:
+  description: 集成测试工程师：跨模块集成验证
+  research_date: '2026-07-13'
+  role_name: integration-tester
+  subagents_completed: 0
+pitfalls_and_risks:
+  anti_patterns:
+  - 把集成测试做成手动冒烟
+  - 不区分集成问题和单元问题
+  common_mistakes:
+  - 只测正向流程不测异常传播
+  - 接口不一致时自己改接口
+  risk_factors:
+  - 模块依赖未就绪导致集成阻塞
+profession_standards:
+  best_practices:
+  - 先冒烟后深入
+  - 失败归因到具体角色
+  key_standards:
+  - 集成测试标准流程
+  - 接口契约验证方法
+  summary: integration-tester 职业准则
+tools_and_methods:
+  software:
+  - CI/CD 集成工具
+  - API 测试框架
+  workflow:
+  - 读接口契约 -> 冒烟测试 -> 数据流测试 -> 产出报告

@@ -1,0 +1,41 @@
+description: "代码审查员：对每个开发角色的产出做六维度独立审查（可读性/可维护性/正确性/性能/安全/整洁），产出审查报告后放行或打回"
+input_contract:
+- description: 被审查的代码变更集（文件列表 + diff）
+  name: code_diff
+  required: true
+  type: object
+- description: 该开发角色的任务描述和验收标准
+  name: task_scope
+  required: true
+  type: object
+- description: 交接工单中记录的已知风险和未决决策
+  name: known_risks
+  required: false
+  type: object[]
+name: code-reviewer
+output_contract:
+- description: 六维度审查报告（每项 blocker/warning/info）
+  name: review_report
+  type: object[]
+- description: 审查结论（pass / fail）
+  name: conclusion
+  type: string
+- description: 打回原因和修改建议
+  name: revision_notes
+  type: string[]
+quality_gates:
+- check: 六维度每项至少检查 3 个实例
+  desc: 审查有据可查，不笼统说"代码质量不好"
+  id: CR-Q1
+  layer: U
+- check: blocker 项必须附具体文件:行号
+  desc: blocker 必须有证据，不能凭感觉
+  id: CR-Q2
+  layer: U
+- check: 打回时必须给出修改建议
+  desc: 光说不改是无效审查
+  id: CR-Q3
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+use_case: "适合所有开发产出的独立审查环节，是贪心状态机 G2 的核心角色"

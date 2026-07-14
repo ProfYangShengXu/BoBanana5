@@ -1,0 +1,37 @@
+deliverables:
+  output_types:
+  - 文档完整性报告
+  - 补充文档
+  - 交付摘要
+  quality_criteria:
+  - 所有必填文档存在
+  - 文档间可交叉引用
+  - 有版本号和变更日期
+meta:
+  description: 技术文档工程师：交付前文档完整性检查和整理
+  research_date: '2026-07-13'
+  role_name: tech-writer
+  subagents_completed: 0
+pitfalls_and_risks:
+  anti_patterns:
+  - 写没人读的模板文档
+  - 替其他角色补产出
+  common_mistakes:
+  - 文档不更新代码
+  - 忽略变更日志
+  risk_factors:
+  - 文档和代码不同步
+profession_standards:
+  best_practices:
+  - 文档即代码
+  - 变更即更新
+  key_standards:
+  - 技术文档标准
+  - 交付物清单检查流程
+  summary: tech-writer 职业准则
+tools_and_methods:
+  software:
+  - Markdown 编辑器
+  - docs/ 目录管理
+  workflow:
+  - 盘 docs/ -> 检缺失 -> 补文档 -> 产出交付摘要

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bobanana 5.0 — 产品设计文档</title>
+<title>Bobanana 5.0 — 非技术产品设计文档</title>
 <style>
 :root {
   --primary: #1a1a2e;
@@ -28,7 +28,6 @@ body {
   color: var(--text);
   background: var(--bg-light);
 }
-/* Header */
 .header {
   background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
   color: #fff;
@@ -60,9 +59,7 @@ body {
   font-size: 0.8rem;
   margin-top: 0.8rem;
 }
-/* Layout */
 .wrapper { display: flex; max-width: 1280px; margin: 0 auto; min-height: 100vh; }
-/* Sidebar */
 .sidebar {
   width: 260px;
   flex-shrink: 0;
@@ -95,7 +92,6 @@ body {
 }
 .sidebar nav a:hover { background: var(--bg-light); color: var(--accent); }
 .sidebar nav a.section { font-weight: 600; margin-top: 0.6rem; }
-/* Main */
 .main { flex: 1; padding: 2.5rem 3rem; max-width: 900px; }
 .main h2 {
   font-size: 1.6rem;
@@ -126,7 +122,7 @@ body {
 .main .highlight-box.purple { border-left-color: var(--purple); }
 .main .highlight-box.teal { border-left-color: var(--teal); }
 .main .highlight-box.gold { border-left-color: var(--gold); }
-/* Tables */
+.main .highlight-box.warn { border-left-color: var(--warn); }
 table {
   width: 100%;
   border-collapse: collapse;
@@ -139,1218 +135,461 @@ th, td {
   text-align: left;
   vertical-align: top;
 }
-th {
-  background: var(--primary);
-  color: #fff;
-  font-weight: 600;
-}
+th { background: var(--primary); color: #fff; font-weight: 600; }
 tr:nth-child(even) td { background: #f5f5f5; }
-/* Details / collapsible */
 details {
   margin: 1rem 0;
   background: var(--bg-card);
-  border-radius: 8px;
   border: 1px solid var(--border);
-  overflow: hidden;
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
 }
-details summary {
-  padding: 0.8rem 1.2rem;
-  cursor: pointer;
-  font-weight: 600;
-  color: var(--primary);
-  background: #fafafa;
-  transition: background 0.15s;
-}
-details summary:hover { background: #f0f0f0; }
-details summary::-webkit-details-marker { color: var(--accent); }
-details .details-body { padding: 1rem 1.5rem; }
-
-/* Architecture diagram */
-.arch-diagram {
-  display: flex;
-  align-items: stretch;
-  gap: 1.5rem;
-  margin: 1.5rem 0;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.arch-layer {
-  flex: 1;
-  min-width: 220px;
-  max-width: 360px;
-  border-radius: 12px;
-  padding: 1.2rem;
-  text-align: center;
-}
-.arch-layer.core { background: linear-gradient(135deg, #1a1a2e, #16213e); color: #fff; }
-.arch-layer.kitset { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff; }
-.arch-layer.tools { background: linear-gradient(135deg, #0d9488, #0f766e); color: #fff; }
-.arch-layer h4 { margin: 0 0 0.3rem; color: inherit; font-size: 1rem; }
-.arch-layer p { font-size: 0.82rem; opacity: 0.85; margin: 0; }
-.arch-arrow {
-  display: flex;
-  align-items: center;
-  font-size: 2rem;
+details summary { cursor: pointer; font-weight: 600; color: var(--primary); }
+details[open] { padding-bottom: 1rem; }
+.emoji-lg { font-size: 2rem; }
+.quote {
+  background: var(--bg-card);
+  padding: 1rem 1.5rem;
+  border-left: 3px solid var(--teal);
+  margin: 1rem 0;
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
   color: var(--text-light);
 }
-
-/* Card grid */
-.role-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.8rem;
-  margin: 1rem 0;
+.tag-op { display:inline-block; background:#3b82f6; color:#fff; padding:0.1rem 0.5rem; border-radius:4px; font-size:0.8rem; font-weight:600; }
+.tag-cl { display:inline-block; background:#ef4444; color:#fff; padding:0.1rem 0.5rem; border-radius:4px; font-size:0.8rem; font-weight:600; }
+.tag-hr { display:inline-block; background:#10b981; color:#fff; padding:0.1rem 0.5rem; border-radius:4px; font-size:0.8rem; font-weight:600; }
+.emoji-row { display:flex; align-items:center; gap:0.5rem; margin:0.5rem 0; }
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { padding: 1.5rem 1rem; }
+  .header h1 { font-size: 1.6rem; }
 }
-.role-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.8rem 1rem;
-  transition: box-shadow 0.2s;
-}
-.role-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-.role-card h4 {
-  margin: 0 0 0.2rem;
-  color: var(--primary);
-  font-size: 0.9rem;
-}
-.role-card .tag {
-  display: inline-block;
-  font-size: 0.7rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 10px;
-  margin-bottom: 0.3rem;
-  font-weight: 600;
-}
-.tag.eng { background: #dbeafe; color: #1e40af; }
-.tag.design { background: #fef3c7; color: #92400e; }
-.tag.art { background: #fce7f3; color: #9d174d; }
-.tag.qa { background: #d1fae5; color: #065f46; }
-.tag.ops { background: #e0e7ff; color: #3730a3; }
-.role-card p { font-size: 0.82rem; color: var(--text-light); margin: 0; }
-.tag.op {
-  display: inline-block;
-  font-size: 0.65rem;
-  padding: 0.12rem 0.4rem;
-  border-radius: 10px;
-  margin-left: 0.3rem;
-  font-weight: 700;
-  background: #fef3c7;
-  color: #92400e;
-  border: 1px solid #f59e0b;
-  vertical-align: middle;
-}
-/* op explanation box */
-.op-box {
-  background: linear-gradient(135deg, #fffbeb, #fef3c7);
-  border: 1px solid #f59e0b;
-  border-radius: 8px;
-  padding: 1.2rem 1.5rem;
-  margin: 1rem 0;
-}
-.op-box h4 { color: #92400e; margin: 0 0 0.5rem; }
-.op-box ul { margin: 0; padding-left: 1.2rem; }
-.op-box li { font-size: 0.9rem; margin-bottom: 0.3rem; }
-/* SWOT */
-.swot-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  margin: 1rem 0;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-.swot-cell { padding: 1rem 1.2rem; }
-.swot-cell h4 { margin: 0 0 0.5rem; font-size: 0.95rem; }
-.swot-cell ul { margin: 0; padding-left: 1.2rem; }
-.swot-cell li { font-size: 0.9rem; margin-bottom: 0.3rem; }
-.swot-s { background: #d1fae5; }
-.swot-w { background: #fee2e2; }
-.swot-o { background: #dbeafe; }
-.swot-t { background: #fef3c7; }
-/* Tag badges for OP / CL */
-.tag-op {
-  display: inline-block;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: #fff;
-  padding: 0.1rem 0.6rem;
-  border-radius: 10px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  margin-right: 0.3rem;
-  vertical-align: middle;
-}
-.tag-cl {
-  display: inline-block;
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
-  color: #fff;
-  padding: 0.1rem 0.6rem;
-  border-radius: 10px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  margin-right: 0.3rem;
-  vertical-align: middle;
-}
-.tag-hr {
-  display: inline-block;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: #fff;
-  padding: 0.1rem 0.6rem;
-  border-radius: 10px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  margin-right: 0.3rem;
-  vertical-align: middle;
-}
-.tag-meta {
-  display: inline-block;
-  background: linear-gradient(135deg, #7c3aed, #6d28d9);
-  color: #fff;
-  padding: 0.1rem 0.6rem;
-  border-radius: 10px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  margin-right: 0.3rem;
-  vertical-align: middle;
-}
-/* OP explanation box */
-.op-box {
-  background: linear-gradient(135deg, #fffbeb, #fef3c7);
-  border: 1px solid #f59e0b;
-  border-radius: 8px;
-  padding: 1.2rem 1.5rem;
-  margin: 1rem 0;
-}
-.op-box h4 { color: #92400e; margin: 0 0 0.5rem; }
-.op-box ul { margin: 0; padding-left: 1.2rem; }
-.op-box li { font-size: 0.9rem; margin-bottom: 0.3rem; }
-/* CL explanation box */
-.cl-box {
-  background: linear-gradient(135deg, #fef2f2, #fee2e2);
-  border: 1px solid #dc2626;
-  border-radius: 8px;
-  padding: 1.2rem 1.5rem;
-  margin: 1rem 0;
-}
-.cl-box h4 { color: #991b1b; margin: 0 0 0.5rem; }
-.cl-box ul { margin: 0; padding-left: 1.2rem; }
-.cl-box li { font-size: 0.9rem; margin-bottom: 0.3rem; }
-/* Flow diagram in text */
-.flow-mermaid {
-  background: #1e1e2e;
-  color: #cdd6f4;
-  border-radius: 8px;
-  padding: 1rem 1.5rem;
-  margin: 1rem 0;
-  font-family: "Fira Code", "Cascadia Code", Consolas, monospace;
-  font-size: 0.85rem;
-  overflow-x: auto;
-  white-space: pre;
-  line-height: 1.5;
-}
-.flow-mermaid .highlight-op { color: #f5a623; font-weight: 700; }
-.flow-mermaid .highlight-cl { color: #ef4444; font-weight: 700; }
-.flow-mermaid .highlight-tech { color: #89b4fa; }
-.flow-mermaid .highlight-pass { color: #a6e3a1; }
-.flow-mermaid .highlight-fail { color: #f38ba8; }
-/* Research mechanism box */
-.research-box {
-  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-  border: 1px solid #22c55e;
-  border-radius: 8px;
-  padding: 1.2rem 1.5rem;
-  margin: 1rem 0;
-}
-.research-box h4 { color: #166534; margin: 0 0 0.5rem; }
-.research-box ul { margin: 0.3rem 0; padding-left: 1.2rem; }
-.research-box li { font-size: 0.9rem; margin-bottom: 0.3rem; }
-.research-ref {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 0.6rem 1rem;
-  margin: 0.5rem 0;
-  font-size: 0.88rem;
-}
-.research-ref code { background: #eef2ff; }
-.research-ref strong { color: var(--primary); }
-/* Kitset table */
-.kitset-table td:first-child { font-weight: 600; white-space: nowrap; }
-/* Print */
 @media print {
   .sidebar { display: none; }
-  .wrapper { display: block; }
-  .main { max-width: 100%; padding: 1rem; }
-  details[open] summary { background: #f0f0f0; }
-  .arch-diagram { page-break-inside: avoid; }
-  .header { padding: 1.5rem; }
-  .role-grid { grid-template-columns: 1fr 1fr; }
-  .swot-grid { page-break-inside: avoid; }
-}
-/* Mobile */
-@media (max-width: 768px) {
-  .wrapper { flex-direction: column; }
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: static;
-    padding: 1rem;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-  .sidebar nav a { display: inline-block; margin-right: 0.3rem; }
-  .main { padding: 1.5rem 1rem; }
-  .role-grid { grid-template-columns: 1fr; }
-  .swot-grid { grid-template-columns: 1fr; }
-  .arch-diagram { flex-direction: column; align-items: stretch; }
-  .arch-arrow { transform: rotate(90deg); }
-  .header h1 { font-size: 1.6rem; }
+  details[open] { padding-bottom: 0; }
+  details summary { list-style: none; }
 }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>🧠 Bobanana 5.0</h1>
-  <div class="subtitle">Meta Agent 编排层 — 领域无关的可编程状态机 + 可插拔角色卡系统</div>
+  <h1>🍌 Bobanana 5.0</h1>
+  <div class="subtitle">Meta Agent 跨 session 长编排引擎 · 可编程状态机 + 可插拔 skill 角色卡系统</div>
   <div class="meta">
-    生成时间: <span id="gen-time"></span> &nbsp;|&nbsp; 版本: v0.5-cl-final &nbsp;|&nbsp; 状态: CL最终出口
+    生成时间: <span id="gen-time">2026-07-13</span> &nbsp;|&nbsp; 版本: v5.0-nontech-prd &nbsp;|&nbsp; 数据来源: 8 个
   </div>
-  <span class="badge">⚙️ 核心编排层 · 领域无关</span>
+  <span class="badge">📄 非技术产品文档</span>
 </div>
 
 <div class="wrapper">
-
 <aside class="sidebar">
   <h3>📑 目录</h3>
   <nav>
-    <a href="#bg" class="section">1. 背景与目标</a>
-    <a href="#architecture">1.2 三层架构</a>
-    <a href="#roletags">1.3 角色标签体系</a>
-    <a href="#flow">1.4 完整管线流程</a>
-    <a href="#research">1.5 HR 招聘技能与角色卡创建</a>
-    <a href="#gui">1.6 桌面 GUI：基于 EUI-NEO</a>
-    <a href="#metrics">2. 数据指标</a>
-    <a href="#personas" class="section">3. 用户画像</a>
-    <a href="#mvp" class="section">4. MVP 定义</a>
-    <a href="#b2b2c">5. 2B / 2C 分析</a>
-    <a href="#competition" class="section">6. 竞争分析</a>
-    <a href="#swot">6.2 SWOT</a>
-    <a href="#philosophy">7. 设计理念</a>
-    <a href="#risks">8. 风险</a>
-    <a href="#kitsets" class="section">附录: Adaption Kitsets</a>
+    <a href="#interview" class="section">1. 用户访谈提纲</a>
+    <a href="#value-prop">2. 价值主张画布</a>
+    <a href="#hypothesis">3. 假设验证卡片</a>
+    <a href="#journey">4. 用户旅程地图</a>
+    <a href="#rice">5. RICE 优先级矩阵</a>
+    <a href="#competitive-ux">6. 竞品体验对比</a>
+    <a href="#positioning">7. 一句话定位卡片</a>
+    <a href="#review-checklist">8. 需求评审清单</a>
+    <a href="#summary">9. 一句话总结</a>
+    <a href="#sources" class="section">📎 数据来源</a>
   </nav>
 </aside>
 
 <main class="main">
 
 <!-- ==================== 1 ==================== -->
-<h2 id="bg">1. 背景与目标</h2>
+<h2 id="interview">1. 用户访谈提纲</h2>
 
-<h3>现实问题</h3>
-<p>
-当前 AI 编程管线（包括 bobanana4.0 在内）都遵循一个本质假设：<strong>角色和流程是固定的</strong>。架构→开发→测试→评审，线性推进，状态机写死在 Go 代码里。这带来了几个根本局限：
-</p>
+<h3>目标用户</h3>
+<p>Bobanana 5.0 的三类核心用户：</p>
 <ul>
-  <li><strong>管线"硬编码"了领域知识</strong>：bobanana4.0 的 6 个角色（架构/开发/测试/评判/挑刺）绑定了"写代码"这个场景。换到游戏开发、数据分析、嵌入式等方向，同一个管线跑不通。</li>
-  <li><strong>状态机不可编程</strong>：角色转换逻辑写在 cycle-bridge 的 Go 代码中。想改一条转换规则就得改 Go → 编译 → 部署。非技术人员无法自定义工作流。</li>
-  <li><strong>角色与实现耦合</strong>：每个角色的行为逻辑和"角色定义"写在一起。没法在一个项目中定义"战斗策划"角色，在另一个项目中定义"数据科学家"角色，再统一接入同一个编排引擎。</li>
-  <li><strong>跨 session 交接有损</strong>：虽然用 [GOAL]/[STATE]/[NEXT] 模板传递上下文，但缺乏标准化的"接口契约"——接收方不知道上一个角色到底产出了什么、留下了什么未决决策。</li>
+  <li><strong>AI 开发者 / 技术 Lead</strong> — 使用 AI 辅助开发，需要多 Agent 协作和长任务编排。痛点：现有工具体验分裂（聊天、代码、文档各开一个窗口），跨 session 上下文丢失。</li>
+  <li><strong>产品 / 项目经理</strong> — 用 AI 做需求分析、文档生成。痛点：AI 产出质量不稳定，缺乏标准化质量门。</li>
+  <li><strong>领域专家（非技术）</strong> — 游戏策划、数据分析师等，想让 AI 按行业标准干活。痛点：不知道怎么写提示词，行业知识无法融入 AI 工作流。</li>
 </ul>
 
-<h3>一句话定位</h3>
-<p class="highlight-box purple">
-<strong>Bobanana 5.0 — AI Agent 编排引擎。</strong><br>
-领域无关的可编程状态机 + 可插拔角色卡系统。它不关心你写的是什么领域的代码、游戏还是文档——你只需要提供<strong>角色卡</strong>（定义每个角色做什么、输入输出）和<strong>状态机配置</strong>（定义角色间的流转规则），Bobanana 5.0 负责编排 Agent 在角色间流转、维护上下文、保证质量门。
-</p>
+<h3>招募条件</h3>
+<ul>
+  <li>过去 3 个月内使用过至少一种 AI 编程工具（Cursor / Windsurf / Claude Code / Reasonix）</li>
+  <li>有至少一次"AI 做了但不可用/需要大量返工"的经历</li>
+  <li>每周使用 AI 工具 ≥ 3 次</li>
+</ul>
 
-<h3>三层架构</h3>
-
-<div class="arch-diagram">
-  <div class="arch-layer" style="background: linear-gradient(135deg, #059669, #047857);">
-    <h4>🖥️ EUI-NEO 桌面端</h4>
-    <p>C++17 GPU 加速 UI<br>状态机图 · 编排工作台<br>角色卡浏览器 · 仪表盘<br>通过 Reasonix MCP 通信</p>
-  </div>
-  <div class="arch-arrow">↕ MCP/JSON-RPC</div>
-  <div class="arch-layer core">
-    <h4>🧠 Bobanana 5.0 核心</h4>
-    <p>Meta Agent 编排层<br>领域无关 · 可编程状态机<br>角色卡注册表 · 交接工单<br>质量门引擎</p>
-  </div>
-  <div class="arch-arrow">→</div>
-  <div class="arch-layer kitset">
-    <h4>📦 Adaption Kitsets</h4>
-    <p>领域专用适配集<br>Godot 游戏开发<br>Web 全栈开发<br>数据科学 · 嵌入式 · ...</p>
-  </div>
-  <div class="arch-arrow">→</div>
-  <div class="arch-layer tools">
-    <h4>🔧 外部工具生态</h4>
-    <p>Godot 引擎插件<br>框架 CLI · SDK<br>社区工具 · API</p>
-  </div>
-</div>
-
-<p>Bobanana 5.0 本身<strong>不包含任何领域知识</strong>。领域知识（角色定义、工具调用、质检标准）全部由外部的 <strong>Adaption Kitsets</strong> 提供。核心编排层只做一件事：<strong>按状态机定义调度 Agent 角色，维护上下文一致性，确保质量门通过。</strong></p>
-
-<div class="highlight-box teal">
-  <strong>🧩 类比：</strong>Bobanana 5.0 核心 = 操作系统内核（调度+IPC+内存管理）；Adaption Kitsets = 驱动程序（显卡/网卡/硬盘各自独立）；外部工具 = 硬件设备。更换适配集 = 更换驱动，内核不用改。
-</div>
-
-<h3>现存方案痛点</h3>
+<h3>访谈问题（10 题）</h3>
 <ol>
-  <li><strong>角色与领域耦合</strong>：bobanana4.0 的 6 角色管线绑定了软件开发领域，无法直接用于游戏开发、数据分析等方向。</li>
-  <li><strong>状态机硬编码</strong>：角色转换逻辑写在 Go 代码（cycle-bridge）中，修改需要重新编译，非技术人员无法自定义。</li>
-  <li><strong>缺乏角色卡抽象</strong>：角色的行为、输入输出、质量门没有标准化的声明式定义格式。</li>
-  <li><strong>跨 session 上下文丢失</strong>：虽然用 [STATE]/[NEXT] 模板传递，但缺乏结构化的"接口契约"。交接时经常信息丢失。</li>
-  <li><strong>"管线"是一等公民，但"角色网络"不是</strong>：当前系统假设 A→B→C 线性推进。真实协作是网络化的（并行、分支、反馈循环）。</li>
+  <li><strong>你目前在用什么 AI 工具辅助开发/工作？每天用多久？</strong>（开放题，了解使用习惯）</li>
+  <li><strong>描述一次 AI 帮你完成复杂任务的经历。你觉得那次为什么成功/失败？</strong>（行为题，找成功因子）</li>
+  <li><strong>AI 输出代码/文档后，你一般花多少时间检查和修改？</strong>（量化，找质量门需求）</li>
+  <li><strong>有没有遇到过 AI "做了一半丢了/前后不一致"的情况？当时怎么处理的？</strong>（跨 session 痛点）</li>
+  <li><strong>如果 AI 可以有自己的"角色"（设计师/测试/安全审计），你最想要什么角色？</strong>（角色需求）</li>
+  <li><strong>你愿意让 AI 自动推进一个 3 小时以上的长任务链吗？你担心什么？</strong>（长编排安全感）</li>
+  <li><strong>你对 AI 产出质量的最低要求是什么？（1-10 分，几分以上算可用？）</strong>（CL 阈值参考）</li>
+  <li><strong>有没有你希望 AI 做但当前工具做不到的事情？</strong>（空白机会）</li>
+  <li><strong>你愿意为"AI 团队协作"类工具付费吗？每月多少？</strong>（定价验证）</li>
+  <li><strong>还有什么想说的？</strong>（开放结尾）</li>
 </ol>
 
-<!-- ==================== ARCHITECTURE DEEP DIVE ==================== -->
-<h2 id="architecture">1.2 三层架构详解</h2>
-
-<h3>Layer 1: 核心编排层（Bobanana 5.0 本体）</h3>
-<p>这是一个<strong>领域无关</strong>的引擎，核心能力只有三条：</p>
+<h3>追问条件</h3>
 <ul>
-  <li><strong>状态机引擎</strong> — 读取 YAML 定义的状态机配置（节点=角色、边=转换规则、条件=分支逻辑），驱动 Agent 在角色间流转。支持串行/并行/分支/循环。</li>
-  <li><strong>角色卡注册表</strong> — 角色卡的"元数据"描述库。每张角色卡描述了一个角色能做什么、需要什么输入、产出什么、受什么质量门约束。编排层不执行角色卡逻辑，只负责在合适的时间把合适的 Agent 送入合适的角色。</li>
-  <li><strong>交接工单系统</strong> — 标准化的上下文传递机制。角色 A 完成时生成工单（产出物列表 + 未决决策 + 风险标注），角色 B 启动时读取工单。工单是版本化的、可审计的。</li>
+  <li>Q1/Q2 回答模糊时追问："能具体说说是哪个项目/哪个场景吗？"</li>
+  <li>Q4 答"遇到过"时追问："你丢了什么信息？丢了之后怎么找回的？"</li>
+  <li>Q6 答"担心"时追问："担心的是技术不稳定，还是结果不可控，还是别的？"</li>
+  <li>Q9 答"不付费"或"不确定"时追问："什么条件下你可能会考虑付费？"</li>
 </ul>
 
-<h3>Layer 2: Adaption Kitsets（外部项目）</h3>
-<p>每个适配集是一个<strong>独立的 Git 仓库</strong>，包含：</p>
-<ul>
-  <li><strong>角色卡文件</strong> — 本领域特有的角色定义（如"战斗策划"、"技术美术"），YAML + Markdown 格式</li>
-  <li><strong>工具实现</strong> — Agent 在该领域干活时调用的 CLI/MCP/脚本工具</li>
-  <li><strong>预设状态机模板</strong> — 针对该领域推荐的管线拓扑（如游戏开发可能走 8 角色网络，Web 开发走 4 角色串行）</li>
-  <li><strong>质量门规则</strong> — 领域特定的验收标准</li>
-  <li><strong>文档和模板</strong> — 快速上手、最佳实践</li>
-</ul>
-
-<div class="highlight-box">
-  <strong>规划中的例子：</strong><code>Godot-adaption-kitset</code> — 设计为独立适配集仓库（当前路径不存在），相关 Skill 代码已在本代码库中<br>
-  包含 4 个 Reasonix skill（godot-dev / godot-test / godot-debug / godot-docs）、11 个 TypeScript 工具模块、Godox Godot 插件、3 个游戏模板、4 层测试体系。完整实现了从"用户说一个游戏创意"到"可运行的 Godot 游戏"的 AI 全流程。现有代码需重构为标准角色卡格式放入独立适配集仓库。
-</div>
-
-<!-- ==================== 1.3 ==================== -->
-<h2 id="roletags">1.3 角色标签体系</h2>
-
-<p>为了让管线从“固定流水线”升级为“网络化协作”，Bobanana 5.0 引入了一个关键抽象：<strong>角色标签</strong>。每张角色卡可以被打上一个或多个标签，标签决定了这个角色在管线中的“层级”——它是更改管线本身的（OP），还是终极审查者（CL），还是普通的技术执行角色。</p>
-
-<div class="op-box">
-  <h4><span class="tag-op">OP</span> Orchestration — 编排者标签</h4>
-  <p><strong>受用角色：</strong>架构师、技术经理、Project Lead、技术总监</p>
-  <p><strong>行为：</strong>OP 角色不仅产出领域交付物（架构文档、任务拆解），还担当<strong>管线的“编排者”</strong>。它需要：</p>
-  <ul>
-    <li><strong>读取当前项目中所有可用的角色卡及其简介</strong>（来自适配集 skills/roles/ 目录）</li>
-    <li><strong>选择一个 OP 或 CL 标签的角色卡作为出口</strong>（终审角色）</li>
-    <li><strong>选择若干个普通角色卡作为状态机节点</strong>（执行角色）</li>
-    <li><strong>动态编写或更新 state-machine.yaml</strong>，将入口→节点→出口连接成完整管线拓扑</li>
-    <li><strong>如遍历角色卡后发现缺少所需角色，触发紧急招聘</strong>：OP 在 state-machine.yaml 中插入 HR 作为临时节点，OP→HR→OP 流程由引擎自动编排，HR 完成后 OP 恢复编排</li>
-  </ul>
-  <p><strong>缺口检测规则：</strong>OP 遍历角色卡库时，若发现管线需要某类角色（如“需要一名数值策划”但库中没有对应角色卡），OP 不跳过也不妥协——而是触发紧急招聘，调用 HR 角色卡创建所需角色，待 HR 完成并注册新角色卡后，OP 继续编排。</p>
-  <p><strong>核心理念：</strong>管线不是固定的——它是由 OP 角色根据项目实际情况“编程”出来的。不同项目阶段、不同产品类型可以有完全不同的管线结构。</p>
-</div>
-
-<div class="cl-box">
-  <h4><span class="tag-cl">CL</span> Client Gate — 甲方终审标签</h4>
-  <p><strong>受用角色：</strong>用户/甲方代表、业务方审核员、产品总监</p>
-  <p><strong>行为：</strong>CL 是整个管线的<strong>唯一终结出口</strong>。它在所有技术性角色（架构、开发、测试、评判、挑刺——即使它们中有 OP 标签）完成后执行，作为最后一道关卡。</p>
-  <ul>
-    <li>必须<strong>启动一个新的、完全隔离的 subagent</strong>（新的 agent 实例，不带任何 pipeline 历史上下文），以确保审查的客观性和公正性</li>
-    <li>对整个项目代码进行<strong>严肃的全面审查</strong>，从 1 到 10 打分</li>
-    <li>如果分数 <strong>&lt; 9 分</strong>：将审查报告和分数一并打回给最近的 OP 角色（通常是架构师），由 OP 重新安排修复</li>
-    <li>如果分数 <strong>≥ 9 分</strong>：调用 <code>signal_done</code>，管线正式结束</li>
-  </ul>
-  <p><strong>核心理念：</strong>技术性评估（测试、评判、挑刺）和“业务方接受”是两回事。CL 角色睛主方视角看待整个产出物，而不只看技术合格不合格。</p>
-</div>
-
-<h3>标签组合示例</h3>
-<p>一个角色可以同时拥有多个标签，也可以没有特殊标签。例如：</p>
+<h3>总结模板</h3>
 <table>
-  <tr><th>角色</th><th>标签</th><th>说明</th></tr>
-  <tr><td>架构师</td><td><span class="tag-op">OP</span></td><td>可以配置管线状态机</td></tr>
-  <tr><td>技术经理</td><td><span class="tag-op">OP</span></td><td>可以更新任务列表和状态机</td></tr>
-  <tr><td>开发 / 测试 / 评判 / 挑刺</td><td>—</td><td>牾纯技术执行角色，不参与管线编排</td></tr>
-  <tr><td>甲方代表</td><td><span class="tag-cl">CL</span></td><td>唯一终审出口</td></tr>
-  <tr><td>HR 招聘专员</td><td><span class="tag-hr">HR</span></td><td>仅由 OP 触发，紧急招聘新角色</td></tr>
+  <tr><th>维度</th><th>访谈发现</th><th>严重程度</th></tr>
+  <tr><td>跨 session 丢失</td><td></td><td></td></tr>
+  <tr><td>质量不可控</td><td></td><td></td></tr>
+  <tr><td>角色不够</td><td></td><td></td></tr>
+  <tr><td>长任务安全感</td><td></td><td></td></tr>
+  <tr><td>付费意愿</td><td></td><td></td></tr>
 </table>
-
-<div class="research-box">
-  <h4><span class="tag-hr">HR</span> HR 招聘专员标签</h4>
-  <p><strong>受用角色：</strong>HR 招聘专员（一张特殊的角色卡，代表 HR Skill 本身）</p>
-  <p><strong>约束：</strong></p>
-  <ul>
-    <li><strong>HR 标签角色不被 OP 选作出口或普通节点</strong>——它是一张“服务角色卡”，只响应 OP 的紧急招聘请求</li>
-    <li><strong>HR 不被用户或其他角色直接调用</strong>——唯一的入口是 OP 在遍历角色卡库发现缺口时触发的紧急招聘</li>
-    <li><strong>HR 执行完毕后控制权回到 OP</strong>，OP 读取新注册的角色卡再继续编排</li>
-  </ul>
-</div>
-
-<!-- ==================== 1.4 ==================== -->
-<h2 id="flow">1.4 完整管线流程</h2>
-
-<p>结合 OP 和 CL 标签，一个完整的 Bobanana 5.0 管线流程可以表示为：</p>
-
-<div class="flow-mermaid">
-┌───────────────────────────────────────────────────┐
-│  <span class="highlight-op">[OP] 架构师</span>                           │
-│  • 读取项目目标 + 当前状态              │
-│  • 产出技术 PRD + 任务拆解            │
-│  <span class="highlight-op">• 动态编写 state-machine.yaml</span>         │
-│  • 设置下一个 OP 角色或终审出口          │
-└───────┬─────────────────────────────┘
-       │
-       │ 管线按 OP 定义的状态机执行
-       │
-┌────────┬───────────────────────────┐
-│  <span class="highlight-tech">技术性角色链</span>                      │
-│  开发 → 测试(U/I/S/A) → 评判 → 挑刺    │
-│  • 每个角色完成时 queue_next_prompt       │
-│  • 有 badcase 则 feedback 回开发         │
-└───────┬────────────────────────────┘
-       │
-       │ 技术链全部 PASS
-       │
-┌────────┬───────────────────────────────────┐
-│  <span class="highlight-cl">[CL] 甲方终审</span>                        │
-│  <span class="highlight-cl">• 新的隔离 subagent 审查</span>          │
-│  <span class="highlight-cl">• 全项目代码打分 1-10</span>            │
-│  ──────────────────────────       │
-│  分支：                                │
-│    <span class="highlight-fail">分数 &lt; 9</span>  → 打回给 [OP] 架构师   │
-│    <span class="highlight-pass">分数 ≥ 9</span>  → signal_done ✔️    │
-└────────────────────────────────────────┘
-</div>
-
-<p><strong>关键规则：</strong></p>
-<ul>
-  <li><strong>CL 是唯一出口</strong>。即使技术链全部 PASS，管线也不会自动结束——必须等 CL 审查通过。这保证了“技术合格”和“业务接受”之间的隔离。</li>
-  <li><strong>OP 可以叠加</strong>。一个复杂项目可能有多层 OP：项目级架构师设置第一层状态机，子模块的技术经理再细化。但 CL 始终只有一个。</li>
-  <li><strong>打回链</strong>。CL 打回时不是打回给最后一个技术角色，而是打回给最近的 OP 角色，由 OP 判断是直接找开发修还是重新规划管线。</li>
-</ul>
-
-<!-- ==================== 1.5 ==================== -->
-<h2 id="research">1.5 HR 招聘技能与角色卡创建</h2>
-
-<p>角色卡不是凭空产生的——它们需要被<strong>"招聘"</strong>出来。Bobanana 5.0 引入一个专门的 <strong>HR Skill</strong>（招聘技能），职责是在创建角色卡时对一个职业进行深度研究，产出标准化的角色卡文件并使其立即可在当前管线中使用。</p>
-
-<div class="research-box">
-  <h4> HR Skill 招聘流程</h4>
-  <p>当管线需要一个新的角色时，用户或 OP 角色调用 HR Skill，传入角色名称和简要描述。HR Skill 自动执行：</p>
-  <ul>
-    <li><strong>第 1 步 派 4 个并行 subagent 做职业研究</strong>：
-    <ul>
-      <li>Subagent A 工作准则（Standards）：行业标准、最佳实践、常见规范</li>
-      <li>Subagent B 工作内容（Deliverables）：交付物类型、质量标准、产出格式</li>
-      <li>Subagent C 工具与方法（Tools & Methods）：常用软件、框架、工作流程</li>
-      <li>Subagent D 常见坑与风险（Pitfalls）：易犯错误、重工诱因、反模式</li>
-    </ul></li>
-    <li><strong>第 2 步 合并研究结果为职业准则简报</strong></li>
-    <li><strong>第 3 步 生成标准角色卡</strong>：输出 role-card.yaml + SKILL.md</li>
-    <li><strong>第 4 步 注册到当前管线</strong>：角色卡立即生效，OP 角色可在下一次状态机编排中引用它</li>
-  </ul>
-</div>
-
-<h3>HR Skill 与现有的准则文件</h3>
-<p>Bobanana 4.0 已有两个可视为预置职业准则文件的例子。HR Skill 可以跳过研究步骤直接引用它们：</p>
-
-<div class="research-ref">
-  <strong> 例子 A：docs skill / 产品经理角色</strong><br>
-  定义了产品经理的工作方法：不写代码、只回答 WHAT/WHY、输出 HTML+YAML 双件。
-</div>
-
-<div class="research-ref">
-  <strong> 例子 B：Bobanana.md / 架构师与开发角色</strong><br>
-  定义了 9 条架构原则、禁止面向结果编程、不重构没问题代码。
-</div>
-
-<h3>关键设计原则</h3>
-<ul>
-  <li><strong>研究发生在招聘时，不发生在上班时</strong>——职业研究是一次性的成本，在创建角色卡时完成。角色卡创建后每次被唤起时直接使用卡中准则，不再重复研究。</li>
-  <li><strong>角色卡立即可用</strong>——写入 skills/roles/ 后，状态机引擎立刻能发现它。</li>
-  <li><strong>预置准则 = 省成本</strong>——适配集作者可预置准则文件，HR Skill 直接引用、不启动 subagent。</li>
-</ul>
-
-<div class="flow-mermaid">
-HR Skill 被调用 (角色名 + 简述)
-   |
-   派出 4 个并行 subagent 做职业研究
-   +---------+---------+---------+---------+
-   | 工作准则 | 工作内容 | 工具方法 | 常见坑  |
-   +---------+---------+---------+---------+
-   |
-   合并为职业准则简报
-   |
-   生成标准角色卡 (YAML + Markdown)
-   |
-   写入 skills/roles/&lt;角色名&gt;/
-   |
-   OP 角色在下轮读取可用角色卡
-   | 读简介 + 选出口(OP/CL) + 选节点 + 写状态机
-   v
-</div>
-
-<h3>HR 角色卡与紧急招聘流程</h3>
-
-<p>HR Skill 本身也是一张<strong>标准角色卡</strong>，拥有自己的 role-card.yaml 和 SKILL.md，可在角色卡注册表中被 OP 发现。但它与其他角色卡有本质不同：</p>
-
-<div class="op-box" style="border-left-color: #22c55e;">
-  <h4> 紧急招聘流程：OP &rarr; HR &rarr; OP</h4>
-  <ul>
-    <li><strong>第 1 步 OP 遍历角色卡库发现缺口</strong>：架构师/技术经理读取所有角色卡后，发现某环节无对应角色。不跳过也不妥协。</li>
-    <li><strong>第 2 步 OP 触发紧急招聘</strong>：在 state-machine.yaml 中插入 HR 临时节点，传递角色名称和描述。</li>
-    <li><strong>第 3 步 HR 执行招聘</strong>：引擎流转 HR，派出 4 subagent 研究 &rarr; 生成角色卡 &rarr; 写入库。</li>
-    <li><strong>第 4 步 控制权回 OP</strong>：引擎流转回 OP，OP 重新读库（新卡已就位），继续编排。</li>
-  </ul>
-  <p><strong>约束：</strong>HR 角色卡不被任何角色直接调用。唯一入口是 OP 遍历缺口时触发的紧急招聘。</p>
-</div>
-
-<div class="flow-mermaid">
-OP 遍历角色卡库
-   |
-   发现缺口 (缺少某类角色卡)
-   |
-   OP 在状态机中插入 HR 临时节点
-   |
-   引擎流转到 HR 角色
-   |
-   HR 派出 4 subagent 做职业研究
-   |
-   生成标准角色卡 + 写入 skills/roles/
-   |
-   引擎流转回 OP
-   |
-   OP 重新读取角色卡库 (新卡已就位)
-   |
-   OP 继续编排完整状态机
-   v
-</div>
-
-<!-- ==================== 1.6 ==================== -->
-<h2 id="gui">1.6 桌面 GUI：基于 EUI-NEO</h2>
-
-<p>Bobanana 5.0 的桌面端推荐使用 <strong>EUI-NEO</strong>（<a href="https://github.com/sudoevolve/EUI-NEO">github.com/sudoevolve/EUI-NEO</a>）——一个跨平台、高性能、低开销的 C++17 GPU 加速 UI 框架，Apache 2.0 开源许可。</p>
-
-<h3>为什么选择 EUI-NEO</h3>
-
-<table>
-  <tr><th>维度</th><th>EUI-NEO</th><th>Electron</th><th>Tauri</th><th>Wails（当前）</th></tr>
-  <tr><td>引擎</td><td>C++17 原生 GPU</td><td>Chromium + Node.js</td><td>系统 WebView + Rust</td><td>系统 WebView + Go</td></tr>
-  <tr><td>二进制大小</td><td>极小（MB）</td><td>巨大（100+ MB）</td><td>小（几 MB）</td><td>小（几 MB）</td></tr>
-  <tr><td>内存占用</td><td>极低</td><td>高</td><td>低</td><td>低</td></tr>
-  <tr><td>GPU 渲染</td><td>原生 OpenGL/Vulkan</td><td>Skia/ANGLE</td><td>通过 WebView</td><td>通过 WebView</td></tr>
-  <tr><td>许可</td><td>Apache 2.0</td><td>MIT + BSD</td><td>MIT + Apache 2.0</td><td>MIT</td></tr>
-</table>
-
-<p>核心理由：Bobanana 5.0 的核心交互是状态机图——节点拖拽、边连线、实时高亮。EUI-NEO 的 C++17 DSL + OpenGL/Vulkan 在渲染性能和二进制体积上远优于基于 WebView 的方案。</p>
-
-<h3>通信架构：EUI-NEO 与 Reasonix</h3>
-
-<div class="arch-diagram">
-  <div class="arch-layer" style="background: linear-gradient(135deg, #059669, #047857); min-width: 220px;">
-    <h4> EUI-NEO 桌面端</h4>
-    <p>C++17 GPU UI<br>状态机图 / 编排工作台<br>角色卡浏览器 / 仪表盘</p>
-  </div>
-  <div class="arch-arrow" style="font-size: 1rem;">MCP / JSON-RPC over stdio</div>
-  <div class="arch-layer core" style="min-width: 220px;">
-    <h4> reasonix.exe</h4>
-    <p>Go 编排引擎<br>cycle-bridge / skill 注册表<br>handoff 管理 / 文件系统</p>
-  </div>
-</div>
-
-<p>两个进程独立运行，通过 Reasonix MCP 协议（JSON-RPC 2.0 over stdio）通信。EUI-NEO 作为前端发起请求：</p>
-
-<div class="op-box" style="border-left-color: #059669;">
-  <h4> MCP Hook 清单</h4>
-  <ul>
-    <li><code>get_state_machine</code> / <code>get_role_cards</code> / <code>queue_next_prompt</code></li>
-    <li><code>signal_done</code> / <code>get_pipeline_status</code> / <code>get_handoff_tickets</code></li>
-    <li><code>trigger_hr_recruit</code> / <code>get_cl_report</code> / <code>run_skill</code></li>
-    <li><code>read_file</code> / <code>write_file</code> / <code>grep</code> / <code>glob</code>（文件系统操作）</li>
-  </ul>
-</div>
-
-<h3>GUI 核心视图</h3>
-
-<table>
-  <tr><th>视图</th><th>描述</th><th>EUI-NEO 渲染</th></tr>
-  <tr><td>状态机图</td><td>节点=角色卡（emoji+标签色环），边=转换条件，当前角色脉冲高亮</td><td>Polygon + Rect + 自定义连线 GPU</td></tr>
-  <tr><td>OP 编排工作台</td><td>左=角色卡库（可拖拽），中=画布，右=属性面板</td><td>ScrollView + DragSource + Canvas</td></tr>
-  <tr><td>角色卡浏览器</td><td>所有角色卡按标签分组，点击展开详情（契约/质量门）</td><td>TreeView + Card + Markdown</td></tr>
-  <tr><td>管线仪表盘</td><td>全局进度条、角色计时器、工单流时间线</td><td>Table + Timeline + ProgressBar</td></tr>
-  <tr><td>CL 审查面板</td><td>CL 运行时显示 10 项打分条目 + 最终评分</td><td>Table + Rating + 状态指示器</td></tr>
-  <tr><td>HR 招聘对话框</td><td>输入角色名称和描述，确认后生成角色卡</td><td>Dialog + Input + Async 进度</td></tr>
-</table>
-
-<h3>EUI-NEO 优势总结</h3>
-<ul>
-  <li><strong>原生 GPU 渲染</strong>：状态机图直接 OpenGL/Vulkan 绘制，不经过 DOM，拖动流畅</li>
-  <li><strong>小体积低内存</strong>：无 Chromium/WebView，release 二进制仅数 MB</li>
-  <li><strong>无运行时依赖</strong>：GLFW 等依赖静态链接，用户不需额外安装</li>
-  <li><strong>成熟组件库</strong>：ScrollView/TreeView/Table/Dialog/Markdown/动画，满足 80% 需求</li>
-  <li><strong>Apache 2.0</strong>：与 Bobanana MIT 许可兼容</li>
-  <li><strong>声明式 DSL</strong>：C++17 DSL 与角色卡系统的声明式理念一致</li>
-</ul>
+<p class="highlight-box warn"><strong>⚠️ 悲观评判：</strong>假设 60% 受访者对"长自动编排"持怀疑态度。如果访谈证实此比例，MVP 需优先做"手动触发式"而非全自动。</p>
 
 <!-- ==================== 2 ==================== -->
-<h2 id="metrics">2. 数据指标（OKR 体系）</h2>
+<h2 id="value-prop">2. 价值主张画布</h2>
 
 <table>
-  <tr><th>层级</th><th>指标</th><th>目标值</th><th>衡量方式</th></tr>
+  <tr><th>用户任务</th><th>痛点</th><th>收益</th><th>产品方案</th></tr>
   <tr>
-    <td><strong>🌟 North Star</strong></td>
-    <td>用户成功完成一次编排管线（目标输入 → signal_done）</td>
-    <td>≥ 85% 的管线在目标轮次内无人工干预完成</td>
-    <td>cycle-bridge 统计 start→signal_done 记录 / 总启动数</td>
+    <td>用 AI 完成完整的软件开发任务（从需求到交付）</td>
+    <td>现有工具只能单 session 对话，长任务无法保持一致性</td>
+    <td>跨 session 自动流转，不丢失上下文</td>
+    <td><strong>可编程状态机编排</strong> — 每角色独立 session，queue_next_prompt 推进</td>
   </tr>
   <tr>
-    <td><strong>KR-1</strong></td>
-    <td>适配集生态</td>
-    <td>发布 ≥ 3 个官方适配集（Godot/Web/Data 至少三个方向）</td>
-    <td>独立仓库数量 + install.bat 一键接入通过率</td>
+    <td>让 AI 按质量门标准产出</td>
+    <td>AI 产出质量波动大，需要人工大量审查</td>
+    <td>内置质量门，减少人工审查</td>
+    <td><strong>CL 终审机制</strong> — 隔离 subagent 评分 ≥ 9 才放行</td>
   </tr>
   <tr>
-    <td><strong>KR-2</strong></td>
-    <td>状态机声明式配置</td>
-    <td>100% 状态机定义可通过 YAML 完成，无需修改核心引擎 Go 代码</td>
-    <td>用户自定义状态机配置测试通过率</td>
+    <td>自定义 AI 团队角色</td>
+    <td>现有框架角色固定，无法自定义</td>
+    <td>按项目需要组 AI 团队</td>
+    <td><strong>角色卡系统</strong> — 21 张预制 + 可编写新角色卡</td>
   </tr>
   <tr>
-    <td><strong>KR-3</strong></td>
-    <td>社区贡献适配集</td>
-    <td>每月至少 2 个社区提交的适配集 issue/PR</td>
-    <td>GitHub issue/PR 标签统计（kitset 标签）</td>
+    <td>跨领域复用工作流</td>
+    <td>同一个工具换领域就要重学/重配</td>
+    <td>换领域只换适配集，核心不变</td>
+    <td><strong>Adaption Kitsets</strong> — 领域知识外置，核心编排层不变</td>
+  </tr>
+  <tr>
+    <td>团队协作共享 AI 编排结果</td>
+    <td>AI 产出分散在各自的聊天窗口中</td>
+    <td>结构化文档可追溯、可评审</td>
+    <td><strong>交接工单</strong> — 版本化结构化上下文，含产出/决策/风险</td>
   </tr>
 </table>
+
+<p class="highlight-box warn"><strong>⚠️ 悲观评判：</strong>以上价值主张建立在用户已熟悉"多 Agent 协作"概念的基础上。对于新用户，编排层的价值可能需要一次完整的 demo 才能理解——认知摩擦是最大风险。</p>
 
 <!-- ==================== 3 ==================== -->
-<h2 id="personas">3. 用户画像</h2>
+<h2 id="hypothesis">3. 假设验证卡片</h2>
 
+<details>
+<summary>📋 假设卡 H1：跨 session 编排是真实痛点</summary>
 <table>
-  <tr>
-    <th>维度</th>
-    <th>画像 A：适配集开发者</th>
-    <th>画像 B：管线高级用户</th>
-    <th>画像 C：端用户（领域专家）</th>
-  </tr>
-  <tr>
-    <td><strong>身份/场景</strong></td>
-    <td>AI 工具开发者/社区贡献者，想为某领域写一套适配集（如游戏开发、Web 全栈）</td>
-    <td>深度使用 AI 管线的技术用户，熟悉 Reasonix，想自定义工作流</td>
-    <td>不懂技术的领域专家（如游戏策划、数据分析师），只想用 AI 完成特定产出</td>
-  </tr>
-  <tr>
-    <td><strong>核心痛点</strong></td>
-    <td>写角色卡没有标准格式；角色间上下文传递要自己拼字符串；没有"角色卡验证器"确认格式正确</td>
-    <td>现有管线角色太少、状态机固定；想自己加"数据分析"、"本地化审核"角色但做不到</td>
-    <td>想让 AI 按自己行业的标准干活，但不知道怎么写配置</td>
-  </tr>
-  <tr>
-    <td><strong>使用频率</strong></td>
-    <td>周期性地：创建/更新适配集时密集使用</td>
-    <td>每天使用，经常调整配置和角色组合</td>
-    <td>每周 3-5 次，使用预制模板，不碰配置</td>
-  </tr>
-  <tr>
-    <td><strong>核心诉求</strong></td>
-    <td>"让我能用 YAML 定义角色卡，用 YAML 定义状态机，验证器帮我检查定义是否正确"</td>
-    <td>"让我能像搭积木一样搭状态机，像写函数一样写角色卡"</td>
-    <td>"给我一个模板，告诉我安装适配集，直接开用"</td>
-  </tr>
-  <tr>
-    <td><strong>技术熟练度</strong></td>
-    <td>高（能写 Go/Python/TypeScript，理解 MCP 协议）</td>
-    <td>中-高（了解管线原理，能写 YAML 配置）</td>
-    <td>低-中（会用命令行安装，不写代码）</td>
-  </tr>
-  <tr>
-    <td><strong>替代方案</strong></td>
-    <td>直接 Fork bobanana4.0 改 Go 代码</td>
-    <td>自定义 Python 脚本 + Claude API + LangChain</td>
-    <td>手动工作 + GPT 聊天 + 零散脚本</td>
-  </tr>
+  <tr><th>字段</th><th>内容</th></tr>
+  <tr><td>假设编号</td><td><strong>H1</strong></td></tr>
+  <tr><td>假设描述</td><td>开发者在使用 AI 完成长任务（>30 分钟）时，最大的痛点是上下文丢失和一致性断裂，需要跨 session 编排</td></tr>
+  <tr><td>验证方法</td><td>访谈 Q4 + 社区帖子分析（Reddit/HN 关于 AI 做一半丢了的讨论）</td></tr>
+  <tr><td>成功标准</td><td>≥ 60% 受访者确认遇到过"AI 做一半上下文丢失"且认为是严重问题</td></tr>
+  <tr><td>时间窗口</td><td>MVP 发布前完成</td></tr>
+  <tr><td>责任人</td><td>产品团队</td></tr>
 </table>
+</details>
+
+<details>
+<summary>📋 假设卡 H2：质量门（CL 终审）提升用户信任</summary>
+<table>
+  <tr><th>字段</th><th>内容</th></tr>
+  <tr><td>假设编号</td><td><strong>H2</strong></td></tr>
+  <tr><td>假设描述</td><td>用户对"AI 自动产出质量"不信任，一个有严格评分和打回机制的质量门能显著提升信任感</td></tr>
+  <tr><td>验证方法</td><td>A/B 测试：有 CL 终审 vs 无 CL 终审的管线交付质量评分</td></tr>
+  <tr><td>成功标准</td><td>有 CL 终审的管线交付的代码/文档经过人工评分平均高 1.5 分（10 分制）</td></tr>
+  <tr><td>时间窗口</td><td>MVP 发布后 1 个月内</td></tr>
+  <tr><td>责任人</td><td>产品 + 测试团队</td></tr>
+</table>
+</details>
+
+<details>
+<summary>📋 假设卡 H3：角色卡生态驱动采用</summary>
+<table>
+  <tr><th>字段</th><th>内容</th></tr>
+  <tr><td>假设编号</td><td><strong>H3</strong></td></tr>
+  <tr><td>假设描述</td><td>用户选择使用 Bobanana 的主要原因之一是角色卡的可扩展性和生态（类似 VS Code 扩展）</td></tr>
+  <tr><td>验证方法</td><td>GitHub 仓库中新角色卡提交/下载量 + 社区 Kitsets 数量</td></tr>
+  <tr><td>成功标准</td><td>上线 3 个月内社区贡献 ≥ 5 个新角色卡或 ≥ 2 个适配集</td></tr>
+  <tr><td>时间窗口</td><td>上线后持续追踪</td></tr>
+  <tr><td>责任人</td><td>产品 + 社区运营</td></tr>
+</table>
+</details>
+
+<details>
+<summary>📋 假设卡 H4：开发者愿意为"编排层"而非"模型层"付费</summary>
+<table>
+  <tr><th>字段</th><th>内容</th></tr>
+  <tr><td>假设编号</td><td><strong>H4</strong></td></tr>
+  <tr><td>假设描述</td><td>用户愿意为"编排能力"付费（云托管/企业版），而不是为模型调用付费（用户自己带 key）</td></tr>
+  <tr><td>验证方法</td><td>访谈 Q9 + 定价页面转化率追踪</td></tr>
+  <tr><td>成功标准</td><td>≥ 20% 受访者表示"愿意付费且月费 ≥ $10"</td></tr>
+  <tr><td>时间窗口</td><td>企业版上线前</td></tr>
+  <tr><td>责任人</td><td>产品 + 增长团队</td></tr>
+</table>
+</details>
+
+<p class="highlight-box warn"><strong>⚠️ 悲观评判：</strong>H3 和 H4 风险最高。角色卡生态需要冷启动——没有用户就没有角色卡，没有角色卡就没有用户。定价方面，"编排层"对普通开发者太抽象，从"0 到付费"的转化可能低于预期。</p>
 
 <!-- ==================== 4 ==================== -->
-<h2 id="mvp">4. MVP 定义</h2>
+<h2 id="journey">4. 用户旅程地图</h2>
 
-<h3>Must-have（按优先级排序）</h3>
-<ol>
-  <li><strong>角色卡系统（Role Card Registry）</strong> — 标准化角色卡片格式（YAML Schema）。每张卡片含：角色 ID、名称、描述、输入契约、输出契约、适用阶段、标签。角色卡存储在 <code>skills/roles/&lt;角色名&gt;/</code>，编排层只读元数据、不执行业务逻辑。</li>
-  <li><strong>可编程状态机（Programmable State Machine）</strong> — 状态机定义从 Go 代码移到 YAML 配置文件 <code>state-machine.yaml</code>。支持：节点（角色）、边（phase flag + 下一角色）、条件分支（判断逻辑）、并行 fork/join、循环反馈。适配集自带预设状态机模板。</li>
-  <li><strong>交接工单系统（Handoff Ticket）</strong> — 结构化上下文传递，替代纯文本 [STATE] 模板。工单含：发送者 ID、接收者 ID、产出物列表（带路径）、未决决策（列表）、显式假设、风险标注。工单是版本化的 JSON 文件，存储在 <code>.reasonix/handoffs/</code>。</li>
-  <li><strong>角色卡验证器</strong> — 在 <code>install.bat</code> 或 <code>reasonix cycle</code> 启动时自动校验角色卡 YAML 格式。不符合 Schema 的卡给出具体错误位置和修复建议。</li>
-  <li><strong>状态机图形化输出</strong> — 每轮角色转换后输出 Mermaid 格式的状态机图，嵌入 HTML 或控制台。用户一眼看清当前管线状态（已过角色 / 当前角色 / 待过角色 / 失败计数）。</li>
-  <li><strong>向后兼容</strong> — bobanana4.0 的 <code>/pipeline</code>、<code>/loop</code>、<code>/cycle</code> 命令继续可用。预设的"通用软件开发"状态机模板覆盖 4.0 的全部行为。</li>
-  <li><strong>首个官方适配集：Godot-adaption-kitset</strong> — 将现有的 Godot-adaption-kitset 重构为角色卡格式，作为参考实现和验证案例。</li>
-</ol>
+<table>
+  <tr><th>阶段</th><th>用户行为</th><th>想法</th><th>痛点</th><th>机会点</th><th>情绪</th></tr>
+  <tr>
+    <td><strong>🔍 发现</strong></td>
+    <td>在 GitHub 搜索 AI 编排工具 / 看到 Reasonix 插件市场推荐</td>
+    <td>"又一个 AI 框架"/"这个看起来不光是写代码的"</td>
+    <td>GitHub 星多但不知道实际好不好用</td>
+    <td>README 的一句话定位要清晰：不是"又一个 AI 框架"</td>
+    <td>🤔 好奇+怀疑</td>
+  </tr>
+  <tr>
+    <td><strong>📖 了解</strong></td>
+    <td>阅读 README、快速上手文档、看架构图</td>
+    <td>"跨 session 编排"/"CL 终审"是什么？</td>
+    <td>概念太新，需要理解"编排层 ≠ 模型层"</td>
+    <td>提供 1 分钟 demo gif / 交互式 quickstart</td>
+    <td>😕 感兴趣但困惑</td>
+  </tr>
+  <tr>
+    <td><strong>🔧 首次使用</strong></td>
+    <td>按安装文档安装 → 运行 /bb 命令</td>
+    <td>"装好了"/"怎么开始？"</td>
+    <td>需要 Reasonix 环境，不是独立工具</td>
+    <td>安装脚本一步到位，首次任务模板化</td>
+    <td>😊 顺利安装 ✅ / 😤 环境问题 ❌</td>
+  </tr>
+  <tr>
+    <td><strong>📋 持续使用</strong></td>
+    <td>日常用 /bb 管理项目管线，用 /docs 做产品调研</td>
+    <td>"这比我自己指挥 AI 省心"/"管线跑起来后我可以去喝咖啡"</td>
+    <td>管线跑太久需要等 / 中间想插话但不知道能否打断</td>
+    <td>通知机制 + 可打断点 + 进度可视化</td>
+    <td>😌 省心 / 😅 等太久</td>
+  </tr>
+  <tr>
+    <td><strong>📢 推荐</strong></td>
+    <td>向同事/社区推荐 Bobanana</td>
+    <td>"这个工具帮你组 AI 团队"</td>
+    <td>朋友问"和 Cursor 有什么区别"——难以一句话说清定位</td>
+    <td>提炼一句话对比："Cursor 帮你写代码，Bobanana 帮你组织 AI 团队"</td>
+    <td>😄 满意 / 🤷 解释累</td>
+  </tr>
+</table>
 
-<h3>角色标签特定功能（must-have）</h3>
-<ol>
-  <li><strong><span class="tag-op">OP</span> 编排者标签</strong> — 角色卡 Schema 支持 <code>tags: [op]</code>。OP 角色运行时有权<strong>读取和写入 state-machine.yaml</strong>，可动态添加/删除/修改角色节点、转换边和分支逻辑。引擎在 OP 角色 session 结束后重新加载状态机配置。</li>
-  <li><strong><span class="tag-cl">CL</span> 甲方终审标签</strong> — 角色卡 Schema 支持 <code>tags: [cl]</code>。CL 角色定义为整个管线的唯一出口：当管线到达 CL 时，引擎启动一个<strong>全新隔离的 subagent</strong>（不继承任何 pipeline 对话历史、不共享上下文），对整个项目代码执行全量审查。</li>
-  <li><strong>CL 打分 + 打回机制</strong> — CL 审查报告强制包含 1-10 整数评分。评分 &lt; 9 时引擎自动将审查报告 + 分数通过 handoff ticket 送回给最近的一个 OP 角色（通常是架构师），由 OP 决定修复方案。此前已完成的技术角色产出物保留、不清除。评分 ≥ 9 时触发 <code>signal_done</code>。</li>
-</ol>
-
-<h3>HR 招聘技能（must-have）</h3>
-<ol>
-  <li><strong>HR Skill 角色</strong> — 一个专门的 Reasonix skill，负责职业研究 + 角色卡创建。在需要新角色时被调用。</li>
-  <li><strong>4 子 agent 并行研究</strong> — HR Skill 自动派出 <strong>4 个并行 read-only subagent</strong>，分别研究工作准则、工作内容、工具与方法、常见坑与风险，合并为职业准则简报。</li>
-  <li><strong>标准角色卡生成</strong> — HR Skill 产出标准化的 <code>role-card.yaml</code> + <code>SKILL.md</code>，写入 <code>skills/roles/</code>，立即可被管线发现和引用。</li>
-  <li><strong>可引用已有准则文件</strong> — 如果适配集已预置职业准则文件（<code>docs</code> skill / <code>Bobanana.md</code>），HR Skill 直接引用、跳过 subagent 研究。</li>
-  <li><strong>一次研究、多次使用</strong> — 职业研究在创建角色卡时一次性完成。角色卡创建后每次被唤起时直接使用卡中准则，不再重复研究。</li>
-</ol>
-
-<h3>Nice-to-have</h3>
-<ul>
-  <li>角色卡市场 / 仓库索引（从远程拉取适配集）</li>
-  <li>GUI 状态机编辑器（拖拽连线）</li>
-  <li>角色卡版本管理 + 适配集依赖声明</li>
-  <li>管道并行：同一时刻多个 Agent 运行不同角色</li>
-  <li>适配集评分 / 质量评级体系</li>
-</ul>
-
-<h3>明确不比</h3>
-<ul>
-  <li><strong>不比领域工具</strong>：不内置任何领域的 SDK、编辑器插件、渲染引擎。Bobanana 5.0 不写代码、不画图、不渲染——它只负责调度。干活的是 Adaption Kitset 里的工具。</li>
-  <li><strong>不比项目管理工具</strong>：不跟 JIRA、Notion 争甘特图和看板。它是 AI 执行引擎，不是管理面板。</li>
-  <li><strong>不比模型训练平台</strong>：不训练 AI 模型。使用 Reasonix 对接的 LLM API。</li>
-  <li><strong>不比无代码平台</strong>：不是给非技术人员"拖拽做应用"的。它是给 AI Agent（和懂技术的人）用的编排层。</li>
-</ul>
+<p class="highlight-box warn"><strong>⚠️ 悲观评判：</strong>"了解"阶段是最大流失点——概念太新，README 读不懂就走人。假设 70% 的访客在"了解"阶段流失。缓解：README 顶部放 3 句大白话解释 + 15 秒 demo 视频。</p>
 
 <!-- ==================== 5 ==================== -->
-<h2 id="b2b2c">5. 2B / 2C 分析</h2>
+<h2 id="rice">5. RICE 优先级矩阵</h2>
 
 <table>
-  <tr><th>维度</th><th>To C（个人开发者/适配集作者）</th><th>To B（企业/工作室）</th></tr>
+  <tr><th>功能/方向</th><th>Reach</th><th>Impact</th><th>Confidence</th><th>Effort</th><th>RICE 得分</th><th>评分理由</th></tr>
   <tr>
-    <td><strong>用户是谁</strong></td>
-    <td>独立开发者、AI 工具开发者、适配集贡献者、领域专家</td>
-    <td>游戏工作室 CTO、数据团队负责人、AI 平台架构师</td>
+    <td>📦 跨 session 编排（核心引擎稳定性）</td><td>1000</td><td>3</td><td>90%</td><td>3</td><td><strong>900</strong></td><td>核心价值，现有已可用但需打磨稳定性</td>
   </tr>
   <tr>
-    <td><strong>付费意愿</strong></td>
-    <td>低（习惯了免费工具），接受捐赠 + 一次性买断</td>
-    <td>高（编排层直接降低多角色协作成本），接受订阅制</td>
+    <td>🔵 OP 角色动态编排状态机</td><td>800</td><td>3</td><td>80%</td><td>5</td><td><strong>384</strong></td><td>核心差异化但实现工作量大</td>
   </tr>
   <tr>
-    <td><strong>决策链</strong></td>
-    <td>个人决策，即用即走</td>
-    <td>技术评估 → 小团队试点 → 管理层采购。周期 2-8 周</td>
+    <td>📝 /docs 产品文档生成</td><td>600</td><td>2</td><td>85%</td><td>2</td><td><strong>510</strong></td><td>即刻可用的价值，低成本高 reach</td>
   </tr>
   <tr>
-    <td><strong>核心功能差异</strong></td>
-    <td>即开即用：预制适配集 + 模板管线，无需配置</td>
-    <td>深度定制：自定义状态机 + 私有适配集 + 审计日志 + SSO + 权限控制</td>
+    <td>🔴 CL 终审评分机制增强</td><td>500</td><td>3</td><td>85%</td><td>3</td><td><strong>425</strong></td><td>差异化卖点，增强可信度</td>
   </tr>
   <tr>
-    <td><strong>获客方式</strong></td>
-    <td>GitHub 开源 → 开发者社区 → 口碑</td>
-    <td>技术博客 → 行业会议（GDC/KubeCon）→ 企业试用 → 销售跟进</td>
+    <td>🧩 Adaption Kitsets 分离</td><td>400</td><td>3</td><td>70%</td><td>4</td><td><strong>210</strong></td><td>长期价值高但不紧急</td>
+  </tr>
+  <tr>
+    <td>📊 管线可视化（进度/状态图）</td><td>700</td><td>2</td><td>80%</td><td>3</td><td><strong>373</strong></td><td>用户体验提升，降低认知负荷</td>
+  </tr>
+  <tr>
+    <td>📋 交接工单 UI</td><td>400</td><td>2</td><td>75%</td><td>3</td><td><strong>200</strong></td><td>工程师体验，非核心功能</td>
+  </tr>
+  <tr>
+    <td>🔄 管线断点恢复/重试</td><td>600</td><td>3</td><td>85%</td><td>4</td><td><strong>383</strong></td><td>降低用户"长任务安全感"焦虑</td>
+  </tr>
+  <tr>
+    <td>📱 通知机制（管线完成推送）</td><td>500</td><td>1</td><td>70%</td><td>2</td><td><strong>175</strong></td><td>锦上添花</td>
+  </tr>
+  <tr>
+    <td>🌱 Kitsets 生态站点</td><td>300</td><td>3</td><td>60%</td><td>5</td><td><strong>108</strong></td><td>冷启动问题，先有用户再做</td>
   </tr>
 </table>
 
-<p><strong>主次关系</strong>：<strong>To C 优先</strong>。先通过开源免费版获取适配集开发者的信任和反馈。核心引擎开源（MIT），B 端功能（审计/SSO/团队管理）作为付费企业版。适配集市场可抽成。</p>
+<p class="highlight-box warn"><strong>⚠️ 悲观评判：</strong>/docs、核心编排稳定性、CL 终审是 MVP 三角——先做好这三个，再考虑 OP 动态编排和 Kitsets 分离。假设团队只有 1-2 人，Effort ≥ 4 的功能不宜并行。</p>
 
 <!-- ==================== 6 ==================== -->
-<h2 id="competition">6. 竞争分析</h2>
+<h2 id="competitive-ux">6. 竞品体验对比</h2>
 
-<h3>竞争格局矩阵</h3>
+<h3>注册/安装流程对比</h3>
 <table>
-  <tr><th>竞品</th><th>定位</th><th>目标用户</th><th>优势</th><th>劣势</th><th>与本产品差异</th></tr>
+  <tr><th>产品</th><th>安装步骤</th><th>首次使用耗时</th><th>外部依赖</th><th>用户评分（社区）</th></tr>
+  <tr><td><strong>Bobanana 5.0</strong></td><td>2 步（install.bat + /bb）</td><td>5-10 分钟</td><td>Python 3.12+, Reasonix</td><td>新项目，暂无</td></tr>
+  <tr><td>MetaGPT</td><td>3 步（pip + Node.js + 配置）</td><td>15-30 分钟</td><td>Node.js, pnpm</td><td>3.8/5 (GH Issues)</td></tr>
+  <tr><td>CrewAI</td><td><strong>1 步</strong>（pip）</td><td><strong>5 分钟</strong></td><td>OpenAI API key</td><td>4.2/5 (Discord)</td></tr>
+  <tr><td>LangGraph</td><td>2 步（pip + key）</td><td>10-30 分钟</td><td>LangSmith key（可选）</td><td>3.5/5 (HN 评论)</td></tr>
+  <tr><td>ChatDev 2.0</td><td>4 步（uv + npm + 配置）</td><td>10-20 分钟</td><td>Node.js, Python</td><td>3.6/5 (GH Issues)</td></tr>
+  <tr><td>Dify</td><td>2 步（Docker + 配置）</td><td>10-15 分钟</td><td>Docker</td><td>4.0/5 (Discord)</td></tr>
+</table>
+
+<h3>差评集中点分析</h3>
+<table>
+  <tr><th>产品</th><th>Top 3 差评</th><th>来源</th></tr>
   <tr>
-    <td><strong>MetaGPT / ChatDev / AutoGPT</strong></td>
-    <td>多 AI agent 协作框架</td>
-    <td>AI 研究者、实验性项目</td>
-    <td>多 agent 对话、角色扮演</td>
-    <td>状态机简单、不支持自定义角色卡、无适配集概念</td>
-    <td>Bobanana 5.0 强调可编程状态机 + 可插拔角色卡 + 两层架构</td>
+    <td>MetaGPT</td>
+    <td>① 输出的代码不可直接用 ② 配置复杂 ③ 只适合 toy project</td>
+    <td>HN, GH Issues</td>
   </tr>
   <tr>
-    <td><strong>LangGraph / LangChain</strong></td>
-    <td>Agent 工作流框架</td>
-    <td>AI 应用开发者</td>
-    <td>灵活、Python 生态丰富、支持复杂图状态机</td>
-    <td>没有"角色"抽象、没有适配集概念、不面向非 Python 场景</td>
-    <td>Bobanana 5.0 的角色卡 + 状态机 = LangGraph 的"信念系统"层之上的抽象</td>
+    <td>CrewAI</td>
+    <td>① 跨 session 不支持 ② 调试困难 ③ 大项目性能差</td>
+    <td>Discord, Reddit</td>
   </tr>
   <tr>
-    <td><strong>Claude Code / Reasonix 原生</strong></td>
-    <td>AI agent 编程框架</td>
-    <td>所有开发者</td>
-    <td>强推理、工具链丰富、直接可用</td>
-    <td>角色单一、无多角色编排、无跨 session 状态机</td>
-    <td>Bobanana 5.0 在其上叠加编排层</td>
+    <td>LangGraph</td>
+    <td>① 学习曲线陡峭 ② 文档不友好 ③ 概念太多</td>
+    <td>HN, Reddit</td>
   </tr>
   <tr>
-    <td><strong>n8n / Temporal / Airflow</strong></td>
-    <td>工作流编排引擎</td>
-    <td>DevOps / 数据团队</td>
-    <td>成熟、可配置、企业级</td>
-    <td>不面向 AI Agent 场景、无 LLM 集成、角色概念不同</td>
-    <td>Bobanana 5.0 专注于 AI Agent 的角色化编排</td>
+    <td>AutoGPT</td>
+    <td>① 许可证争议 ② 结果不可控 ③ 资源消耗大</td>
+    <td>HN, GH Issues</td>
   </tr>
   <tr>
-    <td><strong>"用户自己拼"</strong></td>
-    <td>手动组合各种工具</td>
-    <td>所有有需求的团队</td>
-    <td>高度灵活</td>
-    <td>没有标准化框架、重复造轮子、维护成本高</td>
-    <td>提供标准化的两层架构和开箱即用的适配集</td>
+    <td>ChatDev 2.0</td>
+    <td>① 角色不够灵活 ② 前端太重 ③ 安装步骤多</td>
+    <td>GH Issues, Reddit</td>
   </tr>
 </table>
 
-<h2 id="swot">SWOT 分析</h2>
-
-<div class="swot-grid">
-  <div class="swot-cell swot-s">
-    <h4>💪 S（优势）</h4>
-    <ul>
-      <li>已有成熟的 bobanana4.0 管线体系和用户基础</li>
-      <li>两层架构设计清晰，核心编排层 + 外部适配集解耦</li>
-      <li>已有首个验证案例（Godot-adaption-kitset），证明模式可行</li>
-      <li>继承 Reasonix 的跨 session 机制和 MCP 工具生态</li>
-    </ul>
-  </div>
-  <div class="swot-cell swot-w">
-    <h4>⚠️ W（劣势）</h4>
-    <ul>
-      <li>状态机从硬编码到可配置需要重构 cycle-bridge 核心组件</li>
-      <li>角色卡 Schema 设计要兼顾通用性和表达能力，权衡很关键</li>
-      <li>适配集生态冷启动问题——第一个适配集好做，第 N 个需要社区</li>
-      <li>项目本身是纯配置+Markdown 仓库，核心引擎代码在 Reasonix 主仓库</li>
-    </ul>
-  </div>
-  <div class="swot-cell swot-o">
-    <h4>🚀 O（机会）</h4>
-    <ul>
-      <li>AI Agent 编排市场快速增长，多角色协作仍是蓝海</li>
-      <li>大模型能力提升使多角色专业化分工变得可行</li>
-      <li>不同领域对 AI 工具的需求在爆发（游戏/数据/嵌入式/设计）</li>
-      <li>开源社区对"AI 框架"类项目兴趣浓厚</li>
-    </ul>
-  </div>
-  <div class="swot-cell swot-t">
-    <h4>🔥 T（威胁）</h4>
-    <ul>
-      <li>大厂快速跟进（LangChain、OpenAI 可能出类似编排层）</li>
-      <li>"编排层"的概念对普通用户太抽象，难以理解价值</li>
-      <li>适配集质量参差不齐可能影响核心编排层的口碑</li>
-      <li>LLM API 价格波动影响使用成本</li>
-    </ul>
-  </div>
-</div>
-
-<!-- ==================== 7 ==================== -->
-<h2 id="philosophy">7. 设计理念</h2>
-
-<h3>体验关键词</h3>
+<h3>空白机会</h3>
+<p class="highlight-box teal">基于竞品分析，以下空白领域是 Bobanana 5.0 的差异化机会：</p>
 <ul>
-  <li><strong>🧩 模块化</strong> — 角色是积木，状态机是搭建说明书。每一块独立、可替换、可组合。核心不关心积木是什么颜色。</li>
-  <li><strong>🔌 可插拔</strong> — 适配集=驱动。换适配集=换领域。核心引擎不改一行代码。驱动出了问题换驱动，不重装操作系统。</li>
-  <li><strong>📐 声明式</strong> — 状态机配置、角色卡定义、交接工单全部用 YAML 声明式描述。用户描述"是什么"，不描述"怎么做"。</li>
-  <li><strong>🔍 可审计</strong> — 每一次角色转换、每一张工单、每一个质量门检查都有记录。追溯问题和归因不需要翻对话历史。</li>
+  <li><strong>跨 session 状态机编排</strong> — LangGraph 有但门槛高，CrewAI 无。Bobanana 取中间地带：YAML 状态机 + 跨 session 持久化</li>
+  <li><strong>可插拔角色卡生态</strong> — 类似 VSCode 插件市场，竞品都无此设计</li>
+  <li><strong>CL 质量门机制</strong> — 所有竞品都缺乏"交付质量门"，只有单元测试没有业务验收</li>
+  <li><strong>结构化交接工单</strong> — 纯自然语言消息传递是竞品标配，Bobanana 的结构化工单是工程化优势</li>
+  <li><strong>零外部依赖</strong> — 对比 ChatDev/Dify/AutoGPT 需要 Docker/Node.js，Bobanana 纯 Python 更轻量</li>
 </ul>
 
-<h3>核心交互原则</h3>
-<ol>
-  <li><strong>一次一个角色</strong> — 每个 session 只扮演一个角色，产出该角色的交付物。角色完成时自动触发交接，不征求同意（RED LINE 继承）。</li>
-  <li><strong>交接即工单</strong> — 角色间不走"对话历史"，走结构化工单。工单是版本化的 JSON，存储在 <code>.reasonix/handoffs/</code>，可审计、可回溯。</li>
-  <li><strong>状态机看得见</strong> — 每轮输出 Mermaid 状态机进度图 + 统计（当前阶段 / 已过 / 待过 / 重试次数），用户始终知道"现在谁在干活"。</li>
-</ol>
+<!-- ==================== 7 ==================== -->
+<h2 id="positioning">7. 一句话定位卡片</h2>
 
-<h3>视觉风格方向</h3>
-<p>产品文档和角色卡使用清爽的卡片式 UI，核心编排层用深紫/深蓝色系，适配集用不同的主题色区分。用户界面保持"信息密度高、功能优先"的开发者工具风格。所有输出（状态机图、工单视图、质量门报告）都支持 HTML 和 Markdown 两种格式。</p>
+<details open>
+<summary><strong>方案 A（推荐）</strong></summary>
+<table>
+  <tr><th>维度</th><th>内容</th></tr>
+  <tr><td>目标用户</td><td>使用 AI 辅助开发的程序员和产品团队</td></tr>
+  <tr><td>解决什么</td><td>AI 无法自主完成长任务、跨 session 上下文丢失、输出质量不可控</td></tr>
+  <tr><td>为什么选你</td><td>唯一支持可编程状态机跨 session 编排 + CL 质量门 + 可插拔角色卡</td></tr>
+  <tr><td>一句话</td><td><strong>"Bobanana 帮你组建 AI 团队——编排角色、打通 session、把关质量。"</strong></td></tr>
+  <tr><td>谁最可能反对</td><td>Langgrap 用户会说"状态机和持久化我也有"；CrewAI 用户会说"安装太简单了"</td></tr>
+</table>
+</details>
+
+<details>
+<summary><strong>方案 B</strong></summary>
+<table>
+  <tr><th>维度</th><th>内容</th></tr>
+  <tr><td>目标用户</td><td>被 AI 工具碎片化困扰的技术管理者</td></tr>
+  <tr><td>解决什么</td><td>AI 工具各自为战，没有统一的编排和质量体系</td></tr>
+  <tr><td>为什么选你</td><td>提供"AI 团队的操作系统"——编排层统一调度、质量门统一把关</td></tr>
+  <tr><td>一句话</td><td><strong>"AI 工具的 Kubernetes——编排 Agent、管理管线、确保交付质量。"</strong></td></tr>
+  <tr><td>谁最可能反对</td><td>对"编排层"概念陌生的人——太抽象了，不如方案 A 直观</td></tr>
+</table>
+</details>
+
+<details>
+<summary><strong>方案 C</strong></summary>
+<table>
+  <tr><th>维度</th><th>内容</th></tr>
+  <tr><td>目标用户</td><td>想自定义 AI 工作流的进阶用户</td></tr>
+  <tr><td>解决什么</td><td>现有管线角色固定、不能自定义</td></tr>
+  <tr><td>为什么选你</td><td>21 张角色卡 + 可编写新角色 + 可插拔适配集</td></tr>
+  <tr><td>一句话</td><td><strong>"像搭积木一样搭 AI 管线——Bobanana 让你定义角色、编排流程、把质量。"</strong></td></tr>
+  <tr><td>谁最可能反对</td><td>非技术用户——"积木"也要编写 YAML，不是真的零代码</td></tr>
+</table>
+</details>
+
+<p class="highlight-box warn"><strong>⚠️ 悲观评判：</strong>三类定位的共同风险是"编排"概念需要教育。用户可能不觉得自己需要"编排引擎"——他们只是想要"AI 帮我做完一个功能"。方案 A 最安全，因为它从用户熟悉的"团队协作"入手。</p>
 
 <!-- ==================== 8 ==================== -->
-<h2 id="risks">8. 风险（非技术）</h2>
+<h2 id="review-checklist">8. 需求评审清单</h2>
+
+<p>面向非技术用户的 8 项自查问题：</p>
 
 <table>
-  <tr><th>风险类别</th><th>风险描述</th><th>可能性</th><th>影响</th><th>缓解措施</th></tr>
+  <tr><th>#</th><th>自查问题</th><th>为什么重要</th></tr>
   <tr>
-    <td><strong>市场风险</strong></td>
-    <td>编排层赛道变拥挤，大厂（LangChain/OpenAI）出竞品</td>
-    <td>中</td>
-    <td>高</td>
-    <td>通过角色卡 + 适配集两层抽象建立差异化壁垒；深耕已有用户基础（bobanana4.0 用户群）</td>
+    <td>1</td><td><strong>用户真的需要"多 Agent 编排"还是只需要"一个更好的聊天助手"？</strong></td><td>避免为不需要的功能做产品——如果用户痛点只是"AI 回话太慢"，编排层解决不了</td>
   </tr>
   <tr>
-    <td><strong>认知风险</strong></td>
-    <td>"三层架构"概念对用户太抽象，难以理解核心和适配集的边界</td>
-    <td>高</td>
-    <td>中</td>
-    <td>用"操作系统/驱动程序"类比；先推完整的适配集（用户不用关心核心），再逐步开放核心能力</td>
+    <td>2</td><td><strong>"跨 session"对用户来说是一个真实问题，还是一个工程师的想象？</strong></td><td>大量社区证据（Reddit/HN）显示上下文丢失是真实痛点，但需要确认目标用户群是否感同身受</td>
   </tr>
   <tr>
-    <td><strong>生态风险</strong></td>
-    <td>适配集冷启动困难，只有官方 1-2 个适配集，社区不贡献</td>
-    <td>高</td>
-    <td>高</td>
-    <td>官方同时启动 3 个方向的适配集（Godot/Web/Data），作为模板；写详细的"如何写适配集"文档；降低贡献门槛</td>
+    <td>3</td><td><strong>用户愿意花多少时间学习"角色卡"和"状态机"的概念？</strong></td><td>CrewAI 成功的原因之一是"角色"概念直观。Bobanana 的角色卡 + YAML 状态机需要同样的直观性</td>
   </tr>
   <tr>
-    <td><strong>质量风险</strong></td>
-    <td>第三方适配集质量参差不齐，用户归咎于核心编排层不稳定</td>
-    <td>中</td>
-    <td>中</td>
-    <td>角色卡 Schema 验证 + 沙箱执行 + 适配集评分体系 + 官方认证徽章</td>
+    <td>4</td><td><strong>CL 终审的 9 分门槛是不是太高了？会不会变成"永远过不了"？</strong></td><td>参考当前测试数据：177+ 测试的通过率。如果 CL 经常打回，用户会失去耐心</td>
+  </tr>
+  <tr>
+    <td>5</td><td><strong>安装流程是否需要 Reasonix 作为前置依赖？用户能接受吗？</strong></td><td>Bobanana 不是独立工具，是 Reasonix 插件。这意味着用户必须先安装 Reasonix，增加了门槛</td>
+  </tr>
+  <tr>
+    <td>6</td><td><strong>Kitsets 生态冷启动——第一个适配集谁来写？</strong></td><td>没有适配集 → 没有领域差异化 → 和普通管线工具没区别。Godot 适配集是第一个验证案例</td>
+  </tr>
+  <tr>
+    <td>7</td><td><strong>非技术用户（游戏策划/产品经理）能否从 Bobanana 获得价值？</strong></td><td>/docs 是一个切入点，但 /bb 管线需要技术理解。先聚焦开发者，再拓展到非技术用户</td>
+  </tr>
+  <tr>
+    <td>8</td><td><strong>与 Reasonix 的关系是"加分"还是"绑定风险"？</strong></td><td>平台绑定是双刃剑：Reasonix 提供能力但限制分发力。需要评估独立分发的可行性</td>
   </tr>
 </table>
 
-<hr style="margin: 3rem 0;">
+<!-- ==================== 9 ==================== -->
+<h2 id="summary">9. 一句话总结</h2>
 
-<!-- ==================== APPENDIX ==================== -->
-<h2 id="kitsets" style="font-size: 2rem;">📦 附录：Adaption Kitsets 生态规划</h2>
-
-<p>Bobanana 5.0 的完整价值需要适配集来兑现。以下是规划中的适配集方向，以及规划中的 <strong>Godot-adaption-kitset</strong> 作为参考实现。</p>
-
-<h3>官方规划适配集</h3>
-
-<table>
-  <tr><th>适配集</th><th>领域</th><th>角色卡示例</th><th>优先级</th><th>状态</th></tr>
-  <tr>
-    <td><code>godot-adaption-kitset</code></td>
-    <td>🎮 Godot 游戏开发</td>
-    <td>系统策划、数值策划、战斗策划、概念美术、3D建模、动作设计、技术美术(TA)、游戏客户端、游戏服务端、QA、游戏运营...</td>
-    <td>P0</td>
-    <td>🟡 代码库内已有 Skill，需重构为独立仓库</td>
-  </tr>
-  <tr>
-    <td><code>web-fullstack-kitset</code></td>
-    <td>🌐 Web 全栈开发</td>
-    <td>产品经理、UX设计师、前端开发、后端开发、DB管理员、QA、安全审计、DevOps</td>
-    <td>P1</td>
-    <td>⚪ 待建</td>
-  </tr>
-  <tr>
-    <td><code>data-science-kitset</code></td>
-    <td>📊 数据科学/ML</td>
-    <td>数据分析师、特征工程师、模型训练师、MLOps、报告撰写</td>
-    <td>P1</td>
-    <td>⚪ 待建</td>
-  </tr>
-  <tr>
-    <td><code>game-unreal-kitset</code></td>
-    <td>🎮 Unreal 游戏开发</td>
-    <td>与 godot-kitset 类似的角色集，但适配 Unreal 引擎</td>
-    <td>P2</td>
-    <td>⚪ 待建</td>
-  </tr>
-  <tr>
-    <td><code>embedded-kitset</code></td>
-    <td>🔧 嵌入式/IoT 开发</td>
-    <td>硬件设计、固件开发、驱动开发、测试自动化</td>
-    <td>P2</td>
-    <td>⚪ 待建</td>
-  </tr>
-</table>
-
-<h3>Godot-adaption-kitset 示例：30 角色体系</h3>
-<p>以下是 Godot-adaption-kitset 规划中的 30 张角色卡。它们展示了适配集可以如何细化游戏开发的专业分工。每个角色都有自己的角色卡 YAML + Skill Markdown + 质量门。</p>
-
-<details>
-<summary>🛠 程序/技术类（10 角色）— 薪资最高，门槛最高，AI 冲击最小</summary>
-<div class="details-body">
-<div class="role-grid">
-<div class="role-card">
-  <span class="tag eng">程序</span>
-  <h4>1. 游戏客户端开发</h4>
-  <p>Unity/UE、C++/C#，实现角色控制/UI/物品系统/技能逻辑。50% 编码、30% 调试、20% 评审。</p>
-</div>
-<div class="role-card">
-  <span class="tag eng">程序</span>
-  <h4>2. 游戏服务端开发</h4>
-  <p>Go/C++/Java，高并发架构、会话管理、匹配逻辑。权威服务器原则，"永远不信客户端"。</p>
-</div>
-<div class="role-card">
-  <span class="tag eng">程序</span>
-  <h4>3. 引擎开发工程师</h4>
-  <p>UE/Unity 底层优化，内存分配器/渲染通道/资源流送。每毫秒都重要。</p>
-</div>
-<div class="role-card">
-  <span class="tag eng">程序</span>
-  <h4>4. 图形/渲染工程师</h4>
-  <p>HLSL/GLSL Shader、PBR 光照模型、后处理管线。能骗过玩家就算真的。</p>
-</div>
-<div class="role-card">
-  <span class="tag eng">程序</span>
-  <h4>5. 技术美术（TA）</h4>
-  <p>Shader Graph + DCC 自动化 + 资源管线优化。让美术更快，别让引擎更快。</p>
-</div>
-<div class="role-card">
-  <span class="tag eng">程序</span>
-  <h4>6. AI 工程师</h4>
-  <p>行为树/状态机/寻路/感知系统/大模型对话。可信的愚蠢比完美的智能更难做。</p>
-</div>
-<div class="role-card">
-  <span class="tag eng">程序</span>
-  <h4>7. 工具链/平台开发</h4>
-  <p>编辑器扩展/CI-CD/资产处理器。做两次就自动化。</p>
-</div>
-<div class="role-card">
-  <span class="tag eng">程序</span>
-  <h4>8. 测试开发工程师</h4>
-  <p>自动化测试框架/回归套件/压测脚本。测试是不撒谎的文档。</p>
-</div>
-<div class="role-card">
-  <span class="tag eng">程序</span>
-  <h4>9. 安全工程师</h4>
-  <p>反外挂/加密/内存扫描/逆向。攻击者有无穷耐心。</p>
-</div>
-<div class="role-card">
-  <span class="tag eng">程序</span>
-  <h4>10. 数据平台工程师</h4>
-  <p>埋点管线/ETL/OLAP（ClickHouse）/实时看板。数据质量 > 数据数量。</p>
-</div>
-</div>
-</div>
-</details>
-
-<details>
-<summary>📐 策划/设计类（7 角色）— 入行门槛相对低，但天花板高</summary>
-<div class="details-body">
-<div class="role-grid">
-<div class="role-card">
-  <span class="tag design">策划</span>
-  <h4>11. 系统策划</h4>
-  <p>玩法框架/功能文档/原型验证。先定义动词，再定义名词。</p>
-</div>
-<div class="role-card">
-  <span class="tag design">策划</span>
-  <h4>12. 数值策划</h4>
-  <p>伤害公式/经济系统/概率调控/成长曲线。玩家会把乐趣优化掉。</p>
-</div>
-<div class="role-card">
-  <span class="tag design">策划</span>
-  <h4>13. 关卡设计师</h4>
-  <p>地图 Layout/灰盒测试/遭遇编排/难度曲线。最好的关卡不用文字教。</p>
-</div>
-<div class="role-card">
-  <span class="tag design">策划</span>
-  <h4>14. 战斗策划</h4>
-  <p>技能体系/打击感/Hitstop/击退/镜头震动。手感是看不见的数学。</p>
-</div>
-<div class="role-card">
-  <span class="tag design">策划</span>
-  <h4>15. 文案/世界观策划</h4>
-  <p>对话树/角色设定/剧情脚本/配音指导。Show don't tell。</p>
-</div>
-<div class="role-card">
-  <span class="tag design">策划</span>
-  <h4>16. 商业化策划</h4>
-  <p>付费设计/战令/Gacha 经济/LTV。付费像小费，不像过路费。</p>
-</div>
-<div class="role-card">
-  <span class="tag design">策划</span>
-  <h4>17. UX/交互原型设计师</h4>
-  <p>手柄交互/UI 原型/可用性测试/认知负荷优化。最好的 UI 不可见。</p>
-</div>
-</div>
-</div>
-</details>
-
-<details>
-<summary>🎨 美术类（7 角色）— AI 冲击最大，但头部精品仍急需</summary>
-<div class="details-body">
-<div class="role-grid">
-<div class="role-card">
-  <span class="tag art">美术</span>
-  <h4>18. 原画师/概念设计师</h4>
-  <p>氛围板/角色设定/场景 Key Art/色彩研究。好剪影在 50 步外也认得出。</p>
-</div>
-<div class="role-card">
-  <span class="tag art">美术</span>
-  <h4>19. 3D 建模师</h4>
-  <p>ZBrush 高模/Maya 拓扑/法线烘培/UV 展开。好拓扑不出声，坏拓扑毁所有。</p>
-</div>
-<div class="role-card">
-  <span class="tag art">美术</span>
-  <h4>20. 动作设计师</h4>
-  <p>IK/FK 绑定/手调 Key/动捕清理/状态机混合。每帧都在告诉玩家角色心情。</p>
-</div>
-<div class="role-card">
-  <span class="tag art">美术</span>
-  <h4>21. 特效设计师</h4>
-  <p>粒子系统/Shader VFX/Flipbook/Overdraw 优化。VFX 奖励玩家，不闪瞎他们。</p>
-</div>
-<div class="role-card">
-  <span class="tag art">美术</span>
-  <h4>22. UI 设计师</h4>
-  <p>HUD 布局/图标绘制/交互界面/UI 动效/9-slice。HUD 增强沉浸感，不破坏它。</p>
-</div>
-<div class="role-card">
-  <span class="tag art">美术</span>
-  <h4>23. 场景编辑/地编师</h4>
-  <p>地形雕刻/植被布置/灯光设置/后期处理。大自然很乱，玩法需要清晰。</p>
-</div>
-<div class="role-card">
-  <span class="tag art">美术</span>
-  <h4>24. 动作捕捉师</h4>
-  <p>动捕相机标定/演员指导/数据清理/骨骼重定向。好捕捉 80% 靠演员指导。</p>
-</div>
-</div>
-</div>
-</details>
-
-<details>
-<summary>🧪 测试/质量类（2 角色）</summary>
-<div class="details-body">
-<div class="role-grid">
-<div class="role-card">
-  <span class="tag qa">测试</span>
-  <h4>25. 游戏测试工程师（QA）</h4>
-  <p>功能测试/兼容性/回归测试/探索性测试。如果你能搞坏，玩家一定也能。</p>
-</div>
-<div class="role-card">
-  <span class="tag qa">测试</span>
-  <h4>26. 性能/压力测试</h4>
-  <p>并发模拟/逐帧分析/内存泄漏/压力报告。性能是特性，不通过不能发布。</p>
-</div>
-</div>
-</div>
-</details>
-
-<details>
-<summary>📣 运营/发行/市场类（4 角色）</summary>
-<div class="details-body">
-<div class="role-grid">
-<div class="role-card">
-  <span class="tag ops">运营</span>
-  <h4>27. 游戏运营</h4>
-  <p>版本更新/活动策划/数据监控/热修复。运营是马拉松，不是冲刺。</p>
-</div>
-<div class="role-card">
-  <span class="tag ops">运营</span>
-  <h4>28. 用户/社区运营</h4>
-  <p>社区运营/开发者博客/玩家反馈/危机管理。社区是副驾驶。</p>
-</div>
-<div class="role-card">
-  <span class="tag ops">运营</span>
-  <h4>29. 数据分析师</h4>
-  <p>用户行为/留存漏斗/ARPU/A-B 测试/报告。相关性是起点不是结论。</p>
-</div>
-<div class="role-card">
-  <span class="tag ops">运营</span>
-  <h4>30. 海外发行/本地化</h4>
-  <p>多语言适配/合规检查/文化本地化/渠道对接。本地化不是翻译，是文化适配。</p>
-</div>
-</div>
-</div>
-</details>
-
-<p style="text-align: center; margin-top: 3rem; color: var(--text-light);">
-  — END —<br>
-  Bobanana 5.0 Product PRD · v0.1-draft
+<p class="highlight-box purple" style="font-size:1.1rem; text-align:center;">
+<strong>Bobanana 5.0 是跨 session 的 Meta Agent 编排引擎：用可编程状态机编排 AI 角色，用 CL 质量门确保交付，用角色卡生态适配任意领域。</strong>
 </p>
+
+<!-- ==================== SOURCES ==================== -->
+<h2 id="sources">📎 数据来源</h2>
+<ol>
+  <li>https://github.com/ProfYangShengXu/BoBanana5 — Bobanana 5.0 GitHub 仓库</li>
+  <li>https://github.com/geekan/MetaGPT — MetaGPT GitHub</li>
+  <li>https://github.com/OpenBMB/ChatDev — ChatDev GitHub</li>
+  <li>https://github.com/crewAIInc/crewAI — CrewAI GitHub</li>
+  <li>https://github.com/langchain-ai/langgraph — LangGraph GitHub</li>
+  <li>https://github.com/Significant-Gravitas/AutoGPT — AutoGPT GitHub</li>
+  <li>https://github.com/microsoft/autogen — AutoGen GitHub</li>
+  <li>https://github.com/langgenius/dify — Dify GitHub</li>
+  <li>https://hn.algolia.com — Hacker News 搜索</li>
+  <li>https://www.langchain.com/pricing — LangSmith 定价</li>
+  <li>https://openai.com/api/pricing/ — OpenAI 定价</li>
+  <li>https://www.anthropic.com/pricing — Anthropic 定价</li>
+</ol>
 
 </main>
 </div>
-
-<script>
-document.getElementById('gen-time').textContent = new Date().toISOString();
-</script>
 </body>
 </html>

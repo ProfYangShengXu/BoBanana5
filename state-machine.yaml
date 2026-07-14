@@ -1,48 +1,201 @@
-# 状态机 — 外部工具集约定
-# 第一状态机：不含CL，出口为架构师(OP)
+# 贪心状态机 v15 — 更多角色 = 更高质量
+# G1 领域拆分贪心：Architect 识别 N 个领域 → 插入 N 个专业角色
+# G2 计划评审贪心：每个 OP 节点产出后先 Self-Review
+# G3 测试不合并：变更 >1 模块时 test-dev-engineer 强制独立
+# G4 安全不省略：涉及数据处理/网络/用户输入时 security-engineer 强制
+# G5 验收不跳过：Architect 在 CL 前必须做一次完整终验
 
-version: 14
+version: 15
 entry_point: "boss"
 max_loops: 50
 
 nodes:
   - id: "boss"
     label: "Boss"
-    description: "用户代言人，已完成外部工具集约定规划"
+    description: "用户代言人，管线入口"
     tags: ["OP"]
     is_op_role: true
 
   - id: "architect"
     label: "架构师"
-    description: "OP编排者。设计外部工具集扫描与路由机制，更新角色遍历流程"
+    description: "OP编排者。全局设计、任务拆分、动态编排状态机、终验"
     tags: ["OP"]
     is_op_role: true
 
-  - id: "fullstack-dev"
-    label: "全栈开发工程师"
-    description: "实现 kitset 扫描逻辑和角色卡路由"
+  - id: "backend-dev"
+    label: "后端开发工程师"
+    description: "服务端架构、API 设计、业务逻辑实现"
+    tags: []
+
+  - id: "frontend-dev"
+    label: "前端开发工程师"
+    description: "Web/移动端 UI 实现、交互优化"
+    tags: []
+
+  - id: "database-engineer"
+    label: "数据库工程师"
+    description: "Schema 设计、查询优化、数据迁移"
+    tags: []
+
+  - id: "code-reviewer"
+    label: "代码审查员"
+    description: "六维度独立审查，放行或打回"
+    tags: []
+
+  - id: "integration-tester"
+    label: "集成测试工程师"
+    description: "跨模块集成验证、接口一致性检查"
+    tags: []
+
+  - id: "test-dev-engineer"
+    label: "测试开发工程师"
+    description: "U/I/S/A 四层测试、覆盖率、CI/CD"
+    tags: []
+
+  - id: "security-engineer"
+    label: "安全工程师"
+    description: "应用安全审计、渗透测试、密钥管理"
+    tags: []
+
+  - id: "tech-writer"
+    label: "技术文档工程师"
+    description: "交付文档完整性检查和整理"
     tags: []
 
   - id: "client-gate"
     label: "甲方终审"
-    description: "管线的唯一出口。审查外部工具集约定完整性"
+    description: "管线的唯一出口。隔离 subagent 全量审查并打分 1-10"
     tags: ["CL"]
     is_exit: true
 
 edges:
+  # ── 入口 ──
   - from: "boss"
     to: "architect"
     phase: "boss-done"
     label: "Boss → 架构师"
 
+  # ── 架构师方案自审（G2） ──
   - from: "architect"
-    to: "fullstack-dev"
-    phase: "arch-done"
-    label: "架构师 → 全栈实现"
-
-  - from: "fullstack-dev"
     to: "architect"
-    phase: "dev-done_task-done"
-    label: "全栈完成 → 架构师验收"
+    phase: "arch-self-review"
+    label: "架构师自审方案"
 
-  # 第二状态机：architect → client-gate → terminal
+  # ── 按领域拆分（G1）：architect 完成全局设计后分配 ──
+  # 默认路径：后端 → 数据库 → 前端（Architect 可插入/调序）
+  - from: "architect"
+    to: "backend-dev"
+    phase: "arch-done"
+    label: "架构师 → 后端开发"
+
+  # ── 各开发角色 → 代码审查（G2） ──
+  - from: "backend-dev"
+    to: "code-reviewer"
+    phase: "backend-done"
+    label: "后端完成 → 代码审查"
+
+  - from: "code-reviewer"
+    to: "database-engineer"
+    phase: "cr-done"
+    label: "审查通过 → 数据库"
+
+  - from: "database-engineer"
+    to: "code-reviewer"
+    phase: "db-done"
+    label: "数据库完成 → 代码审查"
+
+  - from: "code-reviewer"
+    to: "frontend-dev"
+    phase: "cr-pass"
+    label: "审查通过 → 前端"
+
+  - from: "frontend-dev"
+    to: "code-reviewer"
+    phase: "frontend-done"
+    label: "前端完成 → 代码审查"
+
+  # ── CR 打回路径 ──
+  - from: "code-reviewer"
+    to: "backend-dev"
+    phase: "cr-fail-backend"
+    label: "审查不通过 → 后端修复"
+
+  - from: "code-reviewer"
+    to: "database-engineer"
+    phase: "cr-fail-db"
+    label: "审查不通过 → 数据库修复"
+
+  - from: "code-reviewer"
+    to: "frontend-dev"
+    phase: "cr-fail-frontend"
+    label: "审查不通过 → 前端修复"
+
+  # ── 全部开发完成 → 集成测试（G3） ──
+  - from: "code-reviewer"
+    to: "integration-tester"
+    phase: "all-dev-done"
+    label: "全部开发通过 → 集成测试"
+
+  # ── 集成测试 → 四层测试（G3强制） ──
+  - from: "integration-tester"
+    to: "test-dev-engineer"
+    phase: "integration-done"
+    label: "集成通过 → 全量测试"
+
+  - from: "test-dev-engineer"
+    to: "integration-tester"
+    phase: "test-fail"
+    label: "测试不通过 → 集成回归"
+
+  # ── 测试通过 → 安全审计（G4强制） ──
+  - from: "test-dev-engineer"
+    to: "security-engineer"
+    phase: "test-all-pass"
+    label: "测试全通过 → 安全审计"
+
+  # ── 安全通过 → 文档整理 ──
+  - from: "security-engineer"
+    to: "tech-writer"
+    phase: "security-done"
+    label: "安全通过 → 文档整理"
+
+  # ── 文档完成 → 架构师终验（G5） ──
+  - from: "tech-writer"
+    to: "architect"
+    phase: "docs-done"
+    label: "文档完备 → 架构师终验"
+
+  # ── 架构师终验 → CL 终审 ──
+  - from: "architect"
+    to: "client-gate"
+    phase: "arch-gate-pass"
+    label: "架构师终验通过 → CL 终审"
+
+  - from: "architect"
+    to: "backend-dev"
+    phase: "arch-gate-fail-backend"
+    label: "终验不通过 → 后端修复"
+
+  - from: "architect"
+    to: "frontend-dev"
+    phase: "arch-gate-fail-frontend"
+    label: "终验不通过 → 前端修复"
+
+  # ── CL 出口 ──
+  - from: "client-gate"
+    to: "__terminal__"
+    phase: "cl-pass"
+    label: "CL 通过 ✅"
+    condition:
+      field: score
+      operator: ">="
+      value: 9
+
+  - from: "client-gate"
+    to: "architect"
+    phase: "cl-fail"
+    label: "CL 不通过 → 架构师修复"
+    condition:
+      field: score
+      operator: "<"
+      value: 9

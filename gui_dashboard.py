@@ -175,7 +175,7 @@ class Dashboard:
         self.show_cl(cl)
         self.show_handoff(tickets)
         print()
-        print(f"  {c('DIM','/bobanana <goal>  |  Ctrl+C exit')}")
+        print(f"  {c('DIM','/bb <goal>  |  Ctrl+C exit')}")
 
 
 def main():

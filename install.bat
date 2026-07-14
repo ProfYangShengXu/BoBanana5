@@ -100,7 +100,7 @@ if errorlevel 1 (
 echo.
 echo === Done ===
 echo === Usage: reasonix chat -^> /pipeline your goal ===
-echo === Quick:   reasonix chat -^> /bobanana your goal ===
+echo === Quick:   reasonix chat -^> /bb your goal ===
 echo === GUI:    python bobanana.py --gui ===
 echo === To update: git pull + install.bat ===
 echo.

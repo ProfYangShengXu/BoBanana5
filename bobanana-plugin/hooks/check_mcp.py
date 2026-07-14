@@ -36,7 +36,7 @@ def _set_goal_mode(goal):
             with open(tf, 'r', encoding='utf-8') as f:
                 titles = json.load(f)
             titles = {k: v for k, v in titles.items() if 'bobanana_p_' not in k}
-        except:  # bare except 应改为精确异常
+        except (json.JSONDecodeError, KeyError):
             pass
     titles[tid] = goal[:120]
     with open(tf, 'w', encoding='utf-8') as f:

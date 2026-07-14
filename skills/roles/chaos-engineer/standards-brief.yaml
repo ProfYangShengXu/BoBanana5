@@ -1,16 +1,50 @@
 deliverables:
   output_types:
-  - 实现代码
-  - 测试用例
+  - 混沌实验设计文档
+  - 故障注入脚本
+  - 韧性报告
+  - SLO仪表盘
+  - 自动化实验流水线
   quality_criteria:
-  - 功能完整
-  - 性能达标
-  - 可维护性强
+  - 爆炸半径可控（≤1%流量/实例）
+  - 实验可重复、可自动化
+  - 自动回滚/熔断机制
+  - 稳态假设明确、可观测
 meta:
   description: 混沌工程：Chaos Monkey/故障注入、分布式系统韧性测试
+  research_date: '2026-07-14'
   role_name: chaos-engineer
+  subagents_completed: 4
+pitfalls_and_risks:
+  anti_patterns:
+  - 爆炸半径过大导致生产事故
+  - 一次性实验而非持续验证
+  - 在错误环境做实验（仅staging无生产）
+  - 不通知团队、不记录结果
+  common_mistakes:
+  - 未定义稳态指标就注入故障
+  - 缺少自动回滚/熔断机制
+  - 所有流量都受实验影响（无对照组）
+  - 手动执行而非自动化
+  risk_factors:
+  - 真实用户受影响风险
+  - 级联故障放大
+  - 团队抵触/管理层不理解价值
+  - 安全合规约束（SOC2/PCI-DSS）
 profession_standards:
-  summary: chaos-engineer职业准则
+  best_practices:
+  - Netflix Chaos Monkey 开创的故障注入模式
+  - Chaos Mesh/LitmusChaos CNCF 标准
+  - 五项混沌工程原则（principlesofchaos.org）
+  key_standards:
+  - 混沌工程标准工作流程
+  - 实验成熟度模型（Alpha→Beta→GA）
+  - 稳态假设+爆炸半径+自动化+生产环境
+  summary: chaos-engineer 职业准则
 tools_and_methods:
+  software:
+  - Chaos Mesh / LitmusChaos / Gremlin
+  - AWS Fault Injection Simulator / Azure Chaos Studio
+  - Prometheus + Grafana 可观测性栈
   workflow:
-  - 需求分析->设计->实现->测试->评审->发布
+  - 计划→设计→审批→执行→分析→改进→自动化

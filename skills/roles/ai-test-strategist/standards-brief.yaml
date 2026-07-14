@@ -1,16 +1,50 @@
 deliverables:
   output_types:
-  - 实现代码
-  - 测试用例
+  - AI模型验证报告
+  - 生成式测试用例
+  - 公平性评估报告
+  - 模型卡(Model Card)
+  - 对抗测试报告
   quality_criteria:
-  - 功能完整
-  - 性能达标
-  - 可维护性强
+  - 三路径覆盖(normal/boundary/adversarial)
+  - 公平性指标(群体差异≤阈值)
+  - RAG检索质量验证(Recall/Precision)
+  - prompt注入/jailbreak检测覆盖
 meta:
   description: AI测试策略师：AI模型验证、生成式测试用例、模型公平性评估
+  research_date: '2026-07-14'
   role_name: ai-test-strategist
+  subagents_completed: 4
+pitfalls_and_risks:
+  anti_patterns:
+  - 只测准确率不测公平性/偏见
+  - 测试集与训练集同分布(发现不了drift)
+  - 只测模型不测系统(RAG/工具调用)
+  - 遗漏prompt注入/jailbreak安全测试
+  common_mistakes:
+  - 无subgroup分析(多数群体掩盖少数退化)
+  - 静态fixture无OOD数据
+  - 忽略数据漂移/概念漂移监控
+  risk_factors:
+  - 模型在生产环境中对少数群体表现差
+  - 分布漂移导致性能断崖下跌
+  - prompt注入导致越权操作
 profession_standards:
-  summary: ai-test-strategist职业准则
+  best_practices:
+  - Google ML Test Score体系
+  - Microsoft Responsible AI Standard
+  - TFX/TFDV数据验证管线
+  - DeepEval 50+评估指标
+  key_standards:
+  - 模型卡(Model Card)+Data Sheets标准
+  - 公平性评估(Fairlearn/AIF360)
+  - 对抗测试(Counterfit/ART)
+  summary: ai-test-strategist 职业准则
 tools_and_methods:
+  software:
+  - DeepEval / LangSmith / LangFuse
+  - Weights & Biases / MLflow
+  - TensorFlow Responsible AI Toolkit
+  - Fairlearn / AIF360 / InterpretML
   workflow:
-  - 需求分析->设计->实现->测试->评审->发布
+  - 数据验证→模型评估→对抗测试→公平性检查→回归测试→部署监控

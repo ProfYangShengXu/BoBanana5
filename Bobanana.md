@@ -85,6 +85,7 @@
 | 🎮 **game-dev** | 14 | 游戏开发、AI NPC、服务器韧性 | `docs/examples/state-machine-game-dev.yaml` |
 | 📊 **data-science** | 12 | 数据分析、ML 训练、推荐系统 | `docs/examples/state-machine-data-science.yaml` |
 | 🔒 **security-audit** | 9 | 安全审计、渗透测试、合规检查 | `docs/examples/state-machine-security-audit.yaml` |
+| 👑 **super-cr** | 15+ | **超级 Code Review**：BOSS分析技术栈→HR招聘对应专家→逐栈审查 | `docs/examples/state-machine-super-cr.yaml` |
 
 **chaos-engineer + ai-test-strategist 协同模式**：在所有含此二角色的模板中，它们构成"质量双核"——
 1. chaos-engineer 先注入故障（网络中断、服务宕机、高延迟）验证系统韧性

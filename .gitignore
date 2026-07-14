@@ -34,3 +34,7 @@ eui_neo_app/external/EUI-NEO/
 
 # 为什么选择这个架构？baseline
 为什么选择这个架构？baseline
+
+# Kitsets（独立仓库，不包含在主仓库中）
+kitsets/
+

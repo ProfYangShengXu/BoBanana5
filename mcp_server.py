@@ -235,13 +235,14 @@ def handle_read_file(params):
     path = params.get("path")
     if not path:
         return {"error": "No path provided"}
-    # 路径消毒：禁止目录遍历
-    safe_path = os.path.normpath(os.path.join(os.getcwd(), path))
-    if not safe_path.startswith(os.getcwd()):
+    # 路径消毒：用 realpath 解析真实路径 + commonpath 比较
+    cwd = os.path.realpath(os.getcwd())
+    requested = os.path.realpath(os.path.join(cwd, path))
+    if os.path.commonpath([cwd]) != os.path.commonpath([cwd, requested]):
         return {"error": "Path traversal denied"}
-    if not os.path.exists(safe_path):
+    if not os.path.exists(requested):
         return {"error": f"File not found: {path}"}
-    with open(safe_path, 'r', encoding='utf-8') as f:
+    with open(requested, 'r', encoding='utf-8') as f:
         content = f.read()
     return {"content": content, "path": path}
 

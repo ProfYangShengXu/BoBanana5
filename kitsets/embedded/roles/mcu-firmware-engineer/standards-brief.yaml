@@ -22,7 +22,13 @@ profession_standards:
   summary: mcu-firmware-engineer 职业准则
 tools_and_methods:
   software:
+  - arm-none-eabi-gcc
+  - Makefile/CMake
+  - FreeRTOS
+  - OpenOCD
+  - pyOCD
   - 对应MCU的IDE/工具链
   - Git + Git LFS
   workflow:
+  - 查手册→寄存器级编程→驱动开发→编译→烧录→信号验证
   - 需求→方案→实现→编译→烧录→验证→文档

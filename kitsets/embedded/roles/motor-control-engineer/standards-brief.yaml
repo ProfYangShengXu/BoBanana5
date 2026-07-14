@@ -22,7 +22,12 @@ profession_standards:
   summary: motor-control-engineer 职业准则
 tools_and_methods:
   software:
+  - ST MotorControl SDK
+  - MC Workbench
+  - MATLAB/Simulink
+  - Oscilloscope
   - 对应MCU的IDE/工具链
   - Git + Git LFS
   workflow:
+  - PRD审查→PWM生成验证→电流采样校准→FOC调参→效率测量→保护验证
   - 需求→方案→实现→编译→烧录→验证→文档

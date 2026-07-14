@@ -22,7 +22,14 @@ profession_standards:
   summary: stm32-firmware-engineer 职业准则
 tools_and_methods:
   software:
+  - STM32CubeMX
+  - Keil MDK
+  - IAR EWARM
+  - ST-Link
+  - JLink
+  - OpenOCD
   - 对应MCU的IDE/工具链
   - Git + Git LFS
   workflow:
+  - 需求分析→CubeMX配置生成→HAL/LL驱动开发→编译→烧录→硬件信号验证
   - 需求→方案→实现→编译→烧录→验证→文档

@@ -1,0 +1,28 @@
+description: '功能安全工程师：ISO 26262/IEC 61508、FMEA/FTA分析、安全机制验证'
+input_contract:
+- description: 任务输入（需求描述/技术文档链接）
+  name: task_input
+  required: true
+  type: object
+name: functional-safety-engineer
+output_contract:
+- description: 实现产出（代码/固件/配置文件/文档）
+  name: implementation
+  type: object
+quality_gates:
+- check: 编译通过无警告
+  desc: 固件编译零错误零警告
+  id: FUNCTI-Q1
+  layer: U
+- check: 硬件信号验证
+  desc: 关键GPIO/外设信号用逻辑分析仪或示波器验证
+  id: FUNCTI-Q2
+  layer: I
+- check: 文档完整性
+  desc: 烧录步骤/引脚连接/环境搭建文档齐全
+  id: FUNCTI-Q3
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+is_op_role: false
+use_case: '适合ISO 26262/IEC 61508、FMEA/FTA分析、安全机制验证'

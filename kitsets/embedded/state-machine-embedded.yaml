@@ -1,0 +1,92 @@
+# 嵌入式系统开发状态机 v1-embedded
+# 适用场景：嵌入式硬件开发项目、固件开发、FPGA开发、系统级调试
+# 角色数：17 张嵌入式专业角色卡
+# OP角色：embedded-architect（可以编排工具集和角色）
+
+version: 1
+entry_point: "embedded-architect"
+max_loops: 50
+
+nodes:
+  # OP编排层
+  - id: "embedded-architect"     tags: ["OP"]  is_op_role: true
+
+  # 固件开发链
+  - id: "stm32-firmware-engineer" tags: []
+  - id: "mcu-firmware-engineer"   tags: []
+  - id: "motor-control-engineer"  tags: []
+
+  # Linux 开发链
+  - id: "linux-app-dev"           tags: []
+  - id: "linux-driver-engineer"   tags: []
+  - id: "bsp-engineer"            tags: []
+  - id: "qt-developer"            tags: []
+
+  # 行业应用链
+  - id: "bms-software-engineer"   tags: []
+  - id: "domain-controller-engineer" tags: []
+  - id: "edge-computing-engineer" tags: []
+  - id: "model-quantization-engineer" tags: []
+
+  # FPGA 链
+  - id: "fpga-engineer"           tags: []
+
+  # 硬件链
+  - id: "embedded-hardware-engineer" tags: []
+  - id: "rf-engineer"             tags: []
+  - id: "power-engineer"          tags: []
+
+  # 安全链
+  - id: "functional-safety-engineer" tags: []
+
+  # 出口
+  - id: "client-gate"             tags: ["CL"]  is_exit: true
+
+edges:
+  # 架构师方案自审
+  - from: "embedded-architect"    to: "embedded-architect"  phase: "arch-self-review"
+
+  # 固件开发分支
+  - from: "embedded-architect"    to: "stm32-firmware-engineer" phase: "arch-fw-start"
+  - from: "stm32-firmware-engineer" to: "mcu-firmware-engineer"  phase: "stm32-done"
+  - from: "mcu-firmware-engineer" to: "motor-control-engineer"   phase: "mcu-done"
+
+  # Linux 开发分支
+  - from: "embedded-architect"    to: "linux-app-dev"       phase: "arch-lx-start"
+  - from: "linux-app-dev"        to: "linux-driver-engineer" phase: "lx-app-done"
+  - from: "linux-driver-engineer" to: "bsp-engineer"        phase: "lx-drv-done"
+  - from: "bsp-engineer"         to: "qt-developer"          phase: "bsp-done"
+
+  # 行业应用分支
+  - from: "embedded-architect"   to: "bms-software-engineer" phase: "arch-bms-start"
+  - from: "bms-software-engineer" to: "domain-controller-engineer" phase: "bms-done"
+  - from: "domain-controller-engineer" to: "edge-computing-engineer" phase: "dc-done"
+  - from: "edge-computing-engineer" to: "model-quantization-engineer" phase: "edge-done"
+
+  # FPGA 分支
+  - from: "embedded-architect"   to: "fpga-engineer"        phase: "arch-fpga-start"
+
+  # 硬件分支
+  - from: "embedded-architect"   to: "embedded-hardware-engineer" phase: "arch-hw-start"
+  - from: "embedded-hardware-engineer" to: "rf-engineer"    phase: "hw-done"
+  - from: "rf-engineer"          to: "power-engineer"        phase: "rf-done"
+
+  # 功能安全（可选，贯穿全流程）
+  - from: "motor-control-engineer" to: "functional-safety-engineer" phase: "fw-all-done"
+  - from: "qt-developer"          to: "functional-safety-engineer"  phase: "lx-all-done"
+  - from: "model-quantization-engineer" to: "functional-safety-engineer" phase: "app-all-done"
+  - from: "fpga-engineer"         to: "functional-safety-engineer"  phase: "fpga-done"
+  - from: "power-engineer"        to: "functional-safety-engineer"  phase: "hw-all-done"
+
+  # 安全通过 → 架构师终验 → CL
+  - from: "functional-safety-engineer" to: "embedded-architect" phase: "safety-done"
+  - from: "embedded-architect"    to: "client-gate"         phase: "arch-gate-pass"
+
+  # 打回路径
+  - from: "embedded-architect"    to: "stm32-firmware-engineer" phase: "arch-gate-fail-fw"
+  - from: "embedded-architect"    to: "linux-app-dev"        phase: "arch-gate-fail-lx"
+  - from: "embedded-architect"    to: "embedded-hardware-engineer" phase: "arch-gate-fail-hw"
+
+  # CL 出口
+  - from: "client-gate"           to: "__terminal__"         phase: "cl-pass"   condition: {field: score, operator: ">=", value: 9}
+  - from: "client-gate"           to: "embedded-architect"   phase: "cl-fail"   condition: {field: score, operator: "<", value: 9}

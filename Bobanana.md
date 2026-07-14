@@ -46,11 +46,14 @@
 所有管线目标自动追加「默认目标：通过 CL 终审(score≥9)」。由 `pipeline_orchestrator.init_pipeline()` 执行注入，各角色无需手动添加。
 
 ### 5.8 外部工具集（Adaption Kitsets）
-领域特定任务优先引用外部适配集中的角色卡和工具。架构师/Boss 遍历角色卡库时额外扫描 `skills/kitsets/` 或配置的 `kitset_paths`，若用户目标匹配某 kitset 领域（如游戏开发→Godot-kitset），则在状态机中插入该 kitset 提供的角色卡节点。Kitset 角色卡遵循标准 `role-card.schema.yaml` 格式，可含 `kitset_name` 字段标记来源。优先使用 kitset 工具而非自研。
-- Boss/架构师 Step 1 遍历角色卡库时增加 `skills/kitsets/` 扫描
-- 检测用户目标关键词匹配 kitset 领域标签
+领域特定任务优先引用外部适配集中的角色卡和工具。架构师/Boss 遍历角色卡库时额外扫描 `kitsets/` 目录下的适配集，若用户目标匹配某 kitset 领域，则在状态机中插入该 kitset 提供的角色卡节点。Kitset 角色卡遵循标准 `role-card.schema.yaml` 格式，可含 `kitset_name` 字段标记来源。优先使用 kitset 工具而非自研。
+- Boss/架构师 Step 1 遍历角色卡库时增加 `kitsets/` 目录扫描
+- 检测用户目标关键词匹配 kitset 领域标签（如"嵌入式/STM32/固件/FPGA"→embedded kitset）
 - 匹配时在状态机中插入 kitset 角色卡作为执行节点
-- 不匹配时使用默认角色池 < 该约定无需修改代码，由角色执行时遵循>
+- 不匹配时使用默认角色池
+
+目前已预置的 Kitset：
+- **embedded** — `kitsets/embedded/` — 17 张嵌入式专业角色卡 + 8 个工具 + 状态机模板
 
 ### 5.9 多文件变更规则
 需求涉及多个文件时，状态机中**禁止使用 fullstack-dev 角色**，必须同时包含 `test-dev-engineer` + `security-engineer` 两个角色。理由：多文件变更意味着跨模块影响，必须有测试覆盖和安全审查兜底，不能由单一角色全包。单文件变更不受此限制。

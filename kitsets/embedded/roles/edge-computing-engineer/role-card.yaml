@@ -1,0 +1,28 @@
+description: '边缘计算工程师：Edge AI推理部署、TFLite Micro推理、摄像头/传感器接入'
+input_contract:
+- description: 任务输入（需求描述/技术文档链接）
+  name: task_input
+  required: true
+  type: object
+name: edge-computing-engineer
+output_contract:
+- description: 实现产出（代码/固件/配置文件/文档）
+  name: implementation
+  type: object
+quality_gates:
+- check: 编译通过无警告
+  desc: 固件编译零错误零警告
+  id: EDGE-C-Q1
+  layer: U
+- check: 硬件信号验证
+  desc: 关键GPIO/外设信号用逻辑分析仪或示波器验证
+  id: EDGE-C-Q2
+  layer: I
+- check: 文档完整性
+  desc: 烧录步骤/引脚连接/环境搭建文档齐全
+  id: EDGE-C-Q3
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+is_op_role: false
+use_case: '适合Edge AI推理部署、TFLite Micro推理、摄像头/传感器接入'

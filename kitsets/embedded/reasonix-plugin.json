@@ -1,0 +1,22 @@
+{
+  "name": "bobanana5-embedded-kitset",
+  "version": "1.0.0",
+  "description": "嵌入式系统开发 Bobanana 5.0 Adaption Kitset — 固件/Linux/FPGA/硬件/功能安全",
+  "homepage": "https://github.com/ProfYangShengXu/BoBanana5",
+  "repository": "https://github.com/ProfYangShengXu/BoBanana5.git",
+
+  "skills": "roles",
+  "commands": [],
+
+  "kitset_name": "embedded",
+  "kitset_domains": ["embedded", "firmware", "hardware", "fpga", "linux-embedded"],
+
+  "mcpServers": {
+    "embedded-kitset": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["-c", "print('Embedded Kitset loaded')"],
+      "auto_start": false
+    }
+  }
+}

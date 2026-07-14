@@ -1,0 +1,28 @@
+deliverables:
+  output_types:
+  - 固件/代码
+  - 烧录文件(.hex/.bin)
+  - 配置文件
+  - 烧录说明文档
+  quality_criteria:
+  - 编译零警告
+  - 硬件信号验证通过
+  - 烧录步骤文档完备
+  - 低功耗/实时性达标
+meta:
+  description: FPGA工程师：Verilog/VHDL开发、时序约束、仿真验证、Quartus/Vivado
+  role_name: fpga-engineer
+pitfalls_and_risks:
+  common_mistakes:
+  - 引脚复用冲突未检查
+  - 时钟配置错误导致外设异常
+  - 忽略电源时序要求
+  - 文档滞后于代码修改
+profession_standards:
+  summary: fpga-engineer 职业准则
+tools_and_methods:
+  software:
+  - 对应MCU的IDE/工具链
+  - Git + Git LFS
+  workflow:
+  - 需求→方案→实现→编译→烧录→验证→文档

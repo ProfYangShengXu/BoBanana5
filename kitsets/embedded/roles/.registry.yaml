@@ -1,0 +1,21 @@
+cards:
+- {id: stm32-firmware-engineer, name: stm32-firmware-engineer, description: "STM32固件工程师：STM32 HAL/LL库开发、外设驱动、RTOS移植、低功耗优化", tags: [], path: stm32-firmware-engineer/role-card.yaml, use_case: "适合STM32系列MCU固件开发"}
+- {id: mcu-firmware-engineer, name: mcu-firmware-engineer, description: "MCU固件工程师：通用MCU裸机/RTOS开发、外设驱动编写、Bootloader开发", tags: [], path: mcu-firmware-engineer/role-card.yaml, use_case: "适合通用MCU固件开发"}
+- {id: motor-control-engineer, name: motor-control-engineer, description: "电机控制工程师：FOC/PID/无刷电机驱动、伺服控制、运动规划", tags: [], path: motor-control-engineer/role-card.yaml, use_case: "适合电机控制和伺服系统开发"}
+- {id: linux-app-dev, name: linux-app-dev, description: "Linux应用开发工程师：嵌入式Linux应用层开发、POSIX编程、Qt", tags: [], path: linux-app-dev/role-card.yaml, use_case: "适合嵌入式Linux应用开发"}
+- {id: linux-driver-engineer, name: linux-driver-engineer, description: "Linux驱动工程师：内核模块、设备树、字符/平台驱动", tags: [], path: linux-driver-engineer/role-card.yaml, use_case: "适合Linux内核驱动开发"}
+- {id: bsp-engineer, name: bsp-engineer, description: "BSP工程师：板级支持包移植、U-Boot/Linux内核适配、Yocto/Buildroot", tags: [], path: bsp-engineer/role-card.yaml, use_case: "适合板级支持包定制"}
+- {id: qt-developer, name: qt-developer, description: "QT开发工程师：Qt/QML嵌入式GUI开发、HMI人机界面", tags: [], path: qt-developer/role-card.yaml, use_case: "适合嵌入式QT界面开发"}
+- {id: bms-software-engineer, name: bms-software-engineer, description: "BMS软件工程师：电池管理、SOX算法、CAN/Modbus通信", tags: [], path: bms-software-engineer/role-card.yaml, use_case: "适合电池管理系统开发"}
+- {id: domain-controller-engineer, name: domain-controller-engineer, description: "域控制器工程师：AUTOSAR、DDS/SOME/IP、多核SoC", tags: [], path: domain-controller-engineer/role-card.yaml, use_case: "适合汽车域控制器开发"}
+- {id: functional-safety-engineer, name: functional-safety-engineer, description: "功能安全工程师：ISO 26262、FMEA/FTA分析、安全验证", tags: [], path: functional-safety-engineer/role-card.yaml, use_case: "适合功能安全开发和认证"}
+- {id: edge-computing-engineer, name: edge-computing-engineer, description: "边缘计算工程师：Edge AI推理、TFLite Micro、摄像头接入", tags: [], path: edge-computing-engineer/role-card.yaml, use_case: "适合边缘AI部署"}
+- {id: model-quantization-engineer, name: model-quantization-engineer, description: "模型量化部署工程师：量化/剪枝/蒸馏、NPU推理优化", tags: [], path: model-quantization-engineer/role-card.yaml, use_case: "适合AI模型嵌入式部署"}
+- {id: fpga-engineer, name: fpga-engineer, description: "FPGA工程师：Verilog/VHDL、时序约束、Quartus/Vivado", tags: [], path: fpga-engineer/role-card.yaml, use_case: "适合FPGA开发"}
+- {id: embedded-hardware-engineer, name: embedded-hardware-engineer, description: "嵌入式硬件工程师：原理图设计、PCB布局、信号完整性", tags: [], path: embedded-hardware-engineer/role-card.yaml, use_case: "适合嵌入式硬件设计"}
+- {id: rf-engineer, name: rf-engineer, description: "射频工程师：天线设计、射频链路、频谱分析、EMC调试", tags: [], path: rf-engineer/role-card.yaml, use_case: "适合射频和无线系统开发"}
+- {id: power-engineer, name: power-engineer, description: "电源工程师：DC-DC/LDO设计、Buck/Boost拓扑、热管理", tags: [], path: power-engineer/role-card.yaml, use_case: "适合电源系统设计"}
+- {id: embedded-architect, name: embedded-architect, description: "嵌入式架构师(OP)：系统架构设计、技术栈选型、工具链编排", tags: [OP], path: embedded-architect/role-card.yaml, is_op_role: true, use_case: "适合嵌入式系统架构设计和评审"}
+
+last_scan: ''
+version: 1

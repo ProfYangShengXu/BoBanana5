@@ -1,0 +1,28 @@
+description: '嵌入式架构师(OP)：系统架构设计、技术栈选型、工具链编排、方案评审'
+input_contract:
+- description: 任务输入（需求描述/技术文档链接）
+  name: task_input
+  required: true
+  type: object
+name: embedded-architect
+output_contract:
+- description: 实现产出（代码/固件/配置文件/文档）
+  name: implementation
+  type: object
+quality_gates:
+- check: 编译通过无警告
+  desc: 固件编译零错误零警告
+  id: EMBEDD-Q1
+  layer: U
+- check: 硬件信号验证
+  desc: 关键GPIO/外设信号用逻辑分析仪或示波器验证
+  id: EMBEDD-Q2
+  layer: I
+- check: 文档完整性
+  desc: 烧录步骤/引脚连接/环境搭建文档齐全
+  id: EMBEDD-Q3
+  layer: U
+standards_file: standards-brief.yaml
+tags: ['OP']
+is_op_role: true
+use_case: '适合系统架构设计、技术栈选型、工具链编排、方案评审'

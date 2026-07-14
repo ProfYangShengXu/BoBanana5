@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>Bobanana 5.0 — Adaption Kitset 接入规范</title>
+<style>
+body{font:16px/1.6 system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:1rem;background:#f8f9fa}
+h1{color:#1a1a2e;border-bottom:2px solid #e94560;padding-bottom:.5rem}
+h2{color:#16213e;margin-top:2rem;border-bottom:1px solid #ddd;padding-bottom:.3rem}
+table{width:100%;border-collapse:collapse;margin:1rem 0}
+th,td{border:1px solid #ddd;padding:.5rem;text-align:left}
+th{background:#1a1a2e;color:#fff}
+pre{background:#1a1a2e;color:#e0e0e0;padding:1rem;border-radius:6px;overflow-x:auto}
+code{background:#eef;padding:.15rem .4rem;border-radius:3px;font-size:.9em}
+.highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:.8rem 1rem;margin:1rem 0;border-radius:0 6px 6px 0}
+.rule{background:#f8d7da;border-left:4px solid #dc3545;padding:.8rem 1rem;margin:1rem 0;border-radius:0 6px 6px 0}
+.tag-op{display:inline-block;background:#3b82f6;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.8rem}
+.tag-cl{display:inline-block;background:#ef4444;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.8rem}
+</style></head>
+<body>
+<h1>🏢 Bobanana 5.0 — Adaption Kitset 接入规范</h1>
+<p>版本: v1.0 | 日期: 2026-07-14 | 类比: 子公司与母公司</p>
+
+<h2>1. 核心理念：子公司模式</h2>
+<div class="highlight">
+<strong>类比：</strong>Bobanana 核心 = 母公司（集团总部），Kitset = 子公司（专业子公司）。<br>
+母公司提供：品牌(Bobanana)、基础设施(状态机引擎)、公共服务(HR/CL)、渠道(Boss入口)。<br>
+子公司提供：领域专业能力(角色卡)、专用工具(工具集)、领域OP管理(嵌入式架构师)。<br>
+<strong>铁律：</strong>子公司不改母公司代码，除非改动对所有子公司都有利。
+</div>
+
+<table>
+<tr><th>角色</th><th>母公司(Bobanana核心)</th><th>子公司(Kitset)</th></tr>
+<tr><td>入口</td><td>Boss（发现+匹配+切换）</td><td>嵌入式架构师（编排+执行+终验）</td></tr>
+<tr><td>角色池</td><td>59张通用角色卡</td><td>17张嵌入式专用角色卡</td></tr>
+<tr><td>工具</td><td>通用工具</td><td>cubemx/keil5/jlink等嵌入式工具</td></tr>
+<tr><td>状态机</td><td>通用模板(v15 standard)</td><td>state-machine-embedded.yaml</td></tr>
+<tr><td>CL</td><td>统一CL终审（隔离审查）</td><td>使用母公司CL</td></tr>
+<tr><td>HR</td><td>统一HR招聘</td><td>可使用母公司HR招聘到子公司</td></tr>
+</table>
+
+<h2>2. 发现阶段（Boss启动时）</h2>
+<p>Boss 启动时自动扫描 <code>kitsets/</code> 目录下所有适配集。</p>
+<pre>kitsets/
+├── embedded/           ← 嵌入式系统开发 Kitset
+│   ├── reasonix-plugin.json   ← 元数据（kitset_name, kitset_domains）
+│   ├── roles/                 ← 领域角色卡
+│   ├── tools/                 ← 领域工具集
+│   └── state-machine-embedded.yaml
+└── ... (更多Kitset)</pre>
+
+<p>每个 Kitset 通过 <code>reasonix-plugin.json</code> 声明自己的领域标签：</p>
+<pre>{
+  "kitset_name": "embedded",
+  "kitset_domains": ["embedded", "firmware", "stm32", "fpga",
+                     "linux-embedded", "hardware", "rtos"],
+  "entry_role": "embedded-architect"
+}</pre>
+
+<h2>3. 匹配阶段（Boss分析目标时）</h2>
+<p>Boss 分析用户目标，按关键词匹配合适的 Kitset：</p>
+<table>
+<tr><th>用户目标关键词</th><th>匹配Kitset</th><th>操作</th></tr>
+<tr><td>"STM32"、"固件"、"嵌入式"、"MCU"、"RTOS"、"电机"</td><td>embedded</td><td>切换控制权</td></tr>
+<tr><td>"FPGA"、"Verilog"、"VHDL"、"逻辑分析"</td><td>embedded</td><td>切换控制权</td></tr>
+<tr><td>"Linux驱动"、"BSP"、"Yocto"、"Buildroot"</td><td>embedded</td><td>切换控制权</td></tr>
+<tr><td>其他通用目标</td><td>无匹配</td><td>使用默认角色池</td></tr>
+</table>
+
+<div class="highlight">
+<strong>匹配原则：</strong>匹配置信度≥2个标签自动切换，1个标签询问用户，0个标签用默认池。
+</div>
+
+<h2>4. 切换阶段（Boss移交控制权）</h2>
+<p>匹配成功时，Boss 执行控制权移交：</p>
+<pre>1. Boss 检测到用户目标匹配 embedded kitset
+2. Boss 读取 state-machine-embedded.yaml
+   → entry_point: "embedded-architect" (kitset的OP角色)
+3. Boss 写入 state-machine.yaml
+   → 将entry_point改为"embedded-architect"
+   → 或插入边: "boss → embedded-architect"
+4. Boss调用 queue_next_prompt(phase="boss-done")
+5. 下一Session: embedded-architect 登场
+→ 控制权从 Boss(母公司) → embedded-architect(子公司)</pre>
+
+<h2>5. 执行阶段（Kitset OP编排）</h2>
+<p>嵌入式架构师(OP)使用母公司的状态机引擎编排 Kitset 内角色：</p>
+<pre>embedded-architect
+  ├── 读取 state-machine-embedded.yaml
+  ├── 调用 state_machine_engine.load() [母公司引擎]
+  ├── 遍历角色链: 固件→Linux→应用→FPGA→硬件→安全
+  ├── 各角色调用 queue_next_prompt 推进
+  ├── 可选: 调用母公司HR招聘新角色进Kitset
+  └── 完成: 调用 queue_next_prompt(phase="arch-gate-pass")</pre>
+
+<p><strong>关键：</strong>Kitset OP 与通用架构师的职责相同（读需求→拆任务→编排→终验），但使用领域专用的角色卡和工具集。</p>
+
+<h2>6. 退出阶段（CL终审）</h2>
+<p>Kitset 执行完成后回到母公司 CL 终审：</p>
+<pre>Kitset内角色链全部完成
+  → embedded-architect 终验
+  → client-gate (母公司CL，隔离审查)
+     ├── score ≥ 9 → __terminal__ ✅
+     └── score < 9 → 打回 embedded-architect 🔄</pre>
+
+<h2>7. 铁律</h2>
+<div class="rule">
+<strong>Kitset 不得修改以下母公司代码：</strong><br>
+state_machine_engine.py / pipeline_orchestrator.py / role_tag_system.py<br>
+role_card_registry.py / mcp_server.py / Bobanana.md / reasonix.toml<br><br>
+<strong>Kitset 可以操作的内容：</strong><br>
+kitsets/&lt;name&gt;/ 下全部文件 / state-machine.yaml（运行时）/ 管线过程中 docs/
+</div>
+
+<h2>8. 一句话总结</h2>
+<p>Kitset = 子公司的角色卡+工具集，挂载在母公司 Bobanana 的状态机引擎上，Boss自动发现并按需切换OP角色，不改一行母公司代码。</p>
+</body></html>

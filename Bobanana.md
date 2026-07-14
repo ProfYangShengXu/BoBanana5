@@ -45,12 +45,28 @@
 ### 5.7 提示词注入
 所有管线目标自动追加「默认目标：通过 CL 终审(score≥9)」。由 `pipeline_orchestrator.init_pipeline()` 执行注入，各角色无需手动添加。
 
-### 5.8 外部工具集（Adaption Kitsets）
-领域特定任务优先引用外部适配集中的角色卡和工具。架构师/Boss 遍历角色卡库时额外扫描 `kitsets/` 目录下的适配集，若用户目标匹配某 kitset 领域，则在状态机中插入该 kitset 提供的角色卡节点。Kitset 角色卡遵循标准 `role-card.schema.yaml` 格式，可含 `kitset_name` 字段标记来源。优先使用 kitset 工具而非自研。
-- Boss/架构师 Step 1 遍历角色卡库时增加 `kitsets/` 目录扫描
-- 检测用户目标关键词匹配 kitset 领域标签（如"嵌入式/STM32/固件/FPGA"→embedded kitset）
-- 匹配时在状态机中插入 kitset 角色卡作为执行节点
-- 不匹配时使用默认角色池
+### 5.8 外部工具集（Adaption Kitsets — 子公司模式）
+
+领域特定任务优先引用外部适配集中的角色卡和工具。架构师/Boss 遍历角色卡库时扫描 `kitsets/` 目录下的适配集。
+
+**子公司-母公司模式**：
+```
+Bobanana 核心（母公司） = 状态机引擎 + CL + HR + 通用角色池
+Kitset（子公司）       = 领域角色卡 + 工具集 + 领域 OP 角色
+操作铁律：Kitset 不改核心代码，改了对所有 Kitset 都有利才改
+```
+
+**Boss 自动发现流程**：
+1. `python kitsets/kitset_discovery.py` — 扫描 `kitsets/` 下所有适配集
+2. 按用户目标关键词匹配 `kitset_domains` 领域标签
+3. 匹配时 → Boss 使用 Kitset 的 OP 角色（如 `embedded-architect`）替代通用架构师
+4. Kitset OP 使用母公司状态机引擎编排 Kitset 内角色
+5. Kitset 完成后回到母公司 CL 终审
+
+**匹配规则**：
+- 命中 ≥2 个领域标签 → 自动切换
+- 命中 1 个 → 询问用户
+- 命中 0 个 → 默认角色池
 
 目前已预置的 Kitset：
 - **embedded** — `kitsets/embedded/` — 17 张嵌入式专业角色卡 + 8 个工具 + 状态机模板

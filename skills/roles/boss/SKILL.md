@@ -43,6 +43,24 @@ python -c "import pipeline_orchestrator as po; po.advance_pipeline('boss-done')"
 - 标记哪些是 CL 角色（tags 含 CL）
 - 整理可用角色清单
 
+### 第 1.5 步：扫描并匹配 Kitset（可选）
+
+运行以下命令自动发现和匹配 Kitset：
+
+```bash
+python kitsets/kitset_discovery.py
+```
+
+如果输出显示有匹配的 Kitset（如 embedded），且用户目标包含该领域的关键词：
+
+1. **匹配 Kitset** → 使用该 Kitset 的 OP 角色（如 embedded-architect）替代通用架构师
+2. **不匹配** → 使用通用角色池继续
+
+匹配规则：
+- 命中 ≥2 个领域标签 → 自动使用 Kitset OP
+- 命中 1 个领域标签 → 询问用户是否需要使用 Kitset
+- 命中 0 个 → 使用默认角色池
+
 ## 第 2 步：调用 /docs 更新产品文档
 
 运行 `run_skill(name: "docs", arguments: "当前项目: bobanana5, 目标: <用户目标>")`，产出：

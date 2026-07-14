@@ -1,0 +1,58 @@
+product:
+  name: "bobanana5-kitset-access-spec"
+  one_liner: "子公司模式 — Boss自动发现Kitset→按需匹配→切换Kitset OP→编排执行→母公司CL终审"
+  created_at: "2026-07-14T22:00:00+08:00"
+
+architecture:
+  model: "子公司-母公司"
+  parent:
+    name: "Bobanana 5.0 核心"
+    responsibilities:
+      - "Boss入口/发现/匹配/切换"
+      - "状态机引擎(state_machine_engine.py)"
+      - "统一CL终审(client-gate)"
+      - "统一HR招聘(hr-recruiter)"
+      - "通用角色池(59张)"
+    untouchable_files:
+      - state_machine_engine.py
+      - pipeline_orchestrator.py
+      - role_tag_system.py
+      - role_card_registry.py
+      - mcp_server.py
+      - Bobanana.md
+      - reasonix.toml
+  subsidiary:
+    name: "Adaption Kitset"
+    examples:
+      - "embedded (嵌入式系统)"
+    directory: "kitsets/<name>/"
+    required_files:
+      - reasonix-plugin.json (含kitset_name, kitset_domains, entry_role)
+      - roles/ (≥1张OP角色卡)
+    optional_files:
+      - state-machine-<name>.yaml
+      - tools/
+      - README.md
+
+workflow:
+  phases:
+    - name: "发现(Scan)"
+      trigger: "Boss启动时"
+      action: "扫描kitsets/目录，读取reasonix-plugin.json元数据"
+      code: "role_card_registry.py scan_directory()"
+    - name: "匹配(Match)"
+      trigger: "Boss分析用户目标"
+      action: "关键词匹配kitset_domains领域标签"
+      rules:
+        - "≥2标签命中 → 自动切换"
+        - "1标签命中 → 询问用户"
+        - "0标签命中 → 默认池"
+    - name: "切换(Switch)"
+      trigger: "匹配成功时"
+      action: "Boss将state-machine.yaml entry_point改为kitset的entry_role"
+    - name: "执行(Execute)"
+      trigger: "Kitset OP角色登场"
+      action: "使用母公司状态机引擎编排kitset内角色"
+    - name: "退出(Exit)"
+      trigger: "Kitset角色链完成"
+      action: "回到母公司CL终审打分"

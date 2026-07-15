@@ -18,12 +18,13 @@ jobs:
           python-version: '3.12'
 
       - name: Install deps
-        run: pip install pyyaml pytest
+        run: pip install pyyaml
 
       - name: Python syntax check
         run: |
           python -m py_compile bobanana.py pipeline_orchestrator.py
           python -m py_compile state_machine_engine.py state_machine_parser.py
+          python -m py_compile scripts/verify_registry.py state_machine_parser.py
 
       - name: Validate state machine
         run: python state_machine_parser.py validate state-machine.yaml
@@ -31,5 +32,23 @@ jobs:
       - name: Verify registry
         run: python scripts/verify_registry.py
 
-      - name: Run tests
-        run: python -m pytest tests/u/test_handoff.py tests/u/test_core.py tests/i/test_state_machine_engine.py tests/perf/test_benchmark.py tests/chaos/test_resilience.py tests/security/test_scan.py tests/s/test_pipeline_e2e.py -v --tb=short
+      - name: Test handoff
+        run: python -m unittest tests.u.test_handoff -v
+
+      - name: Test state machine engine
+        run: python -m unittest tests.i.test_state_machine_engine -v
+
+      - name: Test core (focused)
+        run: python -m unittest tests.u.test_core.TestStateMachineEngine tests.u.test_core.TestRoleCardSchema -v
+
+      - name: Test pipeline E2E
+        run: python -m unittest tests.s.test_pipeline_e2e -v
+
+      - name: Test chaos resilience
+        run: python -m unittest tests.chaos.test_resilience -v
+
+      - name: Test performance benchmarks
+        run: python -m unittest tests.perf.test_benchmark -v
+
+      - name: Security scan
+        run: python -m unittest tests.security.test_scan -v

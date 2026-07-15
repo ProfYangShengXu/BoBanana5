@@ -1,0 +1,10 @@
+meta:
+  description: 组合经理RL：动态仓位优化、RL训练
+  role_name: portfolio-manager-rl
+pitfalls_and_risks:
+  common_mistakes:
+  - 使用未来数据
+  - 过拟合
+tools_and_methods:
+  workflow:
+  - 需求->实现->验证->产出

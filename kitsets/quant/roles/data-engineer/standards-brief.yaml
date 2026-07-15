@@ -1,0 +1,10 @@
+meta:
+  description: 数据工程师：行情/财务/另类数据采集清洗存储
+  role_name: data-engineer
+pitfalls_and_risks:
+  common_mistakes:
+  - 使用未来数据
+  - 过拟合
+tools_and_methods:
+  workflow:
+  - 需求->实现->验证->产出

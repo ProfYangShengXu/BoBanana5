@@ -1,0 +1,11 @@
+description: '策略研究员：交易idea生成、策略逻辑设计'
+name: strategy-researcher
+tags: []
+is_op_role: false
+quality_gates:
+- check: 无未来函数泄露
+  desc: 时间点对齐,禁止使用未来数据
+  id: STRA-Q1
+  layer: U
+standards_file: standards-brief.yaml
+use_case: '适合交易idea生成、策略逻辑设计'

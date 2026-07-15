@@ -1,0 +1,10 @@
+meta:
+  description: ML工程师：预测模型训练、特征筛选、调参
+  role_name: ml-engineer
+pitfalls_and_risks:
+  common_mistakes:
+  - 使用未来数据
+  - 过拟合
+tools_and_methods:
+  workflow:
+  - 需求->实现->验证->产出

@@ -1,0 +1,10 @@
+meta:
+  description: 量化架构师(OP)：策略管线架构设计、工具链编排
+  role_name: quant-architect
+pitfalls_and_risks:
+  common_mistakes:
+  - 使用未来数据
+  - 过拟合
+tools_and_methods:
+  workflow:
+  - 需求->实现->验证->产出

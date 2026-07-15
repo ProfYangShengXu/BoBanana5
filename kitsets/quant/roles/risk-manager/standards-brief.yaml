@@ -1,0 +1,10 @@
+meta:
+  description: 风控官：风险评估、未来函数检测、过拟合检测
+  role_name: risk-manager
+pitfalls_and_risks:
+  common_mistakes:
+  - 使用未来数据
+  - 过拟合
+tools_and_methods:
+  workflow:
+  - 需求->实现->验证->产出

@@ -1,45 +1,72 @@
-# 量化交易状态机 v1-quant
-# 适用场景：策略研究、因子挖掘、ML训练、回测、RL优化
-# 角色数：7 张量化专业角色卡
-
 version: 1
-entry_point: "quant-architect"
+entry_point: quant-architect
 max_loops: 30
-
 nodes:
-  - id: "quant-architect"         tags: ["OP"]      is_op_role: true
-  - id: "strategy-researcher"     tags: []
-  - id: "data-engineer"           tags: []
-  - id: "quant-analyst"           tags: []
-  - id: "ml-engineer"             tags: []
-  - id: "risk-manager"            tags: []
-  - id: "portfolio-manager-rl"    tags: []
-  - id: "client-gate"             tags: ["CL"]      is_exit: true
-
+- id: quant-architect
+  tags:
+  - OP
+  is_op_role: true
+- id: strategy-researcher
+  tags: []
+- id: data-engineer
+  tags: []
+- id: quant-analyst
+  tags: []
+- id: ml-engineer
+  tags: []
+- id: risk-manager
+  tags: []
+- id: portfolio-manager-rl
+  tags: []
+- id: client-gate
+  tags:
+  - CL
+  is_exit: true
 edges:
-  - from: "quant-architect"       to: "strategy-researcher"   phase: "arch-start"
-  - from: "strategy-researcher"   to: "data-engineer"        phase: "strategy-done"
-  - from: "data-engineer"         to: "risk-manager"          phase: "data-ready"
-  - from: "risk-manager"          to: "quant-analyst"         phase: "data-clean"
-  - from: "quant-analyst"         to: "ml-engineer"           phase: "factor-ready"
-  - from: "ml-engineer"           to: "risk-manager"          phase: "model-ready"
-  - from: "risk-manager"          to: "portfolio-manager-rl"  phase: "model-clean"
-  - from: "portfolio-manager-rl"  to: "quant-architect"       phase: "rl-done"
-  - from: "quant-architect"       to: "client-gate"           phase: "arch-gate-pass"
-
-  # 打回路径
-  - from: "risk-manager"          to: "data-engineer"         phase: "data-contaminated"
-  - from: "risk-manager"          to: "ml-engineer"           phase: "model-overfit"
-  - from: "quant-architect"       to: "strategy-researcher"   phase: "arch-gate-fail"
-
-  # CL 出口
-  - from: "client-gate"           to: "__terminal__"          phase: "cl-pass"
-    condition:
-      field: sharpe
-      operator: ">="
-      value: 0.8
-  - from: "client-gate"           to: "quant-architect"        phase: "cl-fail"
-    condition:
-      field: sharpe
-      operator: "<"
-      value: 0.8
+- from: quant-architect
+  to: strategy-researcher
+  phase: arch-start
+- from: strategy-researcher
+  to: data-engineer
+  phase: strategy-done
+- from: data-engineer
+  to: risk-manager
+  phase: data-ready
+- from: risk-manager
+  to: quant-analyst
+  phase: data-clean
+- from: quant-analyst
+  to: ml-engineer
+  phase: factor-ready
+- from: ml-engineer
+  to: risk-manager
+  phase: model-ready
+- from: risk-manager
+  to: portfolio-manager-rl
+  phase: model-clean
+- from: portfolio-manager-rl
+  to: quant-architect
+  phase: rl-done
+- from: quant-architect
+  to: client-gate
+  phase: arch-gate-pass
+- from: risk-manager
+  to: data-engineer
+  phase: data-contaminated
+- from: risk-manager
+  to: ml-engineer
+  phase: model-overfit
+- from: client-gate
+  to: __terminal__
+  phase: cl-pass
+  condition:
+    field: sharpe
+    operator: '>='
+    value: 0.8
+- from: client-gate
+  to: quant-architect
+  phase: cl-fail
+  condition:
+    field: sharpe
+    operator: <
+    value: 0.8

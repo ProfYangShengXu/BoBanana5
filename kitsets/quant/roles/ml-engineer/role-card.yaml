@@ -1,0 +1,11 @@
+description: 'ML工程师：预测模型训练、特征筛选、调参'
+name: ml-engineer
+tags: []
+is_op_role: false
+quality_gates:
+- check: 无未来函数泄露
+  desc: 时间点对齐,禁止使用未来数据
+  id: ML-E-Q1
+  layer: U
+standards_file: standards-brief.yaml
+use_case: '适合预测模型训练、特征筛选、调参'

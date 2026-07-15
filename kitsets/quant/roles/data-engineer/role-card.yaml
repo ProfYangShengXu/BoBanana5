@@ -1,0 +1,11 @@
+description: '数据工程师：行情/财务/另类数据采集清洗存储'
+name: data-engineer
+tags: []
+is_op_role: false
+quality_gates:
+- check: 无未来函数泄露
+  desc: 时间点对齐,禁止使用未来数据
+  id: DATA-Q1
+  layer: U
+standards_file: standards-brief.yaml
+use_case: '适合行情/财务/另类数据采集清洗存储'

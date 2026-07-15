@@ -47,7 +47,7 @@ def save_json(path, data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def init_pipeline(goal, rounds=3):
+def init_pipeline(goal, rounds=1):
     """初始化新管线 (rounds: 多轮循环次数，主管线默认1轮，cycle副管线默认3轮)"""
     # 安全检查：如果有未完成管线，拒绝创建新管线
     if has_pending_pipeline():
@@ -107,7 +107,7 @@ def init_pipeline(goal, rounds=3):
     with open(os.path.join(_cd, 'state.json'), 'w', encoding='utf-8') as _f:
         json.dump({"goal": goal,
                "goal_hash": hashlib.sha256(goal.encode()).hexdigest()[:64],
-               "phase": "init", "iteration": 0, "max_iterations": 50,
+               "phase": "init", "round": 1, "max_rounds": rounds, "iteration": 0, "max_iterations": 50,
                "next_prompt": "", "summary": "pipeline initialized",
                "last_updated": datetime.now().isoformat()},
                _f, ensure_ascii=False, indent=2)

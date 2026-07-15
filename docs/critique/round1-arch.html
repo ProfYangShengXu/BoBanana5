@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>架构批判 — cycle 1/3</title>
+<style>body{font:16px/1.6 system-ui;max-width:800px;margin:2rem auto}</style></head>
+<body>
+<h1>🚨 架构批判 — Round 1/3</h1>
+<p>审查范围: pipeline_orchestrator.py, state_machine_engine.py, Bobanana.md</p>
+
+<h2>1. rounds 参数默认值不一致</h2>
+<p><code>init_pipeline()</code> 默认 rounds=3，CLI 默认 rounds=1，cycle SKILL.md 又写死 3。同一个参数三个默认值，谁调谁不确定。应该统一为：函数默认值=1（安全），调用者显式传参。</p>
+
+<h2>2. <code>advance_pipeline</code> 多轮逻辑与正常流转耦合</h2>
+<p>CL通过后的多轮判断混在 <code>advance_pipeline</code> 的 terminal 处理代码里。这段逻辑本质上是"管线编排"而非"状态机流转"，应该抽到 <code>cmd_advance</code> 或一个新的 <code>handle_post_transition</code> 函数中。</p>
+
+<h2>3. <code>cycle/state.json</code> 的 phase 字段语义过载</h2>
+<p><code>phase</code> 同时表示"状态机转换阶段"(boss-done)和"循环轮次阶段"(plan/exec)。cycle 的 plan/exec 和 SM 的 boss-done/arch-done 混在同一个字段里，后续解析时必须知道上下文才能正确理解。</p>
+
+<h2>4. 无测试覆盖多轮循环</h2>
+<p>68 个测试中没有一个测试多轮循环逻辑。新增的 round/max_rounds 字段、回 Boss 逻辑、next_prompt 写入都在 untested 状态下运行。</p>
+
+<h2>方案</h2>
+<ol>
+<li><code>init_pipeline</code> 默认 rounds=1</li>
+<li>多轮判断从 advance_pipeline 抽出到独立函数</li>
+<li>cycle 用独立字段标记轮次，不和 SM phase 共用</li>
+<li>新增多轮循环测试</li>
+</ol>
+</body></html>

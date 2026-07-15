@@ -34,3 +34,7 @@ eui_neo_app/external/EUI-NEO/
 
 # 为什么选择这个架构？baseline
 为什么选择这个架构？baseline
+
+# Runtime state (auto-generated)
+.reasonix/
+

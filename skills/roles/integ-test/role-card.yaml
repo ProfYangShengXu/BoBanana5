@@ -1,4 +1,13 @@
 description: Integration test role
+example_state_machine:
+  description: integ-test 在架构师分配任务后执行，完成后交回架构师验收
+  entry_phase: arch-done
+  exit_phase: dev-done_task-done
+  typical_pipeline:
+  - architect
+  - integ-test
+  - architect(验收)
+  - client-gate(CL)
 input_contract:
 - description: 传递给 integ-test 的任务输入
   name: task_input
@@ -38,5 +47,4 @@ quality_gates:
   layer: U
 standards_file: standards-brief.yaml
 tags: []
-
-use_case: "适合集成测试和跨模块交互验证"
+use_case: 适合Integration test role，可替代fullstack-dev在该领域的专门工作

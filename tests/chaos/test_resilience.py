@@ -55,7 +55,7 @@ class TestChaosResilience(unittest.TestCase):
         """缺失standards-brief.yaml不应阻止角色卡加载"""
         from skills.roles.role_card_registry import load_role_card
         # 找一个没有standards-brief的目录
-        base = 'skills/roles'
+        base = '/mnt/c/Users/45140/OneDrive/Desktop/code/BoBanana5/skills/roles'
         for name in os.listdir(base):
             d = os.path.join(base, name)
             if os.path.isdir(d) and name != '__pycache__':

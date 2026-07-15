@@ -1,29 +1,97 @@
-edges:
-- from: boss
-  phase: boss-done
-  to: architect
-- from: architect
-  phase: arch-done
-  to: client-gate
-- condition:
-    field: score
-    operator: '>='
-    value: 9
-  from: client-gate
-  phase: cl-pass
-  to: __terminal__
-- condition:
-    field: score
-    operator: <
-    value: 9
-  from: client-gate
-  phase: cl-fail
-  to: architect
-entry_point: boss
-max_loops: 10
+version: 15
+entry_point: "boss"
+max_loops: 50
+
 nodes:
-- id: boss
-- id: architect
-- id: client-gate
-  is_exit: true
-version: 1
+  - id: "boss"
+    tags:
+      - "OP"
+    is_op_role: true
+  - id: "architect"
+    tags:
+      - "OP"
+    is_op_role: true
+  - id: "backend-dev"
+    tags: []
+  - id: "frontend-dev"
+    tags: []
+  - id: "database-engineer"
+    tags: []
+  - id: "code-reviewer"
+    tags: []
+  - id: "integration-tester"
+    tags: []
+  - id: "test-dev-engineer"
+    tags: []
+  - id: "security-engineer"
+    tags: []
+  - id: "tech-writer"
+    tags: []
+  - id: "client-gate"
+    tags:
+      - "CL"
+    is_exit: true
+
+edges:
+  - from: "boss"
+    to: "architect"
+    phase: "boss-done"
+  - from: "architect"
+    to: "architect"
+    phase: "arch-self-review"
+  - from: "architect"
+    to: "backend-dev"
+    phase: "arch-done"
+  - from: "backend-dev"
+    to: "code-reviewer"
+    phase: "backend-done"
+  - from: "code-reviewer"
+    to: "database-engineer"
+    phase: "cr-done"
+  - from: "database-engineer"
+    to: "code-reviewer"
+    phase: "db-done"
+  - from: "code-reviewer"
+    to: "frontend-dev"
+    phase: "cr-pass"
+  - from: "frontend-dev"
+    to: "code-reviewer"
+    phase: "frontend-done"
+  - from: "code-reviewer"
+    to: "integration-tester"
+    phase: "all-dev-done"
+  - from: "integration-tester"
+    to: "test-dev-engineer"
+    phase: "integration-done"
+  - from: "test-dev-engineer"
+    to: "security-engineer"
+    phase: "test-all-pass"
+  - from: "test-dev-engineer"
+    to: "architect"
+    phase: "test-fail"
+  - from: "security-engineer"
+    to: "tech-writer"
+    phase: "security-done"
+  - from: "tech-writer"
+    to: "architect"
+    phase: "docs-done"
+  - from: "architect"
+    to: "client-gate"
+    phase: "arch-gate-pass"
+  - from: "architect"
+    to: "backend-dev"
+    phase: "arch-gate-fail-backend"
+  - from: "client-gate"
+    to: "__terminal__"
+    phase: "cl-pass"
+    condition:
+      field: score
+      operator: ">="
+      value: 9
+  - from: "client-gate"
+    to: "architect"
+    phase: "cl-fail"
+    condition:
+      field: score
+      operator: "<"
+      value: 9

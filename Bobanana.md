@@ -86,7 +86,24 @@ Kitset（子公司）       = 领域角色卡 + 工具集 + 领域 OP 角色
 | **G4** | 安全不省略 | 任何涉及数据处理 / 网络 / 用户输入的项目，security-engineer 强制插入。不准"项目小就不做安全" |
 | **G5** | 验收不跳过 | Architect 在 CL 之前必须做一次完整终验，检查所有模块的产出物完整性。不准"直接交给 CL 过" |
 
-**默认状态机模板**（`state-machine.yaml` v15）已按以上规则编排：Boss → Architect(自审) → 后端→CR→数据库→CR→前端→CR → 集成测试 → 全量测试 → 安全审计 → 文档整理 → Architect终验 → CL → 出口。
+### G6 测试不修只报
+
+测试角色（test-dev-engineer / chaos-engineer / ai-test-strategist / perf-test-engineer 等）发现任何问题时：
+
+1. **只写 badcase 文档**到 `docs/badcase/` 目录，不修一行代码
+2. **推进给架构师**（`queue_next_prompt(phase="test-fail")`）
+3. 架构师审查 badcase → 更新状态机 → 指定专业角色修复
+4. 专业角色修复后重新走测试链验证
+
+> 原因：测试角色修代码 = 既当裁判又当运动员，破坏质量门可信度。
+
+**状态机流转示例**：
+```
+... → test-dev-engineer → [test-pass] → chaos-engineer → [chaos-fail] → architect → ...
+                        → [test-fail] → architect(审查badcase) → backend-dev(修复)
+```
+
+**默认状态机模板**（`state-machine.yaml` v15）已按以上规则编排：Boss → Architect(自审) → 后端→CR→数据库→CR→前端→CR → 集成测试 → 全量测试 → 混沌→AI测试 → 安全审计 → 文档整理 → Architect终验 → CL → 出口。
 
 ### 模板选择指南
 

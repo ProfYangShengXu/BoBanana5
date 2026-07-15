@@ -1,112 +1,68 @@
-# 超级 Code Review 模板 v1-super-cr
-# 核心流程：Boss分析技术栈 → HR招聘对应专家 → 架构师编排 → 专家逐栈审查 → 文档汇总 → CL
-# 适用场景：全面技术栈审计、架构合规检查、代码质量深度审查
-# 动态特性：HR 根据 Boss 检测到的技术栈动态招聘对应专家，架构师动态插入审查节点
+# 标准开发模板 v15 — 默认推荐
+# 铁律：测试角色不修只报 → test-fail 一律给架构师审查 → 架构师更新状态机 → 专业角色修复
 
-version: 1
+version: 15
 entry_point: "boss"
-max_loops: 80
+max_loops: 50
 
 nodes:
-  # ── 固定节点 ──
   - id: "boss"              tags: ["OP"]  is_op_role: true
-  - id: "hr-recruiter"      tags: ["HR"]
   - id: "architect"         tags: ["OP"]  is_op_role: true
+  - id: "backend-dev"       tags: []
+  - id: "frontend-dev"      tags: []
+  - id: "database-engineer" tags: []
+  - id: "code-reviewer"     tags: []
+  - id: "integration-tester" tags: []
+  - id: "test-dev-engineer" tags: []
+  - id: "chaos-engineer"    tags: []
+  - id: "ai-test-strategist" tags: []
+  - id: "security-engineer" tags: []
   - id: "tech-writer"       tags: []
   - id: "client-gate"       tags: ["CL"]  is_exit: true
 
-  # ── 后端技术栈专家（由 HR 按需招聘，以下为常用预置）──
-  - id: "java-backend-dev"  tags: []  # Spring Boot 架构审查
-  - id: "go-backend-dev"    tags: []  # Go 并发/微服务审查
-  - id: "python-backend-dev" tags: [] # Django/FastAPI 审查
-
-  # ── 前端技术栈专家 ──
-  - id: "web-frontend-dev"  tags: []  # React/Vue 审查
-  - id: "cross-platform-dev" tags: [] # Flutter/RN 审查
-
-  # ── 数据层专家 ──
-  - id: "dba-engineer"      tags: []  # MySQL/PostgreSQL Schema 审查
-  - id: "nosql-engineer"    tags: []  # Redis/MongoDB 审查
-
-  # ── 基础设施专家 ──
-  - id: "cloud-native-eng"  tags: []  # K8s/Docker 配置审查
-  - id: "devops-engineer"   tags: []  # CI/CD 流水线审查
-
-  # ── 安全专家 ──
-  - id: "security-engineer" tags: []  # 通用安全审查
-  - id: "pentest-engineer"  tags: []  # 渗透测试
-  - id: "sdl-engineer"      tags: []  # SDL 合规审查
-
 edges:
-  # 第 1 阶段：Boss 分析技术栈
-  - from: "boss"            to: "hr-recruiter"    phase: "boss-stack-analyzed"
-  label: "Boss分析技术栈→HR招聘专家"
+  - from: "boss"            to: "architect"          phase: "boss-done"
+  - from: "architect"       to: "architect"          phase: "arch-self-review"
 
-  # 第 2 阶段：HR 招聘对应技术栈专家
-  # 按 Boss 检测到的技术栈动态招聘，完成后交给架构师
-  - from: "hr-recruiter"    to: "architect"       phase: "hr-recruitment-done"
-  label: "HR招聘完成→架构师编排"
+  # 开发链
+  - from: "architect"       to: "backend-dev"        phase: "arch-done"
+  - from: "backend-dev"     to: "code-reviewer"      phase: "backend-done"
+  - from: "code-reviewer"   to: "database-engineer"  phase: "cr-done"
+  - from: "database-engineer" to: "code-reviewer"    phase: "db-done"
+  - from: "code-reviewer"   to: "frontend-dev"       phase: "cr-pass"
+  - from: "frontend-dev"    to: "code-reviewer"      phase: "frontend-done"
 
-  # 第 3 阶段：架构师设计审查计划 + 派发
-  # 动态插入审查节点，以下为默认路径（架构师可增删）
-  # 后端审查链
-  - from: "architect"       to: "java-backend-dev"    phase: "arch-plan-ready"
-  label: "架构师→Java后端审查"
-  - from: "java-backend-dev" to: "go-backend-dev"    phase: "java-review-done"
-  label: "Java审查通过→Go审查"
-  - from: "go-backend-dev"  to: "python-backend-dev"  phase: "go-review-done"
-  label: "Go审查通过→Python审查"
+  # CR 打回 → 专业角色修复
+  - from: "code-reviewer"   to: "backend-dev"        phase: "cr-fail-backend"
+  - from: "code-reviewer"   to: "frontend-dev"       phase: "cr-fail-frontend"
 
-  # 前端审查链
-  - from: "python-backend-dev" to: "web-frontend-dev" phase: "py-review-done"
-  label: "后端审查完成→前端审查"
-  - from: "web-frontend-dev" to: "cross-platform-dev" phase: "web-review-done"
-  label: "Web审查通过→跨端审查"
+  # CR通过 → 集成+测试
+  - from: "code-reviewer"   to: "integration-tester" phase: "all-dev-done"
+  - from: "integration-tester" to: "test-dev-engineer" phase: "integration-done"
 
-  # 数据层审查
-  - from: "cross-platform-dev" to: "dba-engineer"    phase: "cross-review-done"
-  label: "前端审查完成→数据库审查"
-  - from: "dba-engineer"    to: "nosql-engineer"      phase: "dba-review-done"
-  label: "关系型DB审查→NoSQL审查"
+  # 测试链：测试→混沌→AI测试
+  - from: "test-dev-engineer"  to: "chaos-engineer"     phase: "test-all-pass"
+  - from: "chaos-engineer"     to: "ai-test-strategist" phase: "chaos-done"
 
-  # 基础设施审查
-  - from: "nosql-engineer"  to: "cloud-native-eng"    phase: "nosql-review-done"
-  label: "数据层审查完成→基础设施审查"
-  - from: "cloud-native-eng" to: "devops-engineer"    phase: "k8s-review-done"
-  label: "K8s审查通过→DevOps审查"
+  # 【铁律】测试失败 → 只写badcase文档 → 推进给架构师审查（不直接修）
+  - from: "test-dev-engineer"  to: "architect"        phase: "test-fail"
+  - from: "integration-tester" to: "architect"        phase: "test-fail"
+  - from: "chaos-engineer"     to: "architect"        phase: "chaos-fail"
+  - from: "ai-test-strategist" to: "architect"        phase: "ai-test-fail"
 
-  # 安全审查
-  - from: "devops-engineer" to: "security-engineer"   phase: "devops-review-done"
-  label: "基础设施审查完成→安全审查"
-  - from: "security-engineer" to: "pentest-engineer"  phase: "sec-review-done"
-  label: "通用安全通过→渗透测试"
-  - from: "pentest-engineer" to: "sdl-engineer"       phase: "pentest-done"
-  label: "渗透测试通过→SDL合规审查"
+  # AI测试通过 → 安全
+  - from: "ai-test-strategist" to: "security-engineer" phase: "ai-test-pass"
 
-  # 专家审查打回路径
-  - from: "java-backend-dev" to: "architect"          phase: "java-review-fail"
-  label: "Java审查发现重大架构问题→架构师"
-  - from: "dba-engineer"    to: "architect"            phase: "dba-review-fail"
-  label: "DB审查发现Schema问题→架构师"
-  - from: "security-engineer" to: "architect"         phase: "sec-review-fail"
-  label: "安全审查发现问题→架构师"
+  # 安全 → 文档 → 架构师终验 → CL
+  - from: "security-engineer" to: "tech-writer"        phase: "security-done"
+  - from: "tech-writer"       to: "architect"          phase: "docs-done"
+  - from: "architect"         to: "client-gate"        phase: "arch-gate-pass"
 
-  # 第 4 阶段：文档汇总 + 终验
-  - from: "sdl-engineer"    to: "tech-writer"          phase: "all-reviews-done"
-  label: "全部审查完成→技术文档汇总"
-  - from: "tech-writer"     to: "architect"            phase: "docs-done"
-  label: "文档完备→架构师终验"
-
-  # 第 5 阶段：架构师终验 + CL
-  - from: "architect"       to: "client-gate"          phase: "arch-gate-pass"
-  label: "架构师终验通过→CL终审"
-  - from: "architect"       to: "java-backend-dev"     phase: "arch-gate-fail-be"
-  label: "终验不通过→打回后端"
-  - from: "architect"       to: "web-frontend-dev"     phase: "arch-gate-fail-fe"
-  label: "终验不通过→打回前端"
+  # 架构师打回给专业角色修复（更新状态机后）
+  - from: "architect"         to: "backend-dev"        phase: "arch-gate-fail-backend"
+  - from: "architect"         to: "frontend-dev"       phase: "arch-gate-fail-frontend"
+  - from: "architect"         to: "database-engineer"  phase: "arch-gate-fail-db"
 
   # CL 出口
-  - from: "client-gate"     to: "__terminal__"         phase: "cl-pass"  condition: {field: score, operator: ">=", value: 9}
-  label: "CL通过✅"
-  - from: "client-gate"     to: "architect"            phase: "cl-fail"  condition: {field: score, operator: "<", value: 9}
-  label: "CL不通过→架构师修复"
+  - from: "client-gate"       to: "__terminal__"       phase: "cl-pass"  condition: {field: score, operator: ">=", value: 9}
+  - from: "client-gate"       to: "architect"          phase: "cl-fail"  condition: {field: score, operator: "<", value: 9}

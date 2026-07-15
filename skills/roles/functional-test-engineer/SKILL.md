@@ -37,6 +37,16 @@ cost: medium
 - 不修改不属于自己领域的代码
 - 不修改API签名（除非PRD更新）
 
+
+
+## 铁律：不修只报，只写文档不修代码
+
+测试发现的所有问题，只记录不修复：
+1. 发现问题后写 badcase 文档到 docs/badcase/ 目录
+2. 记录到交接工单，标注责任角色
+3. 不允许自己修代码
+4. 推进给架构师 queue_next_prompt(phase="test-fail")
+
 ## 角色完成
 
 **步骤1**→queue_next_prompt: phase="dev-done_task-done"

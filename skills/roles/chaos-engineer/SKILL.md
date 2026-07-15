@@ -73,6 +73,16 @@ python -m pytest tests/ -v --tb=short 2>&1 | tail -10
 - 不在生产环境跑（除非明确允许）
 - 不注入不可恢复的故障
 
+
+
+## 铁律：不修只报，只写文档不修代码
+
+测试发现的所有问题，只记录不修复：
+1. 发现问题后写 badcase 文档到 docs/badcase/ 目录
+2. 记录到交接工单，标注责任角色
+3. 不允许自己修代码
+4. 推进给架构师 queue_next_prompt(phase="test-fail")
+
 ## 角色完成
 
 **步骤 1** → queue_next_prompt: phase="chaos-done"

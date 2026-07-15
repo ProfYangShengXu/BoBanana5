@@ -71,6 +71,16 @@ python -m pytest tests/ -v --tb=short --junit-xml=docs/test/report.xml 2>&1 | ta
 - 不写测试计划文档（直接写代码）
 - 不跳过任一层
 
+
+
+## 铁律：不修只报，只写文档不修代码
+
+测试发现的所有问题，只记录不修复：
+1. 发现问题后写 badcase 文档到 docs/badcase/ 目录
+2. 记录到交接工单，标注责任角色
+3. 不允许自己修代码
+4. 推进给架构师 queue_next_prompt(phase="test-fail")
+
 ## 角色完成
 
 完成并跑完所有测试后：

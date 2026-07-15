@@ -1,20 +1,11 @@
-description: '策略研究员：交易idea生成、策略逻辑设计、文献调研'
-input_contract:
-- name: task_input
-  type: object
-  required: true
-  description: 任务输入
+description: '策略研究员：交易idea生成、策略逻辑设计'
 name: strategy-researcher
-output_contract:
-- name: output
-  type: object
-  description: 产出物
-quality_gates:
-- id: STRATE-Q1
-  check: 无未来函数泄露
-  desc: 数据无未来函数泄露
-  layer: U
-standards_file: standards-brief.yaml
 tags: []
 is_op_role: false
-use_case: '适合交易idea生成、策略逻辑设计、文献调研'
+quality_gates:
+- check: 无未来函数泄露
+  desc: 时间点对齐,禁止使用未来数据
+  id: STRA-Q1
+  layer: U
+standards_file: standards-brief.yaml
+use_case: '适合交易idea生成、策略逻辑设计'

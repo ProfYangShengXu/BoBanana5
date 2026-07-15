@@ -1,19 +1,40 @@
 deliverables:
   output_types:
-  - 代码/数据/报告
+  - 代码/模型/数据/报告
   quality_criteria:
   - 无未来函数泄露
-  - 回测含实盘约束
+  - Sharpe>=0.8
+  - 过拟合检测通过
 meta:
-  description: 组合经理RL：动态仓位优化、RL训练、执行成本建模
+  description: portfolio-manager-rl 职业研究已完成
+  research_date: '2026-07-15'
   role_name: portfolio-manager-rl
-  subagents_completed: 0
+  subagents_completed: 4
 pitfalls_and_risks:
+  anti_patterns:
+  - RL训练不稳定
+  - 回合奖励设计不合理
+  - 滑点建模不足
+  - 过拟合RL策略
   common_mistakes:
-  - 使用未来数据
-  - 过拟合
+  - 需求理解偏差
+  - 量化特定:幸存者偏差/未来函数/过拟合
+  risk_factors:
+  - 市场体制切换
+  - 因子拥挤
+  - Alpha衰减
 profession_standards:
+  best_practices:
+  - 时间点对齐，不使用未来数据
+  - 回测包含实盘约束(滑点/手续费/T+1)
+  - 分层回测+IC/IR分析
   summary: portfolio-manager-rl 职业准则
 tools_and_methods:
+  software:
+  - Gymnasium
+  - Stable-Baselines3
+  - Ray RLlib
+  - PyTorch
+  - riskfolio-lib
   workflow:
-  - 需求→实现→验证→产出
+  - 环境搭建→RL训练→回测验证→仓位优化→执行成本建模

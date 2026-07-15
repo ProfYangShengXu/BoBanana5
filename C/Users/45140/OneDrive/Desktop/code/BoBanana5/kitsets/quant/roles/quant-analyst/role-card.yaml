@@ -1,0 +1,20 @@
+description: '量化分析师：因子挖掘、IC/IR分析、因子组合构建'
+input_contract:
+- name: task_input
+  type: object
+  required: true
+  description: 任务输入
+name: quant-analyst
+output_contract:
+- name: output
+  type: object
+  description: 产出物
+quality_gates:
+- id: QUANT--Q1
+  check: 无未来函数泄露
+  desc: 数据无未来函数泄露
+  layer: U
+standards_file: standards-brief.yaml
+tags: []
+is_op_role: false
+use_case: '适合因子挖掘、IC/IR分析、因子组合构建'

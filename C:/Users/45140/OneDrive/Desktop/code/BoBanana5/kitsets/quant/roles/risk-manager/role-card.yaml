@@ -1,20 +1,11 @@
-description: '风控官：风险评估、未来函数检测、过拟合检测、合规审查'
-input_contract:
-- name: task_input
-  type: object
-  required: true
-  description: 任务输入
+description: '风控官：风险评估、未来函数检测、过拟合检测'
 name: risk-manager
-output_contract:
-- name: output
-  type: object
-  description: 产出物
-quality_gates:
-- id: RISK-M-Q1
-  check: 无未来函数泄露
-  desc: 数据无未来函数泄露
-  layer: U
-standards_file: standards-brief.yaml
 tags: []
 is_op_role: false
-use_case: '适合风险评估、未来函数检测、过拟合检测、合规审查'
+quality_gates:
+- check: 无未来函数泄露
+  desc: 时间点对齐,禁止使用未来数据
+  id: RISK-Q1
+  layer: U
+standards_file: standards-brief.yaml
+use_case: '适合风险评估、未来函数检测、过拟合检测'

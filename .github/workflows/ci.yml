@@ -15,4 +15,25 @@ jobs:
       - run: pip install pyyaml
       - run: python state_machine_parser.py validate state-machine.yaml
       - run: python scripts/verify_registry.py
-      - run: python -m unittest tests.u.test_handoff tests.i.test_state_machine_engine tests.u.test_registry tests.i.test_schema_compliance tests.chaos.test_resilience tests.perf.test_benchmark tests.security.test_scan tests.s.test_pipeline_e2e tests.i.test_pipeline_deep tests.e2e.test_pipeline_full tests.e2e.test_multi_round -v || true
+      - run: python -m unittest discover -s tests -p "test_handoff.py" -v
+        continue-on-error: true
+      - run: python -m unittest discover -s tests -p "test_registry.py" -v
+        continue-on-error: true
+      - run: python -m unittest discover -s tests -p "test_state_machine_engine.py" -v
+        continue-on-error: true
+      - run: python -m unittest discover -s tests -p "test_schema_compliance.py" -v
+        continue-on-error: true
+      - run: python -m unittest discover -s tests -p "test_resilience.py" -v
+        continue-on-error: true
+      - run: python -m unittest discover -s tests -p "test_benchmark.py" -v
+        continue-on-error: true
+      - run: python -m unittest discover -s tests -p "test_scan.py" -v
+        continue-on-error: true
+      - run: python -m unittest discover -s tests -p "test_pipeline_e2e.py" -v
+        continue-on-error: true
+      - run: python -m unittest discover -s tests -p "test_pipeline_deep.py" -v
+        continue-on-error: true
+      - run: python -m unittest discover -s tests -p "test_pipeline_full.py" -v
+        continue-on-error: true
+      - run: python -m unittest discover -s tests -p "test_multi_round.py" -v
+        continue-on-error: true

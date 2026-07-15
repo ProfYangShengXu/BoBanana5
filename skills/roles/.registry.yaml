@@ -187,7 +187,7 @@ cards:
   registered_at: ''
   tags: []
   use_case: 适合集成测试和跨模块交互验证
-- description: 代码审查员：对每个开发角色的产出做六维度独立审查，产出审查报告后放行或打回
+- description: 代码审查员：对每个开发角色的产出做六维度独立审查（可读性/可维护性/正确性/性能/安全/整洁），产出审查报告后放行或打回
   has_example_sm: false
   id: code-reviewer
   kitset: ''
@@ -195,7 +195,7 @@ cards:
   path: code-reviewer/role-card.yaml
   registered_at: ''
   tags: []
-  use_case: 适合所有开发产出的独立审查环节，贪心状态机的核心质量角色
+  use_case: 适合所有开发产出的独立审查环节，是贪心状态机 G2 的核心角色
 - description: 集成测试工程师：跨模块集成验证，检查接口一致性、数据流完整性、端到端功能可用性
   has_example_sm: false
   id: integration-tester
@@ -231,8 +231,8 @@ cards:
   path: web-frontend-dev/role-card.yaml
   registered_at: ''
   tags: []
-  use_case: 适合 Web 前端应用开发，替代 frontend-dev 的 Web 专项
-- description: Java后端开发：Spring Boot/Cloud，微服务架构，API 设计
+  use_case: 适合 React/Vue/Angular Web 应用开发
+- description: Java后端开发：Spring Boot/Cloud，微服务架构，API 设计，业务逻辑实现
   has_example_sm: false
   id: java-backend-dev
   kitset: ''
@@ -240,8 +240,8 @@ cards:
   path: java-backend-dev/role-card.yaml
   registered_at: ''
   tags: []
-  use_case: 适合 Java 后端开发，替代 backend-dev 的 Java 专项
-- description: Go后端开发：Go/Gin/Beego，高性能 API，并发编程
+  use_case: 适合 Spring Boot/Cloud 微服务后端开发
+- description: Go后端开发：Go/Gin/Beego，高性能 API，并发编程，中间件开发
   has_example_sm: false
   id: go-backend-dev
   kitset: ''
@@ -249,8 +249,8 @@ cards:
   path: go-backend-dev/role-card.yaml
   registered_at: ''
   tags: []
-  use_case: 适合 Go 后端开发，替代 backend-dev 的 Go 专项
-- description: 单元测试工程师：U 层单元测试，Mock，三路径覆盖
+  use_case: 适合 Go 高性能后端和微服务开发
+- description: 单元测试工程师：U 层单元测试，Mock 外部依赖，normal/boundary/adversarial 三路径覆盖
   has_example_sm: false
   id: unit-test-engineer
   kitset: ''
@@ -259,7 +259,7 @@ cards:
   registered_at: ''
   tags: []
   use_case: 适合单元测试专项，替代 test-dev-engineer 的 U 层工作
-- description: 集成测试工程师（专项）：I 层集成测试，模块间交互验证
+- description: 集成测试工程师（专项）：I 层集成测试，模块间交互验证，接口契约测试
   has_example_sm: false
   id: integration-test-eng
   kitset: ''
@@ -267,8 +267,8 @@ cards:
   path: integration-test-eng/role-card.yaml
   registered_at: ''
   tags: []
-  use_case: 适合集成测试专项，与 integration-tester 互补
-- description: 性能测试工程师：JMeter/Locust，高并发压测，瓶颈分析
+  use_case: 适合集成测试专项，替代 integration-tester 的 I 层工作
+- description: 性能测试工程师：JMeter/Locust，高并发压测，瓶颈分析，容量规划
   has_example_sm: false
   id: perf-test-engineer
   kitset: ''
@@ -276,8 +276,8 @@ cards:
   path: perf-test-engineer/role-card.yaml
   registered_at: ''
   tags: []
-  use_case: 适合性能压测和容量规划
-- description: 渗透测试工程师：模拟攻击、漏洞挖掘、渗透测试
+  use_case: 适合性能压测和瓶颈分析
+- description: 渗透测试工程师：模拟攻击、漏洞挖掘、0day 研究、渗透测试报告
   has_example_sm: false
   id: pentest-engineer
   kitset: ''
@@ -286,7 +286,7 @@ cards:
   registered_at: ''
   tags: []
   use_case: 适合安全渗透测试专项
-- description: DevOps工程师：CI/CD 流水线，自动化发布，平台工程
+- description: DevOps工程师：CI/CD 流水线搭建，自动化发布，基础设施即代码，平台工程
   has_example_sm: false
   id: devops-engineer
   kitset: ''
@@ -294,249 +294,249 @@ cards:
   path: devops-engineer/role-card.yaml
   registered_at: ''
   tags: []
-  use_case: 适合 CI/CD 和自动化运维
-- id: cross-platform-dev
-  name: cross-platform-dev
-  description: 跨端开发：Flutter/React Native/UniApp，一套代码多端运行
-  tags: []
+  use_case: 适合 CI/CD 流水线搭建和自动化运维
+- description: 跨端开发：Flutter/React Native/UniApp，一套代码多端运行
+  has_example_sm: false
+  id: cross-platform-dev
   kitset: ''
+  name: cross-platform-dev
   path: cross-platform-dev/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合跨平台移动应用开发
-- id: mini-program-dev
-  name: mini-program-dev
-  description: 小程序开发：微信/支付宝/抖音小程序开发与发布
   tags: []
+  use_case: 适合Flutter/React Native/UniApp，一套代码多端运行
+- description: 小程序开发：微信/支付宝/抖音小程序开发与发布
+  has_example_sm: false
+  id: mini-program-dev
   kitset: ''
+  name: mini-program-dev
   path: mini-program-dev/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合小程序开发
-- id: python-backend-dev
-  name: python-backend-dev
-  description: Python后端开发：Django/FastAPI/Flask，数据处理与API服务
   tags: []
+  use_case: 适合微信/支付宝/抖音小程序开发与发布
+- description: Python后端开发：Django/FastAPI/Flask，数据处理与API服务
+  has_example_sm: false
+  id: python-backend-dev
   kitset: ''
+  name: python-backend-dev
   path: python-backend-dev/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合Python后端开发
-- id: dba-engineer
-  name: dba-engineer
-  description: DBA数据库管理员：MySQL/PostgreSQL运维、备份恢复、性能调优
   tags: []
+  use_case: 适合Django/FastAPI/Flask，数据处理与API服务
+- description: DBA数据库管理员：MySQL/PostgreSQL运维、备份恢复、性能调优
+  has_example_sm: false
+  id: dba-engineer
   kitset: ''
+  name: dba-engineer
   path: dba-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合数据库运维优化
-- id: nosql-engineer
-  name: nosql-engineer
-  description: NoSQL工程师：Redis/MongoDB/Cassandra/HBase运维与开发
   tags: []
+  use_case: 适合MySQL/PostgreSQL运维、备份恢复、性能调优
+- description: NoSQL工程师：Redis/MongoDB/Cassandra/HBase运维与开发
+  has_example_sm: false
+  id: nosql-engineer
   kitset: ''
+  name: nosql-engineer
   path: nosql-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合NoSQL数据库开发运维
-- id: data-warehouse-eng
-  name: data-warehouse-eng
-  description: 数据仓库工程师：数仓建模、ETL管道、StarRocks/ClickHouse
   tags: []
+  use_case: 适合Redis/MongoDB/Cassandra/HBase运维与开发
+- description: 数据仓库工程师：数仓建模、ETL管道、StarRocks/ClickHouse
+  has_example_sm: false
+  id: data-warehouse-eng
   kitset: ''
+  name: data-warehouse-eng
   path: data-warehouse-eng/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合数据仓库和OLAP引擎
-- id: sdl-engineer
-  name: sdl-engineer
-  description: 安全开发工程师：SDL安全开发生命周期、代码审计、DevSecOps
   tags: []
+  use_case: 适合数仓建模、ETL管道、StarRocks/ClickHouse
+- description: 安全开发工程师：SDL安全开发生命周期、代码审计、DevSecOps
+  has_example_sm: false
+  id: sdl-engineer
   kitset: ''
+  name: sdl-engineer
   path: sdl-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合安全开发流程搭建
-- id: cloud-native-eng
-  name: cloud-native-eng
-  description: 云原生运维工程师：K8s集群管理、Docker、Service Mesh、Helm
   tags: []
+  use_case: 适合SDL安全开发生命周期、代码审计、DevSecOps
+- description: 云原生运维工程师：K8s集群管理、Docker、Service Mesh、Helm
+  has_example_sm: false
+  id: cloud-native-eng
   kitset: ''
+  name: cloud-native-eng
   path: cloud-native-eng/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合云原生架构运维
-- id: webgl-visual-dev
-  name: webgl-visual-dev
-  description: WebGL/3D可视化：Three.js、WebGL、3D地图、大屏可视化
   tags: []
+  use_case: 适合K8s集群管理、Docker、Service Mesh、Helm
+- description: WebGL/3D可视化：Three.js、WebGL、3D地图、大屏可视化
+  has_example_sm: false
+  id: webgl-visual-dev
   kitset: ''
+  name: webgl-visual-dev
   path: webgl-visual-dev/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合3D可视化和大屏开发
-- id: frontend-infra-dev
-  name: frontend-infra-dev
-  description: 前端基建：Webpack/Vite构建工具、CI前端链路、组件库搭建
   tags: []
+  use_case: 适合Three.js、WebGL、3D地图、大屏可视化
+- description: 前端基建：Webpack/Vite构建工具、CI前端链路、组件库搭建
+  has_example_sm: false
+  id: frontend-infra-dev
   kitset: ''
+  name: frontend-infra-dev
   path: frontend-infra-dev/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合前端工程化建设
-- id: nodejs-fullstack-dev
-  name: nodejs-fullstack-dev
-  description: Node.js全栈：BFF层、服务端渲染、中间件开发
   tags: []
+  use_case: 适合Webpack/Vite构建工具、CI前端链路、组件库搭建
+- description: Node.js全栈：BFF层、服务端渲染、中间件开发
+  has_example_sm: false
+  id: nodejs-fullstack-dev
   kitset: ''
+  name: nodejs-fullstack-dev
   path: nodejs-fullstack-dev/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合Node.js全栈开发
-- id: cpp-backend-dev
-  name: cpp-backend-dev
-  description: C++后端开发：高性能服务、游戏后端、底层中间件
   tags: []
+  use_case: 适合BFF层、服务端渲染、中间件开发
+- description: C++后端开发：高性能服务、游戏后端、底层中间件
+  has_example_sm: false
+  id: cpp-backend-dev
   kitset: ''
+  name: cpp-backend-dev
   path: cpp-backend-dev/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合C++高性能后端
-- id: middleware-engineer
-  name: middleware-engineer
-  description: 中间件工程师：消息队列Kafka/RabbitMQ、缓存Redis、搜索引擎ES
   tags: []
+  use_case: 适合高性能服务、游戏后端、底层中间件
+- description: 中间件工程师：消息队列Kafka/RabbitMQ、缓存Redis、搜索引擎ES
+  has_example_sm: false
+  id: middleware-engineer
   kitset: ''
+  name: middleware-engineer
   path: middleware-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合中间件开发和运维
-- id: data-storage-engineer
-  name: data-storage-engineer
-  description: 数据/存储工程师：分布式存储、对象存储、文件系统
   tags: []
+  use_case: 适合消息队列Kafka/RabbitMQ、缓存Redis、搜索引擎ES
+- description: 数据/存储工程师：分布式存储、对象存储、文件系统
+  has_example_sm: false
+  id: data-storage-engineer
   kitset: ''
+  name: data-storage-engineer
   path: data-storage-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合分布式存储开发
-- id: api-gateway-engineer
-  name: api-gateway-engineer
-  description: API网关：流量路由、限流降级、协议转换
   tags: []
+  use_case: 适合分布式存储、对象存储、文件系统
+- description: API网关：流量路由、限流降级、协议转换
+  has_example_sm: false
+  id: api-gateway-engineer
   kitset: ''
+  name: api-gateway-engineer
   path: api-gateway-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合API网关和接入层开发
-- id: distributed-db-engineer
-  name: distributed-db-engineer
-  description: 分布式数据库：TiDB/OceanBase/CockroachDB运维与开发
   tags: []
+  use_case: 适合流量路由、限流降级、协议转换
+- description: 分布式数据库：TiDB/OceanBase/CockroachDB运维与开发
+  has_example_sm: false
+  id: distributed-db-engineer
   kitset: ''
+  name: distributed-db-engineer
   path: distributed-db-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合分布式数据库运维
-- id: automation-test-engineer
-  name: automation-test-engineer
-  description: 自动化测试：Selenium/Playwright脚本、接口自动化框架
   tags: []
+  use_case: 适合TiDB/OceanBase/CockroachDB运维与开发
+- description: 自动化测试：Selenium/Playwright脚本、接口自动化框架
+  has_example_sm: false
+  id: automation-test-engineer
   kitset: ''
+  name: automation-test-engineer
   path: automation-test-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合自动化测试框架搭建
-- id: ai-test-strategist
-  name: ai-test-strategist
-  description: AI测试策略师：AI模型验证、生成式测试用例、模型公平性评估
   tags: []
+  use_case: 适合Selenium/Playwright脚本、接口自动化框架
+- description: AI测试策略师：AI模型验证、生成式测试用例、模型公平性评估
+  has_example_sm: false
+  id: ai-test-strategist
   kitset: ''
+  name: ai-test-strategist
   path: ai-test-strategist/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合AI测试和质量评估
-- id: chaos-engineer
-  name: chaos-engineer
-  description: 混沌工程：Chaos Monkey/故障注入、分布式系统韧性测试
   tags: []
+  use_case: 适合AI模型验证、生成式测试用例、模型公平性评估
+- description: 混沌工程：Chaos Monkey/故障注入、分布式系统韧性测试
+  has_example_sm: false
+  id: chaos-engineer
   kitset: ''
+  name: chaos-engineer
   path: chaos-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合混沌工程和系统韧性测试
-- id: security-test-engineer
-  name: security-test-engineer
-  description: 安全测试：渗透测试、代码审计、漏洞扫描
   tags: []
+  use_case: 适合Chaos Monkey/故障注入、分布式系统韧性测试
+- description: 安全测试：渗透测试、代码审计、漏洞扫描
+  has_example_sm: false
+  id: security-test-engineer
   kitset: ''
+  name: security-test-engineer
   path: security-test-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合安全测试
-- id: functional-test-engineer
-  name: functional-test-engineer
-  description: 功能测试：黑盒/白盒测试、手工测试、探索性测试
   tags: []
+  use_case: 适合渗透测试、代码审计、漏洞扫描
+- description: 功能测试：黑盒/白盒测试、手工测试、探索性测试
+  has_example_sm: false
+  id: functional-test-engineer
   kitset: ''
+  name: functional-test-engineer
   path: functional-test-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合功能测试
-- id: security-ops-engineer
-  name: security-ops-engineer
-  description: 安全运维(蓝队)：入侵检测、日志分析、应急响应
   tags: []
+  use_case: 适合黑盒/白盒测试、手工测试、探索性测试
+- description: 安全运维(蓝队)：入侵检测、日志分析、应急响应
+  has_example_sm: false
+  id: security-ops-engineer
   kitset: ''
+  name: security-ops-engineer
   path: security-ops-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合安全运维
-- id: data-security-engineer
-  name: data-security-engineer
-  description: 数据安全：GDPR/PIPL合规、数据脱敏、分类分级
   tags: []
+  use_case: 适合入侵检测、日志分析、应急响应
+- description: 数据安全：GDPR/PIPL合规、数据脱敏、分类分级
+  has_example_sm: false
+  id: data-security-engineer
   kitset: ''
+  name: data-security-engineer
   path: data-security-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合数据安全和隐私合规
-- id: cloud-security-engineer
-  name: cloud-security-engineer
-  description: 云安全：云上安全架构、容器安全、K8s安全策略
   tags: []
+  use_case: 适合GDPR/PIPL合规、数据脱敏、分类分级
+- description: 云安全：云上安全架构、容器安全、K8s安全策略
+  has_example_sm: false
+  id: cloud-security-engineer
   kitset: ''
+  name: cloud-security-engineer
   path: cloud-security-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合云安全架构
-- id: ai-security-engineer
-  name: ai-security-engineer
-  description: AI安全：大模型对抗攻击、Prompt注入、模型后门检测
   tags: []
+  use_case: 适合云上安全架构、容器安全、K8s安全策略
+- description: AI安全：大模型对抗攻击、Prompt注入、模型后门检测
+  has_example_sm: false
+  id: ai-security-engineer
   kitset: ''
+  name: ai-security-engineer
   path: ai-security-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合AI安全
-- id: web3-security-engineer
-  name: web3-security-engineer
-  description: Web3安全：智能合约审计、DeFi漏洞、区块链安全
   tags: []
+  use_case: 适合大模型对抗攻击、Prompt注入、模型后门检测
+- description: Web3安全：智能合约审计、DeFi漏洞、区块链安全
+  has_example_sm: false
+  id: web3-security-engineer
   kitset: ''
+  name: web3-security-engineer
   path: web3-security-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合Web3安全审计
-- id: aiops-engineer
-  name: aiops-engineer
-  description: AIOps：智能告警、日志分析、异常检测自动化
   tags: []
+  use_case: 适合智能合约审计、DeFi漏洞、区块链安全
+- description: AIOps：智能告警、日志分析、异常检测自动化
+  has_example_sm: false
+  id: aiops-engineer
   kitset: ''
+  name: aiops-engineer
   path: aiops-engineer/role-card.yaml
   registered_at: ''
-  has_example_sm: false
-  use_case: 适合智能运维
+  tags: []
+  use_case: 适合智能告警、日志分析、异常检测自动化
 last_scan: ''
 version: 3

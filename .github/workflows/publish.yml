@@ -1,4 +1,4 @@
-name: Publish — 推送管理
+name: Publish
 
 on:
   push:
@@ -9,36 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
 
-      - name: Validate before publish
+      - name: Validate
         run: |
-          pip install pyyaml pytest
+          pip install pyyaml
           python state_machine_parser.py validate state-machine.yaml
-
-      - name: Create release tag
-        id: tag
-        run: |
-          DATE_TAG="v$(date +'%Y%m%d')-$(git rev-parse --short HEAD)"
-          echo "tag=$DATE_TAG" >> $GITHUB_OUTPUT
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.tag.outputs.tag }}
-          name: Release ${{ steps.tag.outputs.tag }}
-          body: |
-            ## Bobanana 5.0 — 自动发布
-            
-            ### 变更内容
-            ${{ github.event.head_commit.message }}
-            
-            ### 包含的检查
-            - ✅ 状态机验证通过
-            - ✅ Python 语法检查
-            - ✅ 角色卡注册表验证
-          generate_release_notes: true
+          python scripts/verify_registry.py

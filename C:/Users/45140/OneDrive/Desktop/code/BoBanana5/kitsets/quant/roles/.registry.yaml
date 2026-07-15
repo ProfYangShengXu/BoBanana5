@@ -1,0 +1,45 @@
+cards:
+- id: quant-architect
+  name: quant-architect
+  description: "量化架构师(OP)：策略管线架构设计、工具链编排、全流程质量把控"
+  tags: ['OP']
+  kitset: "quant"
+  path: "quant-architect/role-card.yaml"
+- id: strategy-researcher
+  name: strategy-researcher
+  description: "策略研究员：交易idea生成、策略逻辑设计、文献调研"
+  tags: []
+  kitset: "quant"
+  path: "strategy-researcher/role-card.yaml"
+- id: data-engineer
+  name: data-engineer
+  description: "数据工程师：行情/财务/另类数据采集、清洗、存储"
+  tags: []
+  kitset: "quant"
+  path: "data-engineer/role-card.yaml"
+- id: quant-analyst
+  name: quant-analyst
+  description: "量化分析师：因子挖掘、IC/IR分析、因子组合构建"
+  tags: []
+  kitset: "quant"
+  path: "quant-analyst/role-card.yaml"
+- id: ml-engineer
+  name: ml-engineer
+  description: "ML工程师：预测模型训练、特征筛选、模型评估与调参"
+  tags: []
+  kitset: "quant"
+  path: "ml-engineer/role-card.yaml"
+- id: risk-manager
+  name: risk-manager
+  description: "风控官：风险评估、未来函数检测、过拟合检测、合规审查"
+  tags: []
+  kitset: "quant"
+  path: "risk-manager/role-card.yaml"
+- id: portfolio-manager-rl
+  name: portfolio-manager-rl
+  description: "组合经理RL：动态仓位优化、RL训练、执行成本建模"
+  tags: []
+  kitset: "quant"
+  path: "portfolio-manager-rl/role-card.yaml"
+last_scan: ""
+version: 1

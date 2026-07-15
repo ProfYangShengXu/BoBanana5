@@ -1,0 +1,10 @@
+{
+  "name": "bobanana5-quant-kitset",
+  "version": "1.0.0",
+  "description": "量化交易 Adaption Kitset — 策略研究/因子挖掘/ML训练/回测/RL优化",
+  "kitset_name": "quant",
+  "kitset_domains": ["quant", "trading", "stock", "backtest", "factor", "finance", "a-share", "rl-trading", "algo-trading", "portfolio", "risk-management"],
+  "entry_role": "quant-architect",
+  "skills": "roles",
+  "commands": []
+}

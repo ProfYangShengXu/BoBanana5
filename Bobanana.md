@@ -92,6 +92,7 @@ Kitset（子公司）       = 领域角色卡 + 工具集 + 领域 OP 角色
 
 目前已预置的 Kitset：
 - **embedded** — `kitsets/embedded/` — 17 张嵌入式专业角色卡 + 8 个工具 + 状态机模板
+- **quant** — `kitsets/quant/` — 7 张量化专业角色卡 + 6 个工具 + 量化状态机模板
 
 ### 5.9 多文件变更规则
 需求涉及多个文件时，状态机中**禁止使用 fullstack-dev 角色**，必须同时包含 `test-dev-engineer` + `security-engineer` 两个角色。理由：多文件变更意味着跨模块影响，必须有测试覆盖和安全审查兜底，不能由单一角色全包。单文件变更不受此限制。

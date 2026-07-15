@@ -16,18 +16,25 @@ jobs:
           python-version: '3.12'
       - name: Install deps
         run: pip install pyyaml
-      - name: Validate state machine
+      - name: Validate SM
         run: python state_machine_parser.py validate state-machine.yaml
       - name: Verify registry
         run: python scripts/verify_registry.py
-      - name: Test
-        run: |
-          python -m unittest tests.u.test_handoff -v
-          python -m unittest tests.i.test_state_machine_engine -v
-          python -m unittest tests.u.test_registry -v
-          python -m unittest tests.i.test_schema_compliance -v
-          python -m unittest tests.chaos.test_resilience -v
-          python -m unittest tests.perf.test_benchmark -v
-          python -m unittest tests.security.test_scan -v
-          python -m unittest tests.s.test_pipeline_e2e -v
-          python -m unittest tests.i.test_pipeline_deep -v
+      - name: Test handoff
+        run: python -m unittest tests.u.test_handoff -v
+      - name: Test SM engine
+        run: python -m unittest tests.i.test_state_machine_engine -v
+      - name: Test registry
+        run: python -m unittest tests.u.test_registry -v
+      - name: Test schema
+        run: python -m unittest tests.i.test_schema_compliance -v
+      - name: Test chaos
+        run: python -m unittest tests.chaos.test_resilience -v
+      - name: Test perf
+        run: python -m unittest tests.perf.test_benchmark -v
+      - name: Test security
+        run: python -m unittest tests.security.test_scan -v
+      - name: Test pipeline e2e
+        run: python -m unittest tests.s.test_pipeline_e2e -v
+      - name: Test pipeline deep
+        run: python -m unittest tests.i.test_pipeline_deep -v

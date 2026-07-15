@@ -1,0 +1,43 @@
+#!/bin/bash
+# Bobanana 5.0 — Pre-commit hook
+# 在 git commit 前自动校验 state-machine.yaml 和注册表
+# 安装: cp scripts/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+echo "=== Bobanana 5.0 Pre-commit ==="
+
+# 1. 检查 state-machine.yaml
+if [ -f "state-machine.yaml" ]; then
+    python3 -c "
+import yaml, sys
+try:
+    with open('state-machine.yaml') as f:
+        yaml.safe_load(f)
+    print('  OK: state-machine.yaml')
+except yaml.YAMLError as e:
+    print(f'  FAIL: state-machine.yaml YAML错误: {e}')
+    sys.exit(1)
+" 2>&1 || exit 1
+fi
+
+# 2. 检查注册表完整性
+if [ -f "scripts/verify_registry.py" ]; then
+    python3 scripts/verify_registry.py 2>&1 || echo "  WARN: registry check failed (non-blocking)"
+fi
+
+# 3. 检查 state-machine.yaml 和 standard 模板是否同步
+if [ -f "state-machine.yaml" ] && [ -f "docs/examples/state-machine-standard.yaml" ]; then
+    python3 -c "
+import yaml
+with open('state-machine.yaml') as f: m = yaml.safe_load(f)
+with open('docs/examples/state-machine-standard.yaml') as f: s = yaml.safe_load(f)
+mn = sorted(n['id'] for n in m['nodes'])
+sn = sorted(n['id'] for n in s['nodes'])
+if mn != sn:
+    for n in set(mn)-set(sn): print(f'  WARN: standard模板缺少 {n}')
+    for n in set(sn)-set(mn): print(f'  WARN: standard模板多余 {n}')
+else:
+    print('  OK: state-machine.yaml 与 standard 模板同步')
+" 2>&1
+fi
+
+echo "=== Done ==="

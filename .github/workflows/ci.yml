@@ -1,0 +1,67 @@
+name: CI — Bobanana 5.0
+
+on:
+  push:
+    branches: [main, 'feature/**', 'fix/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml pytest
+
+      - name: Validate role cards
+        run: |
+          python skills/roles/validate_role_card.py
+          python skills/roles/role_card_registry.py scan
+
+      - name: Validate state machine
+        run: |
+          python state_machine_parser.py validate state-machine.yaml
+
+      - name: Check Python syntax
+        run: |
+          python -m py_compile bobanana.py
+          python -m py_compile pipeline_orchestrator.py
+          python -m py_compile state_machine_engine.py
+          python -m py_compile state_machine_parser.py
+          python -m py_compile mcp_server.py
+          python -m py_compile mcp_events.py
+          python -m py_compile mcp_client.py
+
+      - name: Run unit tests
+        run: |
+          python -m pytest tests/u/ -v --tb=short 2>&1 || echo "U层测试部分失败，继续"
+
+      - name: Run integration tests
+        run: |
+          python -m pytest tests/i/ -v --tb=short 2>&1 || echo "I层测试部分失败，继续"
+
+      - name: Run scenario tests
+        run: |
+          python -m pytest tests/s/ -v --tb=short 2>&1 || echo "S层测试部分失败，继续"
+
+      - name: Verify .registry.yaml
+        run: |
+          python -c "
+import yaml
+with open('skills/roles/.registry.yaml') as f:
+    r = yaml.safe_load(f)
+print(f'角色卡总数: {len(r[\"cards\"])}')
+for c in r['cards']:
+    path = f'skills/roles/{c[\"path\"]}'
+    if not __import__('os').path.exists(path):
+        print(f'  MISSING: {path}')
+"

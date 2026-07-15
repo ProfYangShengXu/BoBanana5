@@ -129,21 +129,28 @@ Kitset（子公司）       = 领域角色卡 + 工具集 + 领域 OP 角色
 
 ### 模板选择指南
 
-### G7 多轮循环（默认 3 轮）
+### G7 多轮循环（主管线默认1轮，cycle副管线默认3轮）
 
 管线支持自动多轮循环。CL 通过后如果 `round < max_rounds`，不结束，回 Boss 开始下一轮：
 
 ```
-第 1 轮: Boss → ... → CL(score≥9) → 未完成(round 1/3) → 回到 Boss
-第 2 轮: Boss → ... → CL(score≥9) → 未完成(round 2/3) → 回到 Boss
-第 3 轮: Boss → ... → CL(score≥9) → 完成(round 3/3) → signal_done
+第 1 轮: Boss → ... → CL(score≥9) → 未完成 → 回到 Boss
+第 2 轮: Boss → ... → CL(score≥9) → 未完成 → 回到 Boss
+第 N 轮: Boss → ... → CL(score≥9) → 完成 → signal_done
 ```
+
+**主管线（`/bb`）：默认 1 轮**，不循环。
+**副管线（`/cycle`）：默认 3 轮**，每轮 2 session（架构师→全栈开发），prompt 锁定。
 
 自定义轮数：
 ```bash
-python pipeline_orchestrator.py init "目标" --rounds 5
-python pipeline_orchestrator.py init "目标" -r 1    # 单轮
-```
+# 主管线（写死 1 轮）
+/bb 目标
+
+# cycle 副管线（默认 3 轮）
+/cycle 目标
+python pipeline_orchestrator.py init "目标" --rounds 5   # 自定义
+python pipeline_orchestrator.py init "目标" -r 1          # 单轮
 
 ### G8 角色卡使用追踪 — OP 角色必须使用低频卡
 

@@ -48,7 +48,7 @@ def save_json(path, data):
 
 
 def init_pipeline(goal, rounds=3):
-    """初始化新管线 (rounds: 多轮循环次数，默认3轮)"""
+    """初始化新管线 (rounds: 多轮循环次数，主管线默认1轮，cycle副管线默认3轮)"""
     # 安全检查：如果有未完成管线，拒绝创建新管线
     if has_pending_pipeline():
         print("[!] 管线进行中，不能创建新管线！")
@@ -513,7 +513,7 @@ def main():
 
     p_i = sub.add_parser('init', help='初始化管线')
     p_i.add_argument('goal', help='管线目标')
-    p_i.add_argument('--rounds', '-r', type=int, default=3, help='多轮循环次数（默认3轮）')
+    p_i.add_argument('--rounds', '-r', type=int, default=1, help='多轮循环次数（主管线默认1轮，cycle副管线默认3轮）')
 
     p_s = sub.add_parser('status', help='管线状态')
     p_s.add_argument('--pipeline', '-p', help='管线 ID（默认最新）')

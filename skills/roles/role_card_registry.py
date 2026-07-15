@@ -19,10 +19,11 @@ import yaml
 import argparse
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.normpath(os.path.join(SCRIPT_DIR, '..', '..'))
 ROLES_DIR = SCRIPT_DIR
 REGISTRY_PATH = os.path.join(ROLES_DIR, '.registry.yaml')
 SCHEMA_PATH = os.path.join(ROLES_DIR, 'role-card.schema.yaml')
-KITSETS_DIR = os.path.normpath(os.path.join(ROLES_DIR, '..', 'kitsets'))
+KITSETS_DIR = os.path.join(PROJECT_ROOT, 'kitsets')
 
 
 def load_registry():
@@ -85,7 +86,10 @@ def scan_directory():
         for ks in sorted(os.listdir(KITSETS_DIR)):
             ks_dir = os.path.join(KITSETS_DIR, ks)
             if os.path.isdir(ks_dir):
-                _scan_dir(ks_dir, ks)
+                # Kitset 角色卡在 roles/ 子目录下
+                ks_roles = os.path.join(ks_dir, 'roles')
+                if os.path.isdir(ks_roles):
+                    _scan_dir(ks_roles, ks)
 
     registry['cards'] = [c for c in registry['cards'] if c['id'] in seen_ids]
     registry['last_scan'] = ''

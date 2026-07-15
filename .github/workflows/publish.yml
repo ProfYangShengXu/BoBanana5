@@ -5,13 +5,14 @@ on:
     branches: [main]
 
 jobs:
-  publish:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Validate
         run: |
-          pip install pyyaml
+          pip install pyyaml pytest
+          python -m py_compile bobanana.py pipeline_orchestrator.py state_machine_engine.py state_machine_parser.py
           python state_machine_parser.py validate state-machine.yaml
           python scripts/verify_registry.py

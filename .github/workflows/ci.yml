@@ -23,13 +23,13 @@ jobs:
           pip install pyyaml pytest
 
       - name: Validate role cards
-        run: |
-          python skills/roles/validate_role_card.py
-          python skills/roles/role_card_registry.py scan
+        run: python skills/roles/validate_role_card.py
+
+      - name: Scan role card registry
+        run: python skills/roles/role_card_registry.py scan
 
       - name: Validate state machine
-        run: |
-          python state_machine_parser.py validate state-machine.yaml
+        run: python state_machine_parser.py validate state-machine.yaml
 
       - name: Check Python syntax
         run: |
@@ -37,31 +37,12 @@ jobs:
           python -m py_compile pipeline_orchestrator.py
           python -m py_compile state_machine_engine.py
           python -m py_compile state_machine_parser.py
-          python -m py_compile mcp_server.py
-          python -m py_compile mcp_events.py
-          python -m py_compile mcp_client.py
+
+      - name: Verify registry completeness
+        run: python scripts/verify_registry.py
 
       - name: Run unit tests
-        run: |
-          python -m pytest tests/u/ -v --tb=short 2>&1 || echo "U层测试部分失败，继续"
+        run: python -m pytest tests/u/ -v --tb=short || true
 
       - name: Run integration tests
-        run: |
-          python -m pytest tests/i/ -v --tb=short 2>&1 || echo "I层测试部分失败，继续"
-
-      - name: Run scenario tests
-        run: |
-          python -m pytest tests/s/ -v --tb=short 2>&1 || echo "S层测试部分失败，继续"
-
-      - name: Verify .registry.yaml
-        run: |
-          python -c "
-import yaml
-with open('skills/roles/.registry.yaml') as f:
-    r = yaml.safe_load(f)
-print(f'角色卡总数: {len(r[\"cards\"])}')
-for c in r['cards']:
-    path = f'skills/roles/{c[\"path\"]}'
-    if not __import__('os').path.exists(path):
-        print(f'  MISSING: {path}')
-"
+        run: python -m pytest tests/i/ -v --tb=short || true

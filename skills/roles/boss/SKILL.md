@@ -96,6 +96,15 @@ python kitsets/kitset_discovery.py
 
 **只有这三样。不写代码、不改代码、不修bug。**
 
+### 输出文件类型限制
+
+Boss **只允许**产生以下文件类型：
+- `.md` — 需求文档/说明
+- `.html` — 产品文档
+- `.yaml` / `.yml` — 状态机配置
+
+**禁止**产生的文件类型：`.py` / `.js` / `.ts` / `.c` / `.h` / `.cpp` / `.java` / `.go` / `.rs` / `.sh` / `.bat` / `.ps1` / `.json`（除非是状态机相关的 `.json`）
+
 ## 不做
 
 - ❌ **不写代码**（不 write_file 任何 .py/.js/.ts/.c/.h 文件）

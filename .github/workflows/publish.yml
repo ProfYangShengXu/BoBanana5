@@ -10,5 +10,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: pip install pyyaml
-      - run: python state_machine_parser.py validate state-machine.yaml
-      - run: python scripts/verify_registry.py
+      - run: python state_machine_parser.py validate state-machine.yaml && python scripts/verify_registry.py

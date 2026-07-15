@@ -129,7 +129,23 @@ Kitset（子公司）       = 领域角色卡 + 工具集 + 领域 OP 角色
 
 ### 模板选择指南
 
-### G7 角色卡使用追踪 — OP 角色必须使用低频卡
+### G7 多轮循环（默认 3 轮）
+
+管线支持自动多轮循环。CL 通过后如果 `round < max_rounds`，不结束，回 Boss 开始下一轮：
+
+```
+第 1 轮: Boss → ... → CL(score≥9) → 未完成(round 1/3) → 回到 Boss
+第 2 轮: Boss → ... → CL(score≥9) → 未完成(round 2/3) → 回到 Boss
+第 3 轮: Boss → ... → CL(score≥9) → 完成(round 3/3) → signal_done
+```
+
+自定义轮数：
+```bash
+python pipeline_orchestrator.py init "目标" --rounds 5
+python pipeline_orchestrator.py init "目标" -r 1    # 单轮
+```
+
+### G8 角色卡使用追踪 — OP 角色必须使用低频卡
 
 每条管线运行时自动记录每张角色卡的使用次数（`scripts/role_usage.py`）。OP 角色（架构师/Boss）在编排状态机时：
 

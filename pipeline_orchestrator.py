@@ -47,8 +47,8 @@ def save_json(path, data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def init_pipeline(goal):
-    """初始化新管线"""
+def init_pipeline(goal, rounds=3):
+    """初始化新管线 (rounds: 多轮循环次数，默认3轮)"""
     # 安全检查：如果有未完成管线，拒绝创建新管线
     if has_pending_pipeline():
         print("[!] 管线进行中，不能创建新管线！")
@@ -88,6 +88,8 @@ def init_pipeline(goal):
         "max_hirings": 3,
         "started_at": datetime.now().isoformat(),
         "history": [],
+        "round": 1,
+        "max_rounds": rounds,
         "cl_score": None,
         "cl_report": None,
     }
@@ -387,6 +389,8 @@ def advance_pipeline(phase, score=None, pid=None):
         "goal": pipeline.get('goal', ''),
         "goal_hash": goal_hash,
         "phase": phase,
+        "round": pipeline.get('round', 1),
+        "max_rounds": pipeline.get('max_rounds', 3),
         "iteration": pipeline['loop_count'],
         "max_iterations": pipeline['max_loops'],
         "next_prompt": f"[GOAL] {pipeline.get('goal', '')}\n[PHASE] {phase}\n[ROLE] {current}\n[DONE] completed\n[STATE] {pipeline['loop_count']} loops\n[NEXT] next: {next_node}",
@@ -453,7 +457,7 @@ def show_status(pid=None):
 
 
 def cmd_init(args):
-    pipeline = init_pipeline(args.goal)
+    pipeline = init_pipeline(args.goal, rounds=getattr(args, 'rounds', 3))
     return 0
 
 
@@ -509,6 +513,7 @@ def main():
 
     p_i = sub.add_parser('init', help='初始化管线')
     p_i.add_argument('goal', help='管线目标')
+    p_i.add_argument('--rounds', '-r', type=int, default=3, help='多轮循环次数（默认3轮）')
 
     p_s = sub.add_parser('status', help='管线状态')
     p_s.add_argument('--pipeline', '-p', help='管线 ID（默认最新）')

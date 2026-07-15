@@ -20,6 +20,8 @@ from datetime import datetime
 
 CL_PASS_THRESHOLD = 9
 PIPELINE_DIR = ".reasonix/pipelines"
+CYCLE_DIR = ".reasonix/cycle"
+STATE_MACHINE_DIR = ".reasonix/state"
 STATE_MACHINE_PATH = "state-machine.yaml"
 
 
@@ -52,7 +54,7 @@ def init_pipeline(goal):
         print("[!] 管线进行中，不能创建新管线！")
         print("    请先完成: python pipeline_orchestrator.py continue")
         return None
-    state_path = '.reasonix/state/machine_state.json'
+    state_path = os.path.join(STATE_MACHINE_DIR, 'machine_state.json')
     if os.path.exists(state_path):
         import json as _j
         with open(state_path, 'r', encoding='utf-8') as _f:
@@ -98,7 +100,7 @@ def init_pipeline(goal):
                           pending_decisions=[goal])
 
     import hashlib
-    _cd = '.reasonix/cycle'
+    _cd = CYCLE_DIR
     os.makedirs(_cd, exist_ok=True)
     with open(os.path.join(_cd, 'state.json'), 'w', encoding='utf-8') as _f:
         json.dump({"goal": goal,
@@ -257,7 +259,7 @@ def has_pending_pipeline():
 
 def get_next_role():
     """获取下一个待执行的角色名（从 cycle state 中读取）"""
-    cycle_dir = '.reasonix/cycle'
+    cycle_dir = CYCLE_DIR
     state_file = os.path.join(cycle_dir, 'state.json')
     next_file = os.path.join(cycle_dir, 'next_prompt.txt')
 
@@ -378,7 +380,7 @@ def advance_pipeline(phase, score=None, pid=None):
 
     # 先写 cycle state（辅助数据）
     import hashlib
-    cycle_dir = '.reasonix/cycle'
+    cycle_dir = CYCLE_DIR
     os.makedirs(cycle_dir, exist_ok=True)
     goal_hash = hashlib.sha256(pipeline.get('goal', '').encode()).hexdigest()[:64]
     cycle_state = {
@@ -422,7 +424,7 @@ def show_status(pid=None):
     if not pipeline:
         print("无活跃管线")
         # 检查是否有状态机引擎状态
-        state_path = ".reasonix/state/machine_state.json"
+        state_path = f"{STATE_MACHINE_DIR}/machine_state.json"
         if os.path.exists(state_path):
             state = load_json(state_path)
             print(f"状态机当前节点: {state.get('current_node', '?')}")
@@ -551,7 +553,7 @@ def cmd_repair(args):
 
     # 从 pipeline.json 重建 cycle/state.json
     import hashlib
-    cycle_dir = '.reasonix/cycle'
+    cycle_dir = CYCLE_DIR
     os.makedirs(cycle_dir, exist_ok=True)
     goal_hash = hashlib.sha256(pipeline.get('goal', '').encode()).hexdigest()[:64]
     phase = pipeline.get('current_phase', 'start')

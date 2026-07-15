@@ -59,13 +59,20 @@ class TestPipelineConstraints(unittest.TestCase):
 
     def setUp(self):
         self.tmpdir = tempfile.mkdtemp()
-        self.orig_pd = __import__('pipeline_orchestrator').PIPELINE_DIR
         import pipeline_orchestrator as po
+        self.orig_pd = po.PIPELINE_DIR
+        self.orig_cd = po.CYCLE_DIR
+        self.orig_sd = po.STATE_MACHINE_DIR
         po.PIPELINE_DIR = os.path.join(self.tmpdir, 'pipelines')
+        po.CYCLE_DIR = os.path.join(self.tmpdir, 'cycle')
+        po.STATE_MACHINE_DIR = os.path.join(self.tmpdir, 'state')
+        os.makedirs(po.PIPELINE_DIR, exist_ok=True)
 
     def tearDown(self):
         import pipeline_orchestrator as po
         po.PIPELINE_DIR = self.orig_pd
+        po.CYCLE_DIR = self.orig_cd
+        po.STATE_MACHINE_DIR = self.orig_sd
         shutil.rmtree(self.tmpdir)
 
     def test_constraints_not_in_goal(self):

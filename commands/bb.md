@@ -1,6 +1,6 @@
 ---
 name: bb
-description: "🍌 Bobanana 5.0 快捷指令 — 直接启动当前主力管线（贪心状态机 v15）"
+description: "🍌 Bobanana 5.0 快捷指令 — 清空状态→进入Boss→启动管线"
 argument-hint: "<目标>"
 ---
 
@@ -8,12 +8,20 @@ argument-hint: "<目标>"
 
 ## 执行
 
-1. `read_skill("bobanana")` 加载 Bobanana 入口 skill
-2. 按入口 skill 的要求进入 Boss 角色
-3. Boss 读角色卡库 → 架构师 → 按贪心状态机 v15 推进
-4. 不询问确认，直接开干
+### 第 0 步：清空残留状态（确保稳定）
 
-## 注意事项
+```bash
+rm -rf .reasonix/state .reasonix/pipelines .reasonix/cycle
+```
 
-- 本指令是 `/bobanana` 的快捷版，跳过选项分支直接启动管线
-- 不支持 `--gui` / `--setup` / `--cards` / `--test` 参数——这些请用 `/bobanana`
+**必须先做这步。** 旧管线残留会导致新管线无法启动。
+
+### 第 1 步：进入 Boss 角色
+
+`read_skill("bobanana")` 加载 Bobanana 入口 skill，按 skill 要求进入 Boss 角色。
+
+### 第 2 步：启动管线
+
+Boss → 架构师 → 按状态机推进。
+
+**全流程不准询问确认、不准输出分析性文字、不准停顿。直接开干。**

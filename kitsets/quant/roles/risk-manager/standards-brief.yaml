@@ -1,10 +1,39 @@
+deliverables:
+  output_types:
+  - 代码/模型/数据/报告
+  quality_criteria:
+  - 无未来函数泄露
+  - Sharpe>=0.8
+  - 过拟合检测通过
 meta:
-  description: 风控官：风险评估、未来函数检测、过拟合检测
+  description: risk-manager 职业研究已完成
+  research_date: '2026-07-15'
   role_name: risk-manager
+  subagents_completed: 4
 pitfalls_and_risks:
+  anti_patterns:
+  - 过拟合漏检
+  - 未来函数未发现
+  - 风险指标单一
+  - 市场体制切换未检测
   common_mistakes:
-  - 使用未来数据
-  - 过拟合
+  - 需求理解偏差
+  - 量化特定:幸存者偏差/未来函数/过拟合
+  risk_factors:
+  - 市场体制切换
+  - 因子拥挤
+  - Alpha衰减
+profession_standards:
+  best_practices:
+  - 时间点对齐，不使用未来数据
+  - 回测包含实盘约束(滑点/手续费/T+1)
+  - 分层回测+IC/IR分析
+  summary: risk-manager 职业准则
 tools_and_methods:
+  software:
+  - pyfolio
+  - quantstats
+  - riskfolio-lib
+  - matplotlib
   workflow:
-  - 需求->实现->验证->产出
+  - 数据质量审查→未来函数检测→过拟合检测→风险评估→合规审查

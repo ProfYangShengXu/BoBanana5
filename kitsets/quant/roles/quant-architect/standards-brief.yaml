@@ -1,10 +1,43 @@
+deliverables:
+  output_types:
+  - 代码/模型/数据/报告
+  quality_criteria:
+  - 无未来函数泄露
+  - Sharpe>=0.8
+  - 过拟合检测通过
 meta:
-  description: 量化架构师(OP)：策略管线架构设计、工具链编排
+  description: quant-architect 职业研究已完成
+  research_date: '2026-07-15'
   role_name: quant-architect
+  subagents_completed: 4
 pitfalls_and_risks:
+  anti_patterns:
+  - 过度复杂设计
+  - 工具链选择不当
+  - 忽略实盘约束
+  - 质量门过松
   common_mistakes:
-  - 使用未来数据
-  - 过拟合
+  - 需求理解偏差
+  - 量化特定:幸存者偏差/未来函数/过拟合
+  risk_factors:
+  - 市场体制切换
+  - 因子拥挤
+  - Alpha衰减
+profession_standards:
+  best_practices:
+  - 时间点对齐，不使用未来数据
+  - 回测包含实盘约束(滑点/手续费/T+1)
+  - 分层回测+IC/IR分析
+  summary: quant-architect 职业准则
 tools_and_methods:
+  software:
+  - pandas
+  - numpy
+  - LightGBM
+  - XGBoost
+  - PyTorch
+  - backtrader
+  - alphalens
+  - stable-baselines3
   workflow:
-  - 需求->实现->验证->产出
+  - 需求分析→管线设计→工具链选型→任务分配→质量把控→终验

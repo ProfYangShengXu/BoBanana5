@@ -179,14 +179,14 @@ cards:
   - OP
   use_case: 管线入口角色，读取用户目标并启动管线
 - description: Integration test role
-  has_example_sm: false
+  has_example_sm: true
   id: integ-test
   kitset: ''
   name: integ-test
   path: integ-test/role-card.yaml
   registered_at: ''
   tags: []
-  use_case: 适合集成测试和跨模块交互验证
+  use_case: 适合Integration test role，可替代fullstack-dev在该领域的专门工作
 - description: 代码审查员：对每个开发角色的产出做六维度独立审查（可读性/可维护性/正确性/性能/安全/整洁），产出审查报告后放行或打回
   has_example_sm: false
   id: code-reviewer

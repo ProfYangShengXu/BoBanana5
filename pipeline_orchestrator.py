@@ -235,27 +235,22 @@ def handle_cl_failback(pipeline_id, cl_report=None):
 
 
 def has_pending_pipeline():
-    """检查是否有未完成的管线（next_prompt 非空 + state 未结束）"""
-    cycle_dir = '.reasonix/cycle'
-    next_file = os.path.join(cycle_dir, 'next_prompt.txt')
-    state_file = os.path.join(cycle_dir, 'state.json')
-    if not (os.path.exists(next_file) and os.path.exists(state_file)):
+    """检查是否有未完成的管线（以 pipeline.json 为权威源）"""
+    if not os.path.isdir(PIPELINE_DIR):
         return False
-    with open(next_file, 'r', encoding='utf-8') as f:
-        if len(f.read().strip()) == 0:
-            return False
-    # 二次确认：检查 state.json 的 phase，防止崩溃后残留
-    try:
-        import json
-        with open(state_file, 'r', encoding='utf-8') as f:
-            st = json.load(f)
-        ph = st.get('phase', '')
-        # done=已完成, init=刚初始化还没跑 → 都不算 pending
-        if ph in ('done', 'init', ''):
-            return False
-    except Exception:
-        pass  # 文件损坏/格式错误 → 保守起见不允许
-    return True
+    pl_files = [f for f in os.listdir(PIPELINE_DIR) if f.endswith('.json')]
+    for f in sorted(pl_files, reverse=True):
+        try:
+            with open(os.path.join(PIPELINE_DIR, f), 'r', encoding='utf-8') as fh:
+                pl = json.load(fh)
+            if pl.get('status') == 'completed':
+                continue
+            if pl.get('current_node') == '__terminal__':
+                continue
+            return True
+        except Exception:
+            continue
+    return False
 
 
 

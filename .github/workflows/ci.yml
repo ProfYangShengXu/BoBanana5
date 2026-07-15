@@ -29,3 +29,5 @@ jobs:
           python -m unittest tests.chaos.test_resilience -v
           python -m unittest tests.perf.test_benchmark -v
           python -m unittest tests.security.test_scan -v
+          python -m unittest tests.s.test_pipeline_e2e -v
+          python -m unittest tests.i.test_pipeline_deep -v

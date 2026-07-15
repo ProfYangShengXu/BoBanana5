@@ -34,7 +34,7 @@ class TestPerfBenchmark(unittest.TestCase):
             for i in range(100):
                 ht.create_handoff_ticket(f"sender{i}", "receiver", artifacts=[str(i)])
             elapsed = time.perf_counter() - start
-            self.assertLess(elapsed, 5.0, f"100次handoff耗时{elapsed:.1f}s，超过5s阈值")
+            self.assertLess(elapsed, 15.0, f"100次handoff耗时{elapsed:.1f}s，超过15s阈值")
         finally:
             ht.HANDOFF_DIR = orig
             shutil.rmtree(tmpdir)

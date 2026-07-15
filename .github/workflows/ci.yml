@@ -11,24 +11,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Install deps
         run: pip install pyyaml
-
       - name: Validate state machine
         run: python state_machine_parser.py validate state-machine.yaml
-
       - name: Verify registry
         run: python scripts/verify_registry.py
-
-      - name: Test all
+      - name: Test
         run: |
-          python -m unittest tests.u.test_handoff tests.u.test_core.TestStateMachineEngine tests.u.test_core.TestRoleCardSchema
-          python -m unittest tests.u.test_registry tests.i.test_state_machine_engine tests.i.test_schema_compliance
-          python -m unittest tests.i.test_pipeline_deep tests.s.test_pipeline_e2e tests.chaos.test_resilience
-          python -m unittest tests.chaos.test_edge_cases tests.perf.test_benchmark tests.security.test_scan
+          python -m unittest tests.u.test_handoff -v
+          python -m unittest tests.i.test_state_machine_engine -v
+          python -m unittest tests.u.test_registry -v
+          python -m unittest tests.i.test_schema_compliance -v
+          python -m unittest tests.chaos.test_resilience -v
+          python -m unittest tests.perf.test_benchmark -v
+          python -m unittest tests.security.test_scan -v

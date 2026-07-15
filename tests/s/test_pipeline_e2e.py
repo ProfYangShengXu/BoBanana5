@@ -9,6 +9,7 @@ import pipeline_orchestrator as po
 
 class TestPipelineE2E(unittest.TestCase):
     def setUp(self):
+        self.orig_cwd = os.getcwd()
         self.tmpdir = tempfile.mkdtemp()
         self.orig_pd = po.PIPELINE_DIR
         po.PIPELINE_DIR = os.path.join(self.tmpdir, 'pipelines')

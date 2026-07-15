@@ -100,13 +100,13 @@ def init_pipeline(goal):
     import hashlib
     _cd = '.reasonix/cycle'
     os.makedirs(_cd, exist_ok=True)
-    json.dump({"goal": goal,
+    with open(os.path.join(_cd, 'state.json'), 'w', encoding='utf-8') as _f:
+        json.dump({"goal": goal,
                "goal_hash": hashlib.sha256(goal.encode()).hexdigest()[:64],
                "phase": "init", "iteration": 0, "max_iterations": 50,
                "next_prompt": "", "summary": "pipeline initialized",
                "last_updated": datetime.now().isoformat()},
-              open(os.path.join(_cd, 'state.json'), 'w', encoding='utf-8'),
-              ensure_ascii=False, indent=2)
+               _f, ensure_ascii=False, indent=2)
 
     print(f"管线已初始化: {pid}")
     print(f"  目标: {goal}")

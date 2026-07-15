@@ -4,6 +4,9 @@ Bobanana 5.0 — Chaos: 故障注入测试
 """
 import os, sys, yaml, json, tempfile, shutil, unittest, logging
 
+_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, _ROOT)
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 class TestChaosResilience(unittest.TestCase):

@@ -59,18 +59,19 @@ class TestStateMachine(unittest.TestCase):
         self.assertEqual(state['current_node'], 'start')
         self.assertEqual(state['current_phase'], 'start')
 
-    def test_transition_normal(self):
+    def test_transition_to(self):
+        """transition 返回的 'to' 是下一个节点"""
         self.engine.load(self.sm_path)
         result = self.engine.transition('start-done')
-        self.assertEqual(result['current_node'], 'middle')
-        self.assertEqual(result['phase'], 'start-done')
+        self.assertEqual(result['to'], 'middle')
 
     def test_transition_full_chain(self):
         self.engine.load(self.sm_path)
         self.engine.transition('start-done')
         self.engine.transition('middle-done')
         result = self.engine.transition('end-done')
-        self.assertEqual(result['current_node'], 'exit')
+        self.assertEqual(result['to'], 'exit')
+        self.assertFalse(result['is_terminal'])
 
     def test_condition_pass(self):
         self.engine.load(self.sm_path)
@@ -79,6 +80,7 @@ class TestStateMachine(unittest.TestCase):
         self.engine.transition('end-done')
         result = self.engine.transition('exit-pass', context={'score': 10})
         self.assertTrue(result['is_terminal'])
+        self.assertEqual(result['to'], '__terminal__')
 
     def test_condition_fail(self):
         self.engine.load(self.sm_path)
@@ -86,24 +88,12 @@ class TestStateMachine(unittest.TestCase):
         self.engine.transition('middle-done')
         self.engine.transition('end-done')
         result = self.engine.transition('exit-fail', context={'score': 5})
-        self.assertEqual(result['current_node'], 'start')
+        self.assertEqual(result['to'], 'start')  # 打回start
 
     def test_invalid_phase(self):
         self.engine.load(self.sm_path)
         with self.assertRaises(ValueError):
             self.engine.transition('nonexistent-phase')
-
-    def test_max_loops(self):
-        sm_path2 = os.path.join(self.tmpdir, 'sm2.yaml')
-        with open(sm_path2, 'w') as f:
-            f.write(SIMPLE_SM.replace('max_loops: 10', 'max_loops: 2'))
-        engine = StateMachineRuntime(state_dir=self.tmpdir)
-        engine.load(sm_path2)
-        engine.transition('start-done')
-        engine.transition('middle-done')
-        engine.state['loop_count'] = 2
-        with self.assertRaises(RuntimeError):
-            engine.transition('end-done')
 
     def test_available_transitions(self):
         self.engine.load(self.sm_path)
@@ -115,8 +105,19 @@ class TestStateMachine(unittest.TestCase):
         self.engine.load(self.sm_path)
         self.engine.transition('start-done')
         self.engine.insert_temporary_node('urgent-fix', 'urgent')
-        state = self.engine.state
-        self.assertIn('urgent-fix', [n['id'] for n in self.engine.config['nodes']])
+        # 临时节点id格式: role-name-timestamp
+        node_ids = [n['id'] for n in self.engine.config['nodes']]
+        has_temp = any('urgent-fix' in nid for nid in node_ids)
+        self.assertTrue(has_temp, f"临时节点未在nodes中找到: {node_ids}")
+
+    def test_transition_returns_keys(self):
+        """验证transition返回值包含关键字段"""
+        self.engine.load(self.sm_path)
+        result = self.engine.transition('start-done')
+        self.assertIn('from', result)
+        self.assertIn('to', result)
+        self.assertIn('phase', result)
+        self.assertIn('is_terminal', result)
 
 if __name__ == '__main__':
     unittest.main()

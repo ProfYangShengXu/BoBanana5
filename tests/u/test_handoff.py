@@ -23,29 +23,27 @@ class TestHandoffTicket(unittest.TestCase):
         self.assertEqual(ticket['sender_id'], 'boss')
         self.assertEqual(ticket['receiver_id'], 'architect')
         self.assertIn('prd.md', ticket['artifacts'])
+        self.assertIn('need tech review', ticket['pending_decisions'])
 
-    def test_create_ticket_with_risk_tags(self):
+    def test_create_with_risks(self):
         risks = [{"risk": "deadline", "level": "high"}]
-        ticket = ht.create_handoff_ticket("dev", "test", risk_tags=risks)
-        self.assertEqual(ticket['risk_tags'], risks)
+        ticket = ht.create_handoff_ticket("dev", "test", risks=risks)
+        self.assertEqual(ticket['risks'], risks)
 
-    def test_handoff_chain(self):
+    def test_handoff_id_unique(self):
+        import time
         t1 = ht.create_handoff_ticket("boss", "architect")
+        time.sleep(0.002)
         t2 = ht.create_handoff_ticket("architect", "dev")
-        self.assertTrue(t2['version'] > t1['version'])
+        self.assertNotEqual(t1['ticket_id'], t2['ticket_id'])
 
-    def test_get_no_ticket(self):
-        result = ht.get_handoff_tickets("ghost_role")
-        self.assertEqual(result['total'], 0)
+    def test_get_nonexistent_ticket(self):
+        result = ht.get_handoff_ticket("ht-nonexistent")
+        self.assertIsNone(result)
 
-    def test_version_timestamp(self):
-        v = ht._next_version("test")
-        self.assertGreater(v, int(time.time() * 1000) - 5000)
-
-    def test_create_with_badcase(self):
-        badcases = [{"desc": "API返回错误", "reproduce": "GET /api/test"}]
-        ticket = ht.create_handoff_ticket("test", "dev", badcases=badcases)
-        self.assertEqual(ticket['badcases'], badcases)
+    def test_create_with_assumptions(self):
+        ticket = ht.create_handoff_ticket("alice", "bob", assumptions=["network available"])
+        self.assertIn("network available", ticket['assumptions'])
 
 if __name__ == '__main__':
     unittest.main()

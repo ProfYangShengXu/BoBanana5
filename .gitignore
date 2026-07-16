@@ -42,3 +42,7 @@ eui_neo_app/external/EUI-NEO/
 kitsets/embedded/
 kitsets/quant/
 
+# Corrupted paths (WSL/Windows path prefix)
+C:/
+C：/
+

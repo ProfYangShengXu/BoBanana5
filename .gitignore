@@ -38,3 +38,7 @@ eui_neo_app/external/EUI-NEO/
 # Runtime state (auto-generated)
 .reasonix/
 
+# Kitset subdirectories (独立仓库)
+kitsets/embedded/
+kitsets/quant/
+

@@ -25,8 +25,12 @@ def fix_installed_plugin():
     # 1. 修复 manifest - 去掉 contextFile 引用
     manifest_path = os.path.join(INSTALLED_DIR, 'reasonix-plugin.json')
     if os.path.exists(manifest_path):
-        with open(manifest_path, 'r', encoding='utf-8') as f:
-            manifest = json.load(f)
+        try:
+            with open(manifest_path, 'r', encoding='utf-8') as f:
+                manifest = json.load(f)
+        except (json.JSONDecodeError, OSError) as e:
+            print(f"  [!] 读取 manifest 失败: {e}")
+            return False
         
         # 清理 hooks 中的 contextFile
         for hook_list in manifest.get('hooks', {}).values():

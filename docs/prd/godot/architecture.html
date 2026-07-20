@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Godot Kitset — 技术方案</title>
+<style>
+body{font-family:-apple-system,'PingFang SC',sans-serif;max-width:960px;margin:40px auto;padding:20px;}
+h1{color:#478cbf;border-bottom:3px solid #478cbf;}
+h2{color:#2d6a9f;margin-top:32px;border-left:4px solid #478cbf;padding-left:12px;}
+code{background:#e3f2fd;padding:2px 6px;border-radius:3px;font-size:14px;}
+pre{background:#f5f5f5;padding:16px;border-radius:8px;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;}
+th,td{border:1px solid #ddd;padding:10px;text-align:left;}
+th{background:#e3f2fd;}
+.card{background:#f0f7ff;border-radius:8px;padding:16px;margin:12px 0;border-left:4px solid #478cbf;}
+</style>
+</head>
+<body>
+
+<h1>🎮 Godot Kitset — 技术方案</h1>
+<p><strong>架构师</strong>: game-architect (OP) | <strong>版本</strong>: v1</p>
+
+<h2>1. 目录结构</h2>
+<pre><code>kitsets/godot/
+├── reasonix-plugin.json          ← kitset 元数据（域标签：godot, game, gamedev…）
+├── state-machine.yaml            ← 游戏开发默认状态机
+├── README.md                     ← Godot Kitset 文档
+├── roles/
+│   ├── .registry.yaml            ← 角色注册表
+│   ├── game-architect/           ← OP 角色卡（架构师）
+│   ├── system-designer/          ← 策划类 5 岗位
+│   ├── level-designer/
+│   ├── narrative-designer/
+│   ├── combat-designer/
+│   ├── numerical-designer/
+│   ├── client-programmer/        ← 程序类 6 岗位
+│   ├── server-programmer/
+│   ├── engine-programmer/
+│   ├── graphics-programmer/
+│   ├── tech-artist/
+│   ├── ai-programmer/
+│   ├── concept-artist/           ← 美术类 6 岗位
+│   ├── 3d-modeler/
+│   ├── animator/
+│   ├── vfx-artist/
+│   ├── ui-artist/
+│   ├── environment-artist/
+│   ├── sound-designer/           ← 音频类 4 岗位
+│   ├── composer/
+│   ├── voice-director/
+│   ├── audio-programmer/
+│   ├── functional-tester/        ← 测试类 4 岗位
+│   ├── automation-tester/
+│   ├── compatibility-tester/
+│   └── test-manager/
+├── tools/
+│   ├── tools.py                  ← 统一 CLI 入口
+│   └── godot-tools/              ← 从 Godot-adaption-kitset 迁移的 M1-M11
+│       ├── scaffolder.ts         ← M1: 项目脚手架
+│       ├── scene_generator.ts    ← M2: 场景生成
+│       ├── script_manager.ts     ← M3: 脚本管理
+│       ├── resource_resolver.ts  ← M4: 资源管理
+│       ├── template_library.ts   ← M5: 模板库
+│       ├── godot_cli.ts          ← M6: CLI 桥接
+│       ├── log_capture.ts        ← M7: 日志捕获
+│       ├── log_parser.ts         ← M8: 日志解析
+│       ├── log_utils.ts          ← M9: 日志工具
+│       ├── input_simulator.ts    ← M10: 输入模拟
+│       ├── debug_orchestrator.ts ← M11: 调试编排
+│       └── godox_bridge.ts       ← M12: Godox 通信桥（新增）
+├── addons/
+│   └── godox/                    ← Godot 编辑器插件（双向通信）
+│       ├── plugin.cfg
+│       ├── plugin.gd             ← EditorPlugin 入口
+│       ├── mcp_server.gd         ← WebSocket JSON-RPC Server
+│       ├── mcp_client.gd         ← MCP 客户端（连接 Agent）
+│       ├── scene_bridge.gd       ← NEW: 场景状态读写
+│       ├── input_relay.gd        ← 输入中继
+│       ├── log_channel.gd        ← 日志通道
+│       └── validator.gd          ← 项目验证
+└── pqf/                          ← (预留) PQF 日报层</code></pre>
+
+<h2>2. 迁移计划（迁移-增强-注册）</h2>
+
+<table>
+<tr><th>阶段</th><th>操作</th><th>产出</th></tr>
+<tr><td><strong>P1: 角色卡</strong></td><td>HR 创建 25 张游戏工作室角色卡 + game-architect OP</td><td><code>roles/*/role-card.yaml + SKILL.md + standards-brief.yaml</code></td></tr>
+<tr><td><strong>P2: Kitset 迁移</strong></td><td>复制 TypeScript 工具到 tools/godot-tools/ + 创建 tools.py</td><td><code>tools/tools.py + tools/godot-tools/</code></td></tr>
+<tr><td><strong>P3: 插件增强</strong></td><td>加强 godox 插件（WebSocket 双向通信 + scene_bridge.gd）</td><td><code>addons/godox/</code> 更新版</td></tr>
+<tr><td><strong>P4: 注册</strong></td><td>创建 reasonix-plugin.json + state-machine.yaml + README</td><td>kitset 元数据</td></tr>
+</table>
+
+<h2>3. 通信架构</h2>
+
+<div class="card">
+<strong>双向通信协议</strong>
+<pre>┌─────────────────┐        WebSocket         ┌──────────────────┐
+│  Bobanana Python  │  JSON-RPC 2.0 over ws   │  Godot 4.x 实例  │
+│  Pipeline Engine  │◄──────────────────────►│  (Headless/GUI)  │
+│                   │   ws://localhost:9800    │                  │
+│  tools.py         │                          │  addons/godox/   │
+│  (bridge client)  │                          │  mcp_server.gd   │
+└─────────────────┘                          └──────────────────┘</pre>
+</div>
+
+<h4>消息类型</h4>
+<table>
+<tr><th>方向</th><th>消息</th><th>说明</th></tr>
+<tr><td>Agent → Godot</td><td><code>scene.get_tree</code></td><td>获取当前场景树</td></tr>
+<tr><td>Agent → Godot</td><td><code>scene.add_node</code></td><td>添加节点到场景</td></tr>
+<tr><td>Agent → Godot</td><td><code>scene.set_property</code></td><td>设置节点属性</td></tr>
+<tr><td>Agent → Godot</td><td><code>scene.run</code></td><td>运行游戏</td></tr>
+<tr><td>Agent → Godot</td><td><code>input.simulate</code></td><td>模拟键盘/鼠标输入</td></tr>
+<tr><td>Godot → Agent</td><td><code>scene.updated</code></td><td>场景变化事件通知</td></tr>
+<tr><td>Godot → Agent</td><td><code>log.message</code></td><td>实时日志推送</td></tr>
+<tr><td>Godot → Agent</td><td><code>game.state</code></td><td>游戏运行时状态</td></tr>
+</table>
+
+<h2>4. tools.py 接口设计</h2>
+
+<pre><code class="language-python">TOOL_MAP = {
+    'godot':        TOOLS_DIR / 'godot-tools' / 'godot_cli.ts',
+    'scaffold':     TOOLS_DIR / 'godot-tools' / 'scaffolder.ts',
+    'scene':        TOOLS_DIR / 'godot-tools' / 'scene_generator.ts',
+    'script':       TOOLS_DIR / 'godot-tools' / 'script_manager.ts',
+    'template':     TOOLS_DIR / 'godot-tools' / 'template_library.ts',
+    'log':          TOOLS_DIR / 'godot-tools' / 'log_capture.ts',
+    'input':        TOOLS_DIR / 'godot-tools' / 'input_simulator.ts',
+    'debug':        TOOLS_DIR / 'godot-tools' / 'debug_orchestrator.ts',
+    'godox':        TOOLS_DIR / 'godot-tools' / 'godox_bridge.ts',
+    'plugin':       TOOLS_DIR / '..' / 'addons' / 'godox' / 'plugin.gd',
+}
+
+# 调用: python tools.py scaffold create my_project
+# 调用: python tools.py plugin start --port 9800</code></pre>
+
+<h2>5. 插件增强设计</h2>
+
+<table>
+<tr><th>文件</th><th>增强内容</th></tr>
+<tr><td><code>mcp_server.gd</code></td><td>新增 WebSocket 服务器（ws://localhost:9800），JSON-RPC 2.0 协议解析，命令路由</td></tr>
+<tr><td><code>plugin.gd</code></td><td>新增编辑器停靠面板（Dock），显示连接状态 + 日志 + 手动启停按钮</td></tr>
+<tr><td><code>scene_bridge.gd</code></td><td><strong>新增</strong>：遍历/修改场景树、获取/设置属性、信号监听</td></tr>
+<tr><td><code>validator.gd</code></td><td>新增项目完整性检查、节点引用有效性、依赖检测</td></tr>
+</table>
+
+<h2>6. 角色卡设计原则</h2>
+
+<ul>
+<li><strong>game-architect (OP)</strong>：游戏开发管线的架构师，类似 quant-architect 的格式</li>
+<li><strong>策划类</strong>：偏文档/设计产出，不写代码。phase flag 用 <code>design-done</code></li>
+<li><strong>程序类</strong>：偏实现，写 GDScript/C#。phase flag 用 <code>dev-done</code></li>
+<li><strong>美术类</strong>：偏资源管理，不写代码。phase flag 用 <code>art-done</code></li>
+<li><strong>音频类</strong>：偏资源管理。phase flag 用 <code>audio-done</code></li>
+<li><strong>测试类</strong>：偏验证。phase flag 用 <code>test-done</code></li>
+<li><strong>格式</strong>：全部对齐 <code>skills/roles/</code> 下的角色卡格式（role-card.yaml + SKILL.md + standards-brief.yaml）</li>
+</ul>
+
+</body>
+</html>

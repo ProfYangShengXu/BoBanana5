@@ -1,0 +1,211 @@
+version: 1
+last_scan: "2026-07-19T16:00:00"
+cards:
+  - id: game-architect
+    name: game-architect
+    tags: [OP, game]
+    description: "游戏架构师(OP)：游戏开发管线的架构师：技术选型、管线搭建、工具链编排、质量把关"
+    path: roles/game-architect/role-card.yaml
+    has_example_sm: false
+    is_op_role: true
+    kitset: godot
+
+  - id: system-designer
+    name: system-designer
+    tags: [game]
+    description: "系统策划：经济/社交/养成/战斗系统设计"
+    path: roles/system-designer/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: level-designer
+    name: level-designer
+    tags: [game]
+    description: "关卡策划：关卡/地形/谜题/流程设计"
+    path: roles/level-designer/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: narrative-designer
+    name: narrative-designer
+    tags: [game]
+    description: "剧情策划：主线/支线/世界观/对话设计"
+    path: roles/narrative-designer/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: combat-designer
+    name: combat-designer
+    tags: [game]
+    description: "战斗策划：动作/AI/手感/连招设计"
+    path: roles/combat-designer/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: numerical-designer
+    name: numerical-designer
+    tags: [game]
+    description: "数值策划：战斗/经济/平衡/概率设计"
+    path: roles/numerical-designer/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: client-programmer
+    name: client-programmer
+    tags: [game]
+    description: "客户端程序：Gameplay/UI/网络/渲染"
+    path: roles/client-programmer/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: server-programmer
+    name: server-programmer
+    tags: [game]
+    description: "服务端程序：后端/数据库/网关/防外挂"
+    path: roles/server-programmer/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: engine-programmer
+    name: engine-programmer
+    tags: [game]
+    description: "引擎程序：渲染/物理/工具链/内存"
+    path: roles/engine-programmer/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: graphics-programmer
+    name: graphics-programmer
+    tags: [game]
+    description: "图形程序：Shader/光照/后处理/GPU"
+    path: roles/graphics-programmer/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: tech-artist
+    name: tech-artist
+    tags: [game]
+    description: "技术美术(TA)：流程/渲染/角色/工具"
+    path: roles/tech-artist/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: ai-programmer
+    name: ai-programmer
+    tags: [game]
+    description: "AI程序：行为树/寻路/机器学习"
+    path: roles/ai-programmer/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: concept-artist
+    name: concept-artist
+    tags: [game]
+    description: "原画设计师：角色/场景/道具/概念"
+    path: roles/concept-artist/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: 3d-modeler
+    name: 3d-modeler
+    tags: [game]
+    description: "3D建模师：角色/场景/硬表面/生物建模"
+    path: roles/3d-modeler/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: animator
+    name: animator
+    tags: [game]
+    description: "动画师：角色/面部/技术动画/动捕"
+    path: roles/animator/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: vfx-artist
+    name: vfx-artist
+    tags: [game]
+    description: "特效师：技能/环境/后期/粒子特效"
+    path: roles/vfx-artist/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: ui-artist
+    name: ui-artist
+    tags: [game]
+    description: "UI美术：图标/界面/动效/交互"
+    path: roles/ui-artist/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: environment-artist
+    name: environment-artist
+    tags: [game]
+    description: "场景美术：地表/植被/灯光/氛围"
+    path: roles/environment-artist/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: sound-designer
+    name: sound-designer
+    tags: [game]
+    description: "音效设计师：拟音/声音/交互音频"
+    path: roles/sound-designer/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: composer
+    name: composer
+    tags: [game]
+    description: "作曲家：作曲/编曲/音乐总监"
+    path: roles/composer/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: voice-director
+    name: voice-director
+    tags: [game]
+    description: "配音导演：配音/录音/音频编辑"
+    path: roles/voice-director/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: audio-programmer
+    name: audio-programmer
+    tags: [game]
+    description: "音频程序：Wwise/FMOD集成/音频引擎"
+    path: roles/audio-programmer/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: functional-tester
+    name: functional-tester
+    tags: [game]
+    description: "功能测试：用例设计/回归/缺陷/探索"
+    path: roles/functional-tester/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: automation-tester
+    name: automation-tester
+    tags: [game]
+    description: "自动化测试：脚本/CI/性能基准"
+    path: roles/automation-tester/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: compatibility-tester
+    name: compatibility-tester
+    tags: [game]
+    description: "兼容性测试：多设备/多系统/硬件"
+    path: roles/compatibility-tester/role-card.yaml
+    has_example_sm: false
+    kitset: godot
+
+  - id: test-manager
+    name: test-manager
+    tags: [game]
+    description: "测试管理：测试计划/风险评估/流程"
+    path: roles/test-manager/role-card.yaml
+    has_example_sm: false
+    kitset: godot

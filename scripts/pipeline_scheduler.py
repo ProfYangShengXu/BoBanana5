@@ -32,14 +32,21 @@ def _load_tasks():
     _ensure()
     if not os.path.exists(TASKS_FILE):
         return []
-    with open(TASKS_FILE, 'r', encoding='utf-8') as f:
-        return json.load(f)
+    try:
+        with open(TASKS_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        logger.error(f"加载任务失败: {e}")
+        return []
 
 
 def _save_tasks(tasks):
     _ensure()
-    with open(TASKS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(tasks, f, ensure_ascii=False, indent=2)
+    try:
+        with open(TASKS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(tasks, f, ensure_ascii=False, indent=2)
+    except OSError as e:
+        logger.error(f"保存任务失败: {e}")
 
 
 def _task_id(goal):
@@ -192,7 +199,9 @@ def main():
     p_sch = sub.add_parser('schedule', help='注册定时任务')
     p_sch.add_argument('--goal', required=True, help='管线目标')
     p_sch.add_argument('--time', required=True, help='执行时间 (HH:MM)')
-    p_sch.add_argument('--weekday', choices=['mon-fri', 'weekend', 'daily', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'], default='daily')
+    p_sch.add_argument('--weekday',
+        choices=['mon-fri', 'weekend', 'daily', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+        default='daily')
     p_sch.add_argument('--rounds', '-r', type=int, default=1)
 
     sub.add_parser('list', help='列出任务')

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>ADR-001 — 定时任务通过 MCP Tool 暴露</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 24px; color: #1a1a2e; line-height: 1.7; }
+h1 { border-bottom: 3px solid #0f3460; }
+.tag { display: inline-block; background: #0f3460; color: white; padding: 2px 12px; border-radius: 12px; font-size: 0.9em; }
+.tag-accepted { background: #16a34a; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #0f3460; color: white; }
+</style>
+</head>
+<body>
+
+<h1>ADR-001：定时任务通过 MCP Tool 暴露</h1>
+<p>
+  <span class="tag tag-accepted">已接受</span>
+  <span class="tag">2026-07-16</span>
+  <span class="tag">v1</span>
+</p>
+
+<h2>背景</h2>
+<p>Bobanana 5.0 已有 <code>scripts/pipeline_scheduler.py</code> 实现完整的 CLI 定时调度能力（schedule/run/list/remove/install-winsch），但 <strong>只能通过命令行操作</strong>。Reasonix 桌面端用户无法在聊天界面或 GUI 中管理定时任务。需要决定如何暴露调度能力给桌面端用户。</p>
+
+<h2>可选方案</h2>
+<table>
+<tr><th>方案</th><th>描述</th><th>优点</th><th>缺点</th></tr>
+<tr>
+  <td><strong>A. MCP Tool 暴露</strong>（选定）</td>
+  <td>在 .mcp.json 中注册 schedule_* MCP tools，mcp_server.py 新增 handler，复用 pipeline_scheduler 现有逻辑</td>
+  <td>• 最小代码改动<br>• 向后兼容<br>• 用户在 Reasonix 聊天中即可操作<br>• 复用已有 schtasks 集成</td>
+  <td>• 需新增 4-5 个 handler<br>• 同步阻塞问题</td>
+</tr>
+<tr>
+  <td><strong>B. 独立 Web UI</strong></td>
+  <td>用 Flask/FastAPI 启动一个本地 Web 服务提供调度管理界面</td>
+  <td>• 功能完整<br>• 可嵌入 iframe</td>
+  <td>• 新增依赖和端口<br>• 偏离 Reasonix 桌面端体验<br>• 安全策略复杂</td>
+</tr>
+<tr>
+  <td><strong>C. 仅 TUI 仪表盘</strong></td>
+  <td>只在 gui_dashboard.py 中新增调度面板，不暴露 MCP tool</td>
+  <td>• 最简实现</td>
+  <td>• Reasonix 桌面端用户无法操作<br>• 仅限终端用户使用</td>
+</tr>
+<tr>
+  <td><strong>D. APScheduler 替换 schtasks</strong></td>
+  <td>用 APScheduler 替代 Windows Task Scheduler 作为后端触发引擎</td>
+  <td>• 跨平台<br>• 更精确的控制</td>
+  <td>• 大改现有架构<br>• 需进程常驻<br>• schtasks 对桌面工具更自然</td>
+</tr>
+</table>
+
+<h2>决策</h2>
+<p><strong>选定方案 A：MCP Tool 暴露。</strong></p>
+<p>理由：</p>
+<ol>
+  <li>最小改动原则：复用已有 <code>pipeline_scheduler.py</code> 的全部 CLI 逻辑，只需新增 MCP 胶水层</li>
+  <li>Reasonix 桌面端原生集成：用户在聊天中通过 MCP tool 创建定时任务，零离开 IDE 体验</li>
+  <li>向后兼容：CLI 用户不受影响</li>
+  <li>schtasks 对 Windows 桌面用户是最自然的系统级调度方案（即使用户关闭桌面端也能触发）</li>
+</ol>
+
+<h2>影响</h2>
+<ul>
+  <li><strong>正面：</strong>用户可在 Reasonix 桌面端聊天中用自然语言创建定时任务（通过 AI 调用 MCP tool）</li>
+  <li><strong>正面：</strong>TUI 仪表盘也可通过 MCPClient 的 schedule_* 方法显示调度信息</li>
+  <li><strong>负面：</strong>Windows 独占（schtasks），但本版本目标平台就是 Windows Reasonix 桌面端</li>
+  <li><strong>负面：</strong>MCP handler 中调用 scheduler 是同步的（subprocess），但单次操作耗时 < 1s 可接受</li>
+  <li><strong>约束：</strong>所有 MCP handler 必须做严格的输入校验（命令注入防护）</li>
+</ul>
+
+<h2>状态</h2>
+<p>✅ 已接受 — 将在 v1 版本中实现</p>
+
+</body>
+</html>

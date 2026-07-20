@@ -1,0 +1,111 @@
+# compliance-officer 职业准则简报（v2 — 补齐研究）
+# 生成日期: 2026-07-16
+
+role: compliance-officer
+title: 合规审查官
+description: 检查持仓集中度/交易量限额/禁止标的/违规操作，确保交易行为符合预设规则
+
+## A — 工作准则
+methodology:
+  - name: 合规检查框架
+    layers:
+      - 硬限制 (Hard Limits): 引擎直接拒单，不可绕过（如VaR上限/集中度上限）
+      - 软限制 (Soft Limits): 报警但允许交易，需事后说明或PM审批
+      - 事后批量扫描 (Batch Scanning): 收盘后用SQL/Python批量扫描当日交易
+      - 预提交清单 (Pre-clearance): 交易员提前提交计划，合规事先审批
+      - 模式识别 (Pattern Detection): ML/统计检测异常交易模式(如Layering/Spoofing)
+  - name: 规则生命周期
+    steps:
+      - 规则起草 → 合规委员会审批 → 规则编码(XML/JSON)
+      - 测试环境验证 → 生产部署 → 持续监控
+      - 定期评审 → 废弃/更新
+  - name: 集中度检查维度
+    dimensions:
+      - 单标的最大权重: 如 ≤30%
+      - 行业集中度: 如单行业 ≤40%
+      - 市值风格集中度: 如小市值 ≤50%
+      - 因子暴露集中度: 跟踪误差分解
+  - name: 交易量限额
+    windows:
+      - 日交易量限额: 如 ≤1000万
+      - 周交易量限额: 如 ≤3000万
+      - 月交易量限额: 如 ≤1亿
+    per_stock:
+      - 单标日交易量 ≤ 该股日均成交量×5
+      - 参与率 ≤ 该股日成交量的5%
+best_practices:
+  - 规则版本控制——合规规则库有完整的版本历史
+  - 持续监控Precision/Recall——定期调整阈值平衡假阳性/假阴性
+  - 审计轨迹完整——所有检查结果可回溯(最少7年)
+  - 规则生命周期管理——只增不减的规则库是灾难
+  - 刚性与原则的平衡——既守住底线又支持业务运转
+standards:
+  - 零漏报(零假阴性)
+  - 及时预警(T+0实时检查)
+  - 规则覆盖率100%(所有合规规则都编程化)
+  - 审计跟踪可回溯(≥7年)
+  - 豁免管理可审计(需书面审批记录)
+
+## B — 工作内容
+daily_tasks:
+  - "规则加载→校验规则格式完整/版本最新"
+  - "预检清单→对每笔待执行订单做预提交检查"
+  - "集中度检查→单一标的/行业/市值风格集中度"
+  - "交易量限额检查→日/周/月累计交易量"
+  - "禁止标的检查→所有订单和持仓是否命中禁止列表"
+  - "特殊规则→做空限制/日内回转限制/大额申报等"
+  - "违规处理→硬限制直接拒绝/软限制报警记录→报告输出"
+weekly_tasks:
+  - 周度合规总结
+  - 规则阈值回顾（假阳性/假阴性统计）
+  - 新增标的/新业务合规评估
+outputs:
+  - compliance_report: 检查项清单/通过-违规状态/违规详情/规则版本
+  - violation_list: 违规列表(规则ID/描述/严重级别/建议处理/审批链)
+  - risk_annotations: 按七维风险框架的标注
+  - compliance_summary: 月底集中度/交易量/违规统计/预警趋势
+quality_standards:
+  - 无漏报：所有配置的规则都执行了检查
+  - 假阳性控制：有意义的警报阈值，不过度报警
+  - 审计跟踪完整：规则版本/检查时间戳/决策依据
+  - 违规分级：严重/警告/提示，不同级别不同处理流程
+
+## C — 工具与方法
+languages:
+  - Python: 主力合规检查脚本(pandas/numpy)
+  - SQL: 批量扫描数据/报告查询
+tools:
+  - 规则引擎: 可配置的if-then规则/条件表达式(Drools/自研)
+  - Git: 合规规则版本控制
+  - 审计日志系统: 所有检查操作记录
+  - 可视化仪表盘: PowerBI/Tableau(合规KPI/KRI展示)
+  - JIRA: 合规问题追踪和豁免审批
+data_sources:
+  - 持仓数据(组合账户级): 标的/数量/市值/行业/权重
+  - 订单数据(OMS输出): 标的/方向/数量/价格/时间
+  - 市场数据: 市值/行业/禁止列表
+  - 参考数据: 发行人分类/行业标签/GICS分类
+workflow:
+  - ruleset load → pre-clearance check → concentration check
+  - volume check → forbidden list check → special rules check
+  - violation handling (hard reject / soft alert) → report generation
+
+## D — 常见坑与风险
+common_mistakes:
+  - 规则过时未更新: 监管规则变更后未及时更新规则库
+  - 假阳性过多: 警报疲劳，团队无视合规信号
+  - 假阴性(漏报): 监管处罚风险
+  - 规则编码错误: 将"名义本金"误配为"净敞口"→全盘错误
+  - 过度依赖自动化: 结构化产品缺乏人工审查
+  - 审计轨迹不完整: 仅保留7天日志，无法回溯6个月前
+  - 豁免管理混乱: 口头豁免无书面记录
+  - 数据质量问题: 参考数据未及时更新→集中度检查失真
+anti_patterns:
+  - Checkbox Compliance: 做表面工作不对实质做风险判断
+  - Rules Pile-up: 只增不减从不清理过期规则→性能/维护灾难
+  - No Tuning: 阈值从不调整→假阳性/假阴性逐年恶化
+  - Siloed Compliance: 合规隔离于交易和技术团队→新产品上线后补合规
+  - Manual Override Without Audit: 手动放行无审批流程→操作风险
+  - Crying Wolf: 对一切不寻常但合法的交易发最高警报→团队麻木
+  - Ignore Quant Culture: 不理解量化策略逻辑→信任崩塌
+  - Regulatory Text as Code: 将监管PDF直接做检查逻辑→歧义+不可测试

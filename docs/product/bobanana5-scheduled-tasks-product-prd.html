@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Bobanana 5.0 — 定时任务优化 PRD</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 960px; margin: 40px auto; padding: 0 24px; color: #1a1a2e; line-height: 1.7; }
+h1 { border-bottom: 3px solid #e94560; padding-bottom: 12px; }
+h2 { margin-top: 40px; border-left: 4px solid #e94560; padding-left: 12px; }
+h3 { margin-top: 28px; }
+.emoji-big { font-size: 2em; }
+.badge { display: inline-block; background: #e94560; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.85em; margin-right: 6px; }
+.badge-green { background: #0f3460; }
+.badge-yellow { background: #e94560; }
+.card { background: #f8f9fa; border-radius: 8px; padding: 16px 20px; margin: 16px 0; border-left: 4px solid #0f3460; }
+.card-pain { border-left-color: #e94560; }
+.card-gain { border-left-color: #16a34a; }
+table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #0f3460; color: white; }
+tr:nth-child(even) { background: #f8f9fa; }
+.summary-box { background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 16px 20px; margin: 20px 0; }
+</style>
+</head>
+<body>
+
+<h1>🍌 Bobanana 5.0 — 定时任务 (Scheduled Tasks) 板块优化</h1>
+<p><strong>版本：</strong>1.0 · <strong>日期：</strong>2026-07-16 · <strong>类型：</strong>功能优化 PRD</p>
+
+<h2>1. 用户访谈提纲 🎙️</h2>
+
+<h3>目标用户画像</h3>
+<ul>
+  <li><strong>主用户：</strong>Reasonix 桌面端日常使用者，用 Bobanana 管线做持续开发/自动化</li>
+  <li><strong>次用户：</strong>需要定时运行 AI 管线的开发团队负责人、DevOps 工程师</li>
+  <li><strong>反用户：</strong>仅一次性手动使用管线、不需要定时运行的轻量用户</li>
+</ul>
+
+<h3>招募条件</h3>
+<ul>
+  <li>使用过 Reasonix 桌面端 ≥1 周</li>
+  <li>有过"希望让 AI 在后台跑任务"的想法</li>
+  <li>了解 CLI 基本操作</li>
+</ul>
+
+<h3>访谈问题</h3>
+
+<div class="card"><strong>Q1.</strong> 你目前如何安排需要定时运行的开发任务？（如定时跑测试、定时拉数据）</div>
+<div class="card"><strong>Q2.</strong> 你在 Reasonix 桌面端最常做的三件事情是什么？</div>
+<div class="card"><strong>Q3.</strong> 如果能在桌面端直接创建一个定时任务（如"每天早9点跑一次数据分析管线"），你会用吗？</div>
+<div class="card"><strong>Q4.</strong> 你希望定时任务的粒度是？（每日/每周/每小时/自定义 cron）</div>
+<div class="card"><strong>Q5.</strong> 你希望定时任务执行完毕后如何通知你？（桌面通知/日志/邮件）</div>
+<div class="card"><strong>Q6.</strong> 你会介意任务执行时 Reasonix 桌面端需要保持打开状态吗？</div>
+<div class="card"><strong>Q7.</strong> 你觉得创建一个定时任务需要多少步才叫"简单"？</div>
+<div class="card"><strong>Q8.</strong> 你用过其他 AI 工具的定时任务功能吗（Claude Code Routines / Cursor Automations）？体验如何？</div>
+
+<h2>2. 价值主张画布 💎</h2>
+
+<h3>用户任务 (Customer Jobs)</h3>
+<div class="card card-gain">
+<strong>功能型：</strong>定时运行 AI 管线（测试/代码审查/报告生成）<br>
+<strong>社交型：</strong>向团队成员展示"管线已自动化"<br>
+<strong>情感型：</strong>从手动触发→自动运行的"省心"感
+</div>
+
+<h3>痛点 (Pains)</h3>
+<div class="card card-pain">
+<strong>P1</strong> 每次都要手动打开终端输入命令 → 繁琐<br>
+<strong>P2</strong> 记不住/忘记在特定时间运行管线<br>
+<strong>P3</strong> Windows 任务计划程序配置复杂，不熟悉的用户不会用<br>
+<strong>P4</strong> 现有 CLI 调度器无 GUI，看不到任务状态<br>
+<strong>P5</strong> 无法在 Reasonix 桌面端内完成全流程
+</div>
+
+<h3>收益 (Gains)</h3>
+<div class="card card-gain">
+<strong>G1</strong> 在 Reasonix 桌面端一站式完成创建→管理→监控<br>
+<strong>G2</strong> 无需离开 IDE 即可管理所有定时任务<br>
+<strong>G3</strong> 任务执行历史一目了然<br>
+<strong>G4</strong> 可与已有管线无缝衔接
+</div>
+
+<h3>产品方案对应</h3>
+<table>
+<tr><th>痛点/收益</th><th>产品方案</th></tr>
+<tr><td>P1 手动输入命令</td><td>MCP Tool 直接创建，用户在 Reasonix 聊天中自然语言完成</td></tr>
+<tr><td>P2 忘记定时执行</td><td>注册后自动由 schtasks/APScheduler 触发</td></tr>
+<tr><td>P3 配置复杂</td><td>自然语言描述 → 自动解析为调度配置</td></tr>
+<tr><td>P4 看不到状态</td><td>TUI 仪表盘 + MCP tool 查询实时状态</td></tr>
+<tr><td>P5 不能全流程</td><td>从创建到日志到删除全部在桌面端完成</td></tr>
+</table>
+
+<h2>3. 假设验证卡片 🃏</h2>
+
+<div class="card">
+<strong>H1 — 用户愿意在 Reasonix 桌面端创建定时任务</strong><br>
+<strong>验证方法：</strong>发布 MCP tool 原型 → 观察 2 周内创建数 ≥10<br>
+<strong>成功标准：</strong>≥60% 用户首次尝试成功创建<br>
+<strong>时间窗口：</strong>2 周 · <strong>风险：</strong>中
+</div>
+
+<div class="card">
+<strong>H2 — MCP tool + schtasks 足以覆盖用户需求</strong><br>
+<strong>验证方法：</strong>用户完成 5 个典型场景（每日/工作日/单次/查看/删除）<br>
+<strong>成功标准：</strong>场景完成率 100%，无回退到 CLI<br>
+<strong>时间窗口：</strong>1 周 · <strong>风险：</strong>低
+</div>
+
+<div class="card">
+<strong>H3 — 定时任务错误恢复不需要复杂机制</strong><br>
+<strong>验证方法：</strong>统计定时任务执行失败率<br>
+<strong>成功标准：</strong>失败率 &lt;10%，且用户能通过日志自行定位问题<br>
+<strong>时间窗口：</strong>4 周 · <strong>风险：</strong>中
+</div>
+
+<h2>4. 用户旅程地图 🗺️</h2>
+
+<table>
+<tr><th>阶段</th><th>行为</th><th>想法</th><th>痛点</th><th>机会点</th></tr>
+<tr>
+<td>🔍 发现</td>
+<td>用户打开 Reasonix 桌面端，看到定时任务选项</td>
+<td>"还能定时跑？试试"</td>
+<td>选项不够显眼</td>
+<td>在上下文菜单或命令入口中自然浮现</td>
+</tr>
+<tr>
+<td>📖 了解</td>
+<td>阅读定时任务帮助/模板</td>
+<td>"支持哪些频率？"</td>
+<td>文档不够直观</td>
+<td>内置预设模板（每日/工作日/每周/自定义cron）</td>
+</tr>
+<tr>
+<td>🛠️ 首次使用</td>
+<td>在聊天中用自然语言创建定时任务</td>
+<td>"创建每天早上9点跑健康检查的定时任务"</td>
+<td>需要明确给出参数</td>
+<td>智能补齐缺失参数 + 确认后再创建</td>
+</tr>
+<tr>
+<td>🔄 持续使用</td>
+<td>查看任务列表、手动触发、查看日志</td>
+<td>"上次跑的结果怎么样？"</td>
+<td>无法在桌面端直接查看日志</td>
+<td>MCP tool 暴露 list/logs/trigger</td>
+</tr>
+<tr>
+<td>📣 推荐</td>
+<td>成功自动化后推荐给团队成员</td>
+<td>"一键定时跑管线，省事"</td>
+<td>团队共享困难</td>
+<td>后续版本考虑交接工单集成</td>
+</tr>
+</table>
+
+<h2>5. RICE 优先级矩阵 📊</h2>
+
+<table>
+<tr><th>功能</th><th>Reach</th><th>Impact</th><th>Confidence</th><th>Effort</th><th>RICE</th><th>理由</th></tr>
+<tr><td>MCP Tool: schedule_create</td><td>8</td><td>9</td><td>9</td><td>3</td><td><strong>216</strong></td><td>最核心交互，几乎所有用户都用到</td></tr>
+<tr><td>MCP Tool: schedule_list</td><td>7</td><td>7</td><td>9</td><td>2</td><td><strong>221</strong></td><td>查询刚需，开发成本低</td></tr>
+<tr><td>MCP Tool: schedule_remove</td><td>6</td><td>6</td><td>9</td><td>1</td><td><strong>324</strong></td><td>删除功能极简单但必要</td></tr>
+<tr><td>MCP Tool: schedule_trigger</td><td>5</td><td>8</td><td>8</td><td>2</td><td><strong>160</strong></td><td>手动触发是个实用功能</td></tr>
+<tr><td>TUI 仪表盘集成</td><td>6</td><td>5</td><td>7</td><td>5</td><td><strong>42</strong></td><td>TUI 用户群有限，复杂度中等</td></tr>
+<tr><td>EUI-NEO GUI 集成</td><td>4</td><td>8</td><td>5</td><td>8</td><td><strong>20</strong></td><td>C++ 前端改动成本高，置信度低</td></tr>
+<tr><td>自然语言→cron 解析</td><td>8</td><td>9</td><td>8</td><td>4</td><td><strong>144</strong></td><td>差异化优势，但有一定实现难度</td></tr>
+</table>
+
+<h2>6. 竞品体验对比 🔍</h2>
+
+<table>
+<tr><th>维度</th><th>Claude Code Desktop</th><th>Cursor Automations</th><th>Bobanana 5.0 (当前)</th><th>Bobanana 5.0 (目标)</th></tr>
+<tr><td>创建方式</td><td>自然语言预设频率</td><td>自然语言 + 市场模板</td><td>CLI 命令行</td><td>MCP tool + 自然语言</td></tr>
+<tr><td>最小间隔</td><td>1 分钟</td><td>未公开</td><td>1 天 (schtasks daily)</td><td>1 分钟</td></tr>
+<tr><td>持久化</td><td>需桌面应用运行</td><td>云端</td><td>Windows Task Scheduler</td><td>Windows Task Scheduler</td></tr>
+<tr><td>GUI 管理</td><td>桌面端内嵌</td><td>Web UI</td><td>❌ 无</td><td>MCP tool + TUI</td></tr>
+<tr><td>手动触发</td><td>✅</td><td>✅</td><td>✅ (CLI)</td><td>✅ (MCP + CLI)</td></tr>
+<tr><td>执行日志</td><td>✅ 终端日志</td><td>✅ 运行历史</td><td>✅ (文件日志)</td><td>✅ (MCP 可查)</td></tr>
+</table>
+
+<div class="summary-box">
+<strong>💡 差距分析：</strong>当前 Bobanana 5.0 在"创建方式"和"GUI 管理"上差距最大。CLI 方式门槛高，不适合 Reasonix 桌面端用户。MCP tool 暴露是最小代价的弥补方案。
+</div>
+
+<h2>7. 一句话定位卡片 🎯</h2>
+
+<div class="card">
+<strong>方案 A — "AI 管线的智能闹钟"</strong><br>
+<strong>目标用户：</strong>Reasonix 桌面端的日常用户<br>
+<strong>解决什么：</strong>不想手动触发定时管线<br>
+<strong>为什么选你：</strong>在 Reasonix 桌面端内自然语言创建，无需离开 IDE<br>
+<strong>一句话：</strong>"像设闹钟一样为 AI 管线设定时任务"<br>
+<em>谁可能反对：</em>喜欢完全手动控制的用户
+</div>
+
+<div class="card">
+<strong>方案 B — "自动化开发的最后一块拼图"</strong><br>
+<strong>目标用户：</strong>需要使用持续自动化管线的开发团队<br>
+<strong>解决什么：</strong>开发流程中缺失的定时触发环节<br>
+<strong>为什么选你：</strong>与 Bobanana 状态机管线原生集成<br>
+<strong>一句话：</strong>"状态机 + 定时器 = 真正的持续 AI 开发"<br>
+<em>谁可能反对：</em>不熟悉状态机概念的用户
+</div>
+
+<div class="card">
+<strong>方案 C — "你的 AI 副驾驶也能上夜班"</strong><br>
+<strong>目标用户：</strong>需要 AI 在非工作时间自动工作的用户<br>
+<strong>解决什么：</strong>AI 只能在用户在线时工作<br>
+<strong>为什么选你：</strong>借助 Windows 任务计划程序，即使桌面端关闭也能触发<br>
+<strong>一句话：</strong>"AI 下班不下线——定时任务让管线 24/7 自动运转"<br>
+<em>谁可能反对：</em>担心电脑整夜运行耗电的用户
+</div>
+
+<h2>8. 需求评审清单 ✅</h2>
+
+<table>
+<tr><th>#</th><th>自查问题</th><th>为什么重要</th></tr>
+<tr><td>1</td><td>用户创建定时任务需要几步？</td><td>门槛越低，使用率越高。目标：1 句自然语言 ≤ 2 步确认</td></tr>
+<tr><td>2</td><td>出错时用户知道如何解决吗？</td><td>错误信息必须可理解，而不是 Python traceback</td></tr>
+<tr><td>3</td><td>已有 CLI 功能是否会中断？</td><td>向后兼容是硬约束</td></tr>
+<tr><td>4</td><td>定时任务与状态机管线如何关联？</td><td>执行的是完整管线而非孤立脚本</td></tr>
+<tr><td>5</td><td>定时任务执行时桌面端是否需要打开？</td><td>依赖 Windows Task Scheduler，不需要</td></tr>
+<tr><td>6</td><td>多个定时任务同时触发会怎样？</td><td>需要排队/互斥机制，不能冲突</td></tr>
+<tr><td>7</td><td>MCP tools 的权限是否足够？</td><td>需要 write 权限创建任务，read 权限查询</td></tr>
+<tr><td>8</td><td>是否会增加安全风险？</td><td>操作范围限定在 pipeline 调度，不暴露任意命令执行</td></tr>
+</table>
+
+<h2>9. 一句话总结 📝</h2>
+
+<div class="summary-box">
+<strong>一句话总结：</strong>在 Reasonix 桌面端内通过 MCP tool + 自然语言创建定时任务，复用现有 `pipeline_scheduler.py` 的 Windows Task Scheduler 后端，让用户像设闹钟一样为 AI 管线安排定时执行，零 CLI 操作。
+</div>
+
+</body>
+</html>

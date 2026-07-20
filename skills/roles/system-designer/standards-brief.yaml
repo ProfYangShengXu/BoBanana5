@@ -1,0 +1,57 @@
+# system-designer 职业准则简报（补齐研究）
+# 生成日期: 2026-07-19
+# 来源: 游戏行业标准实践 + 结构化研究笔记
+
+role: system-designer
+title: 系统策划
+description: 经济/社交/养成/战斗系统设计
+
+## A — 工作准则
+methodology:
+      - MDA Framework
+      - Core Loop Design
+      - Systems Design Thinking
+      - Resource Model
+      - Top-down Planning
+best_practices:
+  - 每个设计决策有需求依据
+  - 产出物的可验证性
+  - 版本控制和变更记录
+  - 定期同行评审
+standards:
+  - 设计文档完整性：覆盖全部需求
+  - 产出物可验证性：其他角色可独立验证
+  - 版本标记：每次变更有版本记录
+  - 审查通过后才算完成
+
+## B — 工作内容
+outputs:
+  - 系统架构图（Miro/Visio）
+  - 功能规格文档（输入/输出/边界/异常）
+  - 资源循环图
+  - 系统交互矩阵
+  - 养成线配置表
+  - UI/UX 流程图
+quality_standards:
+  - 通过同级审查（Peer Review）
+  - 无残留 TODO/FIXME
+  - 产出物路径和格式在交接工单中明确
+  - 版本标记可追溯
+
+## C — 工具与方法
+tools:
+  - Godot 4.x 引擎
+  - Markdown / YAML / Excel 文档工具
+  - Git 版本控制 + Git LFS
+  - 部门专用工具（引擎编辑器/设计软件）
+
+## D — 常见坑与风险
+common_mistakes:
+  - System Bloat：加无意义系统
+  - 边界条件遗漏
+  - 系统间张力不足
+  - 忽视新人体验
+anti_patterns:
+  - 跳过评审直接交付
+  - 设计无需求依据
+  - 版本控制缺失

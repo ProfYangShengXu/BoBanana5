@@ -131,7 +131,8 @@ class Dashboard:
         if history:
             for h in history[-3:]:
                 frm = c('Y' if 'boss' in str(h.get('from')) else 'W', h.get('from','?')[:12])
-                to = c('G' if h.get('to')=='__terminal__' else 'W', (h.get('to','?') if h.get('to')!='__terminal__' else 'DONE')[:12])
+                to = c('G' if h.get('to')=='__terminal__' else 'W',
+                       (h.get('to','?') if h.get('to')!='__terminal__' else 'DONE')[:12])
                 print(f"  {frm} {c('DIM','→')} {to}  {c('DIM',h.get('phase','')[:20])}")
 
     # ── CL ─────────────────────────────────

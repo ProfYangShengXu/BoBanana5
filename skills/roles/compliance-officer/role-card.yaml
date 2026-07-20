@@ -1,0 +1,61 @@
+name: compliance-officer
+description: "合规审查：检查持仓集中度/交易量限额/违规操作，产出合规报告。模拟私募的合规部"
+tags: []
+input_contract:
+  - name: portfolio_holdings
+    type: object
+    description: 当前持仓（标的/数量/市值/行业/占比）
+    required: true
+  - name: order_book
+    type: object[]
+    description: 订单簿（来自 trade-executor 或直接模拟的订单序列）
+    required: true
+  - name: compliance_rules
+    type: object
+    description: 合规规则集——集中度上限/交易额限额/禁止标的/持仓限制
+    required: true
+  - name: handoff_context
+    type: object
+    description: 上一个角色的交接工单
+    required: false
+output_contract:
+  - name: compliance_report
+    type: object
+    description: 合规报告——检查项清单、通过/违规状态、违规详情
+  - name: violation_list
+    type: object[]
+    description: 违规列表——每项违规含规则ID/描述/严重级别/建议处理
+  - name: risk_annotations
+    type: object[]
+    description: 风险标注——按七维风险框架对每笔订单/持仓的风险标注
+  - name: compliance_summary
+    type: object
+    description: 合规摘要——月底/期末总结，集中度/交易量/违规统计
+quality_gates:
+  - id: COMP-Q1
+    desc: "集中度检查已执行——单一标的/行业/市值风格的集中度未超限"
+    check: "确认集中度计算覆盖标的、行业、市值三个维度，阈值已配置"
+    layer: U
+  - id: COMP-Q2
+    desc: "交易量限额检查已执行——日/周/月交易量未超配置的限额"
+    check: "确认交易量检查按日/周/月三个时间窗口分别计算"
+    layer: U
+  - id: COMP-Q3
+    desc: "禁止标的检查已执行——没有交易或持有禁止列表中的标的"
+    check: "确认禁止列表在检查前已加载，check 逻辑覆盖全部订单和持仓"
+    layer: U
+  - id: COMP-Q4
+    desc: "合规报告完整——零漏报，所有规则项均有检查结果"
+    check: "确认合规报告覆盖全部配置的规则，违规项有详情说明"
+    layer: I
+  - id: COMP-Q5
+    desc: "审计跟踪完整——合规检查记录可回溯（规则版本/检查时间/结果）"
+    check: "确认合规检查日志包含规则版本号、检查时间戳和决策依据"
+    layer: S
+standards_file: SKILL.md
+research:
+  subagents: 4
+  sources:
+    - web_fetch
+    - local_docs
+use_case: "适合策略信号或订单执行后的合规检查环节：确保交易策略不违反预设的合规规则"

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>测试报告 — 定时任务调度 v1</title>
+<style>
+body { font-family: -apple-system, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 24px; }
+h1 { border-bottom: 3px solid #0f3460; }
+.pass { color: #16a34a; font-weight: bold; }
+table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #0f3460; color: white; }
+</style>
+</head>
+<body>
+
+<h1>🧪 测试报告 — 定时任务调度模块 v1</h1>
+<p><strong>日期：</strong>2026-07-16 · <strong>测试框架：</strong>pytest · <strong>测试文件：</strong>tests/test_scheduler_api.py</p>
+
+<h2>测试结果汇总</h2>
+<table>
+<tr><th>分类</th><th>总用例</th><th>通过</th><th>失败</th><th>通过率</th></tr>
+<tr><td>validate_goal</td><td>10</td><td>10</td><td>0</td><td class="pass">100%</td></tr>
+<tr><td>validate_time</td><td>9</td><td>9</td><td>0</td><td class="pass">100%</td></tr>
+<tr><td>validate_task_id</td><td>9</td><td>9</td><td>0</td><td class="pass">100%</td></tr>
+<tr><td>schedule_create_task</td><td>9</td><td>9</td><td>0</td><td class="pass">100%</td></tr>
+<tr><td>list_tasks</td><td>3</td><td>3</td><td>0</td><td class="pass">100%</td></tr>
+<tr><td>remove_task</td><td>3</td><td>3</td><td>0</td><td class="pass">100%</td></tr>
+<tr><td>get_task_logs</td><td>2</td><td>2</td><td>0</td><td class="pass">100%</td></tr>
+<tr><td><strong>总计</strong></td><td><strong>44</strong></td><td><strong>44</strong></td><td><strong>0</strong></td><td class="pass"><strong>100%</strong></td></tr>
+</table>
+
+<h2>测试类型分布</h2>
+<table>
+<tr><th>类型</th><th>用例数</th><th>说明</th></tr>
+<tr><td>Normal（正常路径）</td><td>11</td><td>正常创建/列出/删除/日志/时间格式</td></tr>
+<tr><td>Boundary（边界条件）</td><td>14</td><td>空值、超长、边界时间（00:00/23:59）、边界长度</td></tr>
+<tr><td>Adversarial（对抗测试）</td><td>12</td><td>特殊字符脚本注入、路径穿越、非法字符串、负数</td></tr>
+<tr><td>CRUD（增删改查）</td><td>7</td><td>创建/替换/列表/删除/不存在删除/无效ID</td></tr>
+</table>
+
+<h2>执行命令</h2>
+<pre>python -m pytest tests/test_scheduler_api.py -v --tb=short</pre>
+
+<h2>测试环境</h2>
+<ul>
+  <li>Python 3.12.4</li>
+  <li>pytest 9.0.3</li>
+  <li>Windows 10.0.26200</li>
+</ul>
+
+</body>
+</html>

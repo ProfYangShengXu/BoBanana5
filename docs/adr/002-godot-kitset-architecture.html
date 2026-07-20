@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>ADR-002: Godot Kitset 架构决策</title>
+<style>body{font-family:-apple-system,sans-serif;max-width:800px;margin:40px auto;padding:20px;}
+h1{color:#478cbf;border-bottom:3px solid #478cbf;}
+.status{display:inline-block;background:#e8f5e9;color:#2e7d32;padding:4px 12px;border-radius:4px;}
+.block{background:#f5f5f5;border-radius:8px;padding:16px;margin:12px 0;}
+</style></head>
+<body>
+
+<h1>ADR-002: Godot Kitset 架构决策</h1>
+<p><span class="status">✅ 接受</span> | 2026-07-19</p>
+
+<div class="block">
+<h3>背景</h3>
+<p>需要将 Godot-adaption-kitset 从独立仓库迁移到 BoBanana 5.0 的 Kitset 体系，并新增游戏工作室角色卡和 Godot 通信插件。</p>
+</div>
+
+<div class="block">
+<h3>C1: 迁移方式 — 复制 vs 子模块</h3>
+<p>决定: <strong>全量复制 + 独立版本</strong></p>
+<p>对比方案：</p>
+<ul>
+<li><strong>A — 全量复制 ✅</strong>：将 Godot-adaption-kitset 的工具复制到 kitsets/godot/tools/godot-tools/。优点：完全解耦、无外部依赖。缺点：需要手动同步更新。</li>
+<li><strong>B — Git 子模块</strong>：引用原始仓库。优点：自动同步。缺点：增加 Git 复杂度、依赖外部仓库可用性。</li>
+<li>选用 A：因为 Bobanana 的 kitset 体系要求自包含，且 godot 工具集还在快速迭代，解耦更灵活。</li>
+</ul>
+</div>
+
+<div class="block">
+<h3>C2: 通信协议 — WebSocket vs stdio vs TCP</h3>
+<p>决定: <strong>WebSocket JSON-RPC 2.0</strong></p>
+<ul>
+<li>WebSocket：Godot 原生支持（WebSocketPeer），全双工，双向实时。端口 9800。</li>
+<li>stdio：不适合外部进程→Godot 场景（Godot 不是子进程）。</li>
+<li>TCP：可以选择但 WebSocket 更易用、更标准。</li>
+</ul>
+</div>
+
+<div class="block">
+<h3>C3: 角色卡生成策略</h3>
+<p>决定: <strong>快速引用模式 + 统一模板</strong></p>
+<p>25 张游戏工作室角色卡使用 HR 技能的"快速引用模式"生成，跳过研究步骤直接产出角色卡。每角色仅产出 role-card.yaml + SKILL.md + standards-brief.yaml 三个文件。game-architect 手工编写（OP 角色，格式对齐 quant-architect）。</p>
+</div>
+
+</body>
+</html>

@@ -38,13 +38,21 @@ def _next_pipeline_id():
 
 
 def load_json(path):
-    with open(path, 'r', encoding='utf-8') as f:
-        return json.load(f)
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError, OSError) as e:
+        logger.error(f"加载 JSON 失败 {path}: {e}")
+        return None
 
 
 def save_json(path, data):
-    with open(path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except OSError as e:
+        logger.error(f"保存 JSON 失败 {path}: {e}")
 
 
 def init_pipeline(goal, rounds=1):
@@ -393,7 +401,11 @@ def advance_pipeline(phase, score=None, pid=None):
         "max_rounds": pipeline.get('max_rounds', 3),
         "iteration": pipeline['loop_count'],
         "max_iterations": pipeline['max_loops'],
-        "next_prompt": f"[GOAL] {pipeline.get('goal', '')}\n[PHASE] {phase}\n[ROLE] {current}\n[DONE] completed\n[STATE] {pipeline['loop_count']} loops\n[NEXT] next: {next_node}",
+        "next_prompt": (
+            f"[GOAL] {pipeline.get('goal', '')}\n[PHASE] {phase}\n[ROLE] {current}"
+            f"\n[DONE] completed\n[STATE] {pipeline['loop_count']} loops"
+            f"\n[NEXT] next: {next_node}"
+        ),
         "summary": f"{current} -> {next_node} ({phase})",
         "last_updated": datetime.now().isoformat(),
     }

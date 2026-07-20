@@ -1,0 +1,250 @@
+# Bobanana 5.0 — 定时任务优化产品 PRD (结构化数据)
+version: "1.0"
+date: "2026-07-16"
+project: "bobanana5-scheduled-tasks"
+type: feature-optimization
+
+# ── 1. 用户调研 ──
+user_research:
+  target_users:
+    primary: "Reasonix 桌面端日常使用者，用 Bobanana 管线做持续开发/自动化"
+    secondary: "需要定时运行 AI 管线的开发团队负责人、DevOps 工程师"
+    anti_user: "仅一次性手动使用管线、不需要定时运行的轻量用户"
+  recruitment_criteria:
+    - "使用过 Reasonix 桌面端 ≥1 周"
+    - "有过'希望让 AI 在后台跑任务'的想法"
+    - "了解 CLI 基本操作"
+  interview_questions:
+    - "你目前如何安排需要定时运行的开发任务？"
+    - "你在 Reasonix 桌面端最常做的三件事情是什么？"
+    - "如果能在桌面端直接创建定时任务，你会用吗？"
+    - "你希望定时任务的粒度是？（每日/每周/每小时/自定义 cron）"
+    - "你希望定时任务执行完毕后如何通知你？"
+    - "你会介意任务执行时 Reasonix 桌面端需要保持打开状态吗？"
+    - "你觉得创建一个定时任务需要多少步才叫'简单'？"
+    - "你用过其他 AI 工具的定时任务功能吗？体验如何？"
+
+# ── 2. 价值主张 ──
+value_proposition:
+  customer_jobs:
+    functional: "定时运行 AI 管线（测试/代码审查/报告生成）"
+    social: "向团队成员展示管线已自动化"
+    emotional: "从手动触发→自动运行的省心感"
+  pains:
+    - id: P1
+      desc: "每次都要手动打开终端输入命令 → 繁琐"
+    - id: P2
+      desc: "记不住/忘记在特定时间运行管线"
+    - id: P3
+      desc: "Windows 任务计划程序配置复杂"
+    - id: P4
+      desc: "现有 CLI 调度器无 GUI，看不到任务状态"
+    - id: P5
+      desc: "无法在 Reasonix 桌面端内完成全流程"
+  gains:
+    - id: G1
+      desc: "在 Reasonix 桌面端一站式完成创建→管理→监控"
+    - id: G2
+      desc: "无需离开 IDE 即可管理所有定时任务"
+    - id: G3
+      desc: "任务执行历史一目了然"
+    - id: G4
+      desc: "可与已有管线无缝衔接"
+  pain_solution_map:
+    - pain: P1
+      solution: "MCP Tool 直接创建，自然语言完成"
+    - pain: P2
+      solution: "注册后自动由 schtasks 触发"
+    - pain: P3
+      solution: "自然语言描述→自动解析为调度配置"
+    - pain: P4
+      solution: "TUI 仪表盘 + MCP tool 查询状态"
+    - pain: P5
+      solution: "从创建到日志到删除全部在桌面端完成"
+
+# ── 3. 假设验证 ──
+hypotheses:
+  - id: H1
+    title: "用户愿意在 Reasonix 桌面端创建定时任务"
+    method: "发布 MCP tool 原型 → 观察 2 周内创建数 ≥10"
+    success_criteria: "≥60% 用户首次尝试成功创建"
+    time_window: "2周"
+    risk: medium
+  - id: H2
+    title: "MCP tool + schtasks 足以覆盖用户需求"
+    method: "用户完成 5 个典型场景"
+    success_criteria: "场景完成率 100%，无回退到 CLI"
+    time_window: "1周"
+    risk: low
+  - id: H3
+    title: "定时任务错误恢复不需要复杂机制"
+    method: "统计定时任务执行失败率"
+    success_criteria: "失败率 <10%，且用户能通过日志自行定位"
+    time_window: "4周"
+    risk: medium
+
+# ── 4. 用户旅程 ──
+user_journey:
+  stages:
+    - phase: "发现"
+      behavior: "用户打开 Reasonix 桌面端，看到定时任务选项"
+      thoughts: '"还能定时跑？试试"'
+      pain_points: "选项不够显眼"
+      opportunity: "在上下文菜单或命令入口中自然浮现"
+    - phase: "了解"
+      behavior: "阅读定时任务帮助/模板"
+      thoughts: '"支持哪些频率？"'
+      pain_points: "文档不够直观"
+      opportunity: "内置预设模板（每日/工作日/每周/自定义 cron）"
+    - phase: "首次使用"
+      behavior: "在聊天中用自然语言创建定时任务"
+      thoughts: '"创建每天早上9点跑健康检查的定时任务"'
+      pain_points: "需要明确给出参数"
+      opportunity: "智能补齐缺失参数 + 确认后再创建"
+    - phase: "持续使用"
+      behavior: "查看任务列表、手动触发、查看日志"
+      thoughts: '"上次跑的结果怎么样？"'
+      pain_points: "无法在桌面端直接查看日志"
+      opportunity: "MCP tool 暴露 list/logs/trigger"
+    - phase: "推荐"
+      behavior: "成功自动化后推荐给团队成员"
+      thoughts: '"一键定时跑管线，省事"'
+      pain_points: "团队共享困难"
+      opportunity: "后续版本考虑交接工单集成"
+
+# ── 5. RICE 优先级 ──
+rice_scores:
+  - feature: "MCP Tool: schedule_create"
+    reach: 8
+    impact: 9
+    confidence: 9
+    effort: 3
+    rice_score: 216
+    rationale: "最核心交互，几乎所有用户都用到"
+  - feature: "MCP Tool: schedule_list"
+    reach: 7
+    impact: 7
+    confidence: 9
+    effort: 2
+    rice_score: 221
+    rationale: "查询刚需，开发成本低"
+  - feature: "MCP Tool: schedule_remove"
+    reach: 6
+    impact: 6
+    confidence: 9
+    effort: 1
+    rice_score: 324
+    rationale: "删除功能极简单但必要"
+  - feature: "MCP Tool: schedule_trigger"
+    reach: 5
+    impact: 8
+    confidence: 8
+    effort: 2
+    rice_score: 160
+    rationale: "手动触发是实用功能"
+  - feature: "TUI 仪表盘集成"
+    reach: 6
+    impact: 5
+    confidence: 7
+    effort: 5
+    rice_score: 42
+    rationale: "TUI 用户群有限，复杂度中等"
+  - feature: "EUI-NEO GUI 集成"
+    reach: 4
+    impact: 8
+    confidence: 5
+    effort: 8
+    rice_score: 20
+    rationale: "C++ 前端改动成本高，置信度低"
+  - feature: "自然语言→cron 解析"
+    reach: 8
+    impact: 9
+    confidence: 8
+    effort: 4
+    rice_score: 144
+    rationale: "差异化优势，有一定实现难度"
+
+# ── 6. 竞品对比 ──
+competitive_ux:
+  - competitor: "Claude Code Desktop"
+    creation: "自然语言预设频率"
+    min_interval: "1分钟"
+    persistence: "需桌面应用运行"
+    gui_management: true
+    manual_trigger: true
+    execution_logs: true
+  - competitor: "Cursor Automations"
+    creation: "自然语言 + 市场模板"
+    min_interval: "未公开"
+    persistence: "云端"
+    gui_management: true
+    manual_trigger: true
+    execution_logs: true
+  - competitor: "Bobanana 5.0 (当前)"
+    creation: "CLI 命令行"
+    min_interval: "1天 (schtasks daily)"
+    persistence: "Windows Task Scheduler"
+    gui_management: false
+    manual_trigger: true
+    execution_logs: true
+  - competitor: "Bobanana 5.0 (目标)"
+    creation: "MCP tool + 自然语言"
+    min_interval: "1分钟"
+    persistence: "Windows Task Scheduler"
+    gui_management: true
+    manual_trigger: true
+    execution_logs: true
+
+# ── 7. 定位 ──
+positioning:
+  - plan: A
+    title: '"AI 管线的智能闹钟"'
+    target_user: "Reasonix 桌面端的日常用户"
+    solves: "不想手动触发定时管线"
+    why_you: "在 Reasonix 桌面端内自然语言创建，无需离开 IDE"
+    one_liner: '"像设闹钟一样为 AI 管线设定时任务"'
+    opposition: "喜欢完全手动控制的用户"
+  - plan: B
+    title: '"自动化开发的最后一块拼图"'
+    target_user: "需要使用持续自动化管线的开发团队"
+    solves: "开发流程中缺失的定时触发环节"
+    why_you: "与 Bobanana 状态机管线原生集成"
+    one_liner: '"状态机 + 定时器 = 真正的持续 AI 开发"'
+    opposition: "不熟悉状态机概念的用户"
+  - plan: C
+    title: '"你的 AI 副驾驶也能上夜班"'
+    target_user: "需要 AI 在非工作时间自动工作的用户"
+    solves: "AI 只能在用户在线时工作"
+    why_you: "借助 Windows 任务计划程序，即使桌面端关闭也能触发"
+    one_liner: '"AI 下班不下线——定时任务让管线 24/7 自动运转"'
+    opposition: "担心电脑整夜运行耗电的用户"
+
+# ── 8. 评审清单 ──
+review_checklist:
+  - id: R1
+    question: "用户创建定时任务需要几步？"
+    importance: "门槛越低，使用率越高"
+  - id: R2
+    question: "出错时用户知道如何解决吗？"
+    importance: "错误信息必须可理解"
+  - id: R3
+    question: "已有 CLI 功能是否会中断？"
+    importance: "向后兼容是硬约束"
+  - id: R4
+    question: "定时任务与状态机管线如何关联？"
+    importance: "执行的是完整管线而非孤立脚本"
+  - id: R5
+    question: "定时任务执行时桌面端是否需要打开？"
+    importance: "依赖 Windows Task Scheduler，不需要"
+  - id: R6
+    question: "多个定时任务同时触发会怎样？"
+    importance: "需要排队/互斥机制"
+  - id: R7
+    question: "MCP tools 的权限是否足够？"
+    importance: "需要 write 权限创建任务"
+  - id: R8
+    question: "是否会增加安全风险？"
+    importance: "操作范围限定在 pipeline 调度"
+
+# ── 9. 一句话总结 ──
+one_liner_summary: "在 Reasonix 桌面端内通过 MCP tool + 自然语言创建定时任务，复用现有 pipeline_scheduler.py 的 Windows Task Scheduler 后端，让用户像设闹钟一样为 AI 管线安排定时执行，零 CLI 操作。"

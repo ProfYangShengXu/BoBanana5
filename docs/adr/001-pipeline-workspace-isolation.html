@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>ADR-001 — 管线存储迁移到工作区隔离</title>
+<style>body{font-family:-apple-system,sans-serif;max-width:800px;margin:40px auto;padding:20px;}
+h1{color:#1a237e;border-bottom:3px solid #1a237e;padding-bottom:8px;}
+.status{display:inline-block;background:#e8f5e9;color:#2e7d32;padding:4px 12px;border-radius:4px;}
+.block{background:#f5f5f5;border-radius:8px;padding:16px;margin:12px 0;}
+</style></head>
+<body>
+
+<h1>ADR-001: 管线存储迁移到工作区隔离</h1>
+<p><span class="status">✅ 接受</span> | 2026-07-16</p>
+
+<div class="block">
+<h3>背景</h3>
+<p>当前管线状态全部存储在 <code>.reasonix/</code> 下的固定路径中：</p>
+<ul>
+  <li><code>.reasonix/state/machine_state.json</code> — 全局单例</li>
+  <li><code>.reasonix/pipelines/pl-*.json</code> — 单个文件</li>
+  <li><code>.reasonix/cycle/</code> — 全局单例</li>
+</ul>
+<p>当需要同时运行多条管线（如 Quant Kitset 管线 + 主开发管线）时，状态互相覆盖。</p>
+</div>
+
+<div class="block">
+<h3>可选方案</h3>
+<table>
+<tr><th>方案</th><th>描述</th><th>优点</th><th>缺点</th></tr>
+<tr>
+  <td><strong>A — 子目录隔离 ✅</strong></td>
+  <td><code>.reasonix/pipelines/{workspace}/{pipeline_id}/</code> 每个管线独立子目录</td>
+  <td>完整隔离、便于调试、可扩展</td>
+  <td>需迁移旧数据</td>
+</tr>
+<tr>
+  <td><strong>B — 文件名加前缀</strong></td>
+  <td><code>pl-{workspace}-{timestamp}.json</code></td>
+  <td>改动最小</td>
+  <td>文件多了不易管理、状态机态文件仍混在一起</td>
+</tr>
+<tr>
+  <td><strong>C — SQLite 数据库</strong></td>
+  <td>单文件 SQLite 存所有管线</td>
+  <td>查询方便、ACID</td>
+  <td>引入新依赖、调试不方便（二进制）</td>
+</tr>
+</table>
+</div>
+
+<div class="block">
+<h3>决策</h3>
+<p><strong>选择方案 A — 子目录隔离。</strong>理由：</p>
+<ol>
+  <li>纯文件系统方案，零新依赖</li>
+  <li>每个管线目录自包含：pipeline.json + machine_state.json + cycle_state.json</li>
+  <li>调试方便：直接 cat 或 vim 打开目录</li>
+  <li>与版本控制兼容：可单独 .gitignore</li>
+  <li>为未来并行管线提供天然沙箱</li>
+</ol>
+</div>
+
+<div class="block">
+<h3>影响</h3>
+<ul>
+  <li><strong>正面</strong>：管线完全隔离、支持并行、迁移路径清晰</li>
+  <li><strong>负面</strong>：需要修改 3 个文件的路径逻辑</li>
+  <li><strong>回滚</strong>：保留旧路径检测逻辑，新代码写新路径，旧代码仍可读旧路径</li>
+</ul>
+</div>
+
+</body>
+</html>

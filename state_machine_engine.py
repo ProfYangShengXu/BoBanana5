@@ -33,8 +33,11 @@ class StateMachineRuntime:
     def load(self, path):
         """加载并初始化状态机配置"""
         self._state_machine_path = path
-        with open(path, 'r', encoding='utf-8') as f:
-            self.config = yaml.safe_load(f)
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                self.config = yaml.safe_load(f)
+        except (FileNotFoundError, yaml.YAMLError, OSError) as e:
+            raise ValueError(f"加载状态机失败 {path}: {e}") from e
 
         if not self.config:
             raise ValueError("空的状态机配置")

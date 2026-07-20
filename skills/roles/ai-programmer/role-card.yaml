@@ -1,0 +1,24 @@
+name: ai-programmer
+description: AI程序：行为树/寻路/机器学习：角色AI、寻路系统、数据驱动行为、ML集成
+tags: []
+input_contract:
+- name: handoff_context
+  type: object
+  description: 交接工单：上一步角色的产出物和注意事项
+  required: true
+output_contract:
+- name: ai-programmer_deliverables
+  type: object[]
+  description: 角色AI、寻路系统、数据驱动行为、ML集成
+  required: true
+quality_gates:
+- id: GAME-Q1
+  desc: 设计文档完整，需求可追溯
+  check: 每个需求点都有对应的实现或设计依据
+  layer: U
+- id: GAME-Q2
+  desc: 产出物可验证
+  check: 其他角色或工具可以验证该角色的产出
+  layer: I
+standards_file: SKILL.md
+use_case: 适用于游戏开发管线中的AI程序环节

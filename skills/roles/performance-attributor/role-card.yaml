@@ -1,0 +1,61 @@
+name: performance-attributor
+description: "绩效归因：每天拆解收益——市场贡献/行业贡献/选股贡献/因子贡献。模拟私募的风控研究员"
+tags: []
+input_contract:
+  - name: portfolio_holdings
+    type: object
+    description: 组合持仓（标的/数量/市值/行业/权重）
+    required: true
+  - name: benchmark_data
+    type: object
+    description: 基准数据——基准成分股权重和收益
+    required: true
+  - name: factor_returns
+    type: object
+    description: 因子收益率序列（Barra 风格因子/行业因子）
+    required: false
+  - name: handoff_context
+    type: object
+    description: 上一个角色的交接工单（合规完成或执行完成后的上下文）
+    required: false
+output_contract:
+  - name: attribution_report
+    type: object
+    description: 归因报告——Brinson 归因（配置/选股/交叉）或因子归因
+  - name: return_decomposition
+    type: object
+    description: 收益分解表——总收益 = 基准收益 + 配置贡献 + 选股贡献 + 交叉贡献
+  - name: risk_contribution
+    type: object
+    description: 风险贡献分析——因子贡献跟踪误差/边际风险贡献/成分 VaR
+  - name: factor_exposure_dashboard
+    type: object
+    description: 因子暴露仪表盘——组合 vs 基准风格因子载荷对比
+quality_gates:
+  - id: ATTR-Q1
+    desc: "归因完整性——归因残差趋近零（≤ 5bps），所有超额收益可解释"
+    check: "计算归因总残差 = 总超额收益 - 各效应之和，确认 ≤ 5bps"
+    layer: U
+  - id: ATTR-Q2
+    desc: "多期链接正确——使用了 Carino/Menchero/GRAP 等经行业验证的链接算法"
+    check: "检查多期归因代码中是否使用了链接算法（非简单加总）"
+    layer: I
+  - id: ATTR-Q3
+    desc: "因子共线性控制——因子间 VIF < 5"
+    check: "计算回归中因子的 VIF，确认均 < 5"
+    layer: I
+  - id: ATTR-Q4
+    desc: "数据一致性——持仓数据与交易数据一致，估值日对齐"
+    check: "检查持仓采样日与收益计算日是否一致（有无 stale price）"
+    layer: U
+  - id: ATTR-Q5
+    desc: "基准选择合理——基准与策略风格匹配"
+    check: "确认选择的基准指数与策略投资范围一致"
+    layer: S
+standards_file: SKILL.md
+research:
+  subagents: 4
+  sources:
+    - web_fetch
+    - local_docs
+use_case: "适合组合绩效评估环节：对交易执行后的组合收益做归因分析，拆解收益来源"

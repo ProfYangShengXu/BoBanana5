@@ -107,7 +107,10 @@ def handle_get_pipeline_status(params):
         path = os.path.join(pipeline_dir, f"{pipeline_id}.json")
     else:
         # 获取最新
-        files = sorted([f for f in os.listdir(pipeline_dir) if f.endswith('.json')], reverse=True) if os.path.exists(pipeline_dir) else []
+        files = sorted(
+            [f for f in os.listdir(pipeline_dir) if f.endswith('.json')],
+            reverse=True
+        ) if os.path.exists(pipeline_dir) else []
         path = os.path.join(pipeline_dir, files[0]) if files else None
 
     if not path or not os.path.exists(path):
@@ -204,7 +207,10 @@ def handle_get_cl_report(params):
     if pipeline_id:
         path = os.path.join(pipeline_dir, f"{pipeline_id}.json")
     else:
-        files = sorted([f for f in os.listdir(pipeline_dir) if f.endswith('.json')], reverse=True) if os.path.exists(pipeline_dir) else []
+        files = sorted(
+            [f for f in os.listdir(pipeline_dir) if f.endswith('.json')],
+            reverse=True
+        ) if os.path.exists(pipeline_dir) else []
         path = os.path.join(pipeline_dir, files[0]) if files else None
 
     if not path or not os.path.exists(path):

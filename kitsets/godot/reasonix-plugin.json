@@ -1,0 +1,10 @@
+{
+  "name": "bobanana5-godot-kitset",
+  "version": "1.0.0",
+  "description": "Godot 游戏开发 Adaption Kitset — AI Agent 操控 Godot 引擎的完整工具集",
+  "kitset_name": "godot",
+  "kitset_domains": ["godot", "game", "gamedev", "2d", "3d", "gdscript", "visual-novel", "platformer"],
+  "entry_role": "game-architect",
+  "skills": "roles",
+  "commands": []
+}

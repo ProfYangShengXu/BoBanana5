@@ -23,14 +23,20 @@ def _ensure():
 
 def _load():
     _ensure()
-    with open(USAGE_FILE, "r") as f:
-        return json.load(f)
+    try:
+        with open(USAGE_FILE, "r") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return {}
 
 
 def _save(data):
     _ensure()
-    with open(USAGE_FILE, "w") as f:
-        json.dump(data, f, indent=2)
+    try:
+        with open(USAGE_FILE, "w") as f:
+            json.dump(data, f, indent=2)
+    except OSError as e:
+        print(f"保存使用记录失败: {e}")
 
 
 def record_usage(role_id):
@@ -75,7 +81,9 @@ def cmd_stats(args):
     print(f"{'角色ID':25s} {'次数':6s} {'首次使用':25s} {'最后使用':25s}")
     print("-" * 85)
     for role_id, info in sorted(data.items(), key=lambda x: x[1]["count"], reverse=True):
-        print(f"{role_id:25s} {info['count']:6d} {info.get('first_used','')[:19]:25s} {info.get('last_used','')[:19]:25s}")
+        print(f"{role_id:25s} {info['count']:6d} "
+              f"{info.get('first_used','')[:19]:25s} "
+              f"{info.get('last_used','')[:19]:25s}")
     return 0
 
 

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>变更日志 — 定时任务调度 v1</title>
+<style>
+body { font-family: -apple-system, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 24px; }
+h1 { border-bottom: 3px solid #0f3460; }
+h2 { border-left: 4px solid #0f3460; padding-left: 12px; }
+table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #0f3460; color: white; }
+.breaking { background: #fff3cd; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>📋 变更日志 — 定时任务调度 v1</h1>
+<p><strong>版本：</strong>v1 · <strong>日期：</strong>2026-07-16 · <strong>管线：</strong>pl-1784174625</p>
+
+<h2>新增功能</h2>
+<table>
+<tr><th>功能</th><th>文件</th><th>描述</th></tr>
+<tr><td>MCP Tool: bobanana_schedule_create</td><td>.mcp.json, mcp_server.py, mcp_client.py</td><td>在 Reasonix 桌面端通过 MCP tool 创建定时任务（goal/time/weekday/rounds）</td></tr>
+<tr><td>MCP Tool: bobanana_schedule_list</td><td>.mcp.json, mcp_server.py, mcp_client.py</td><td>列出所有已注册定时任务</td></tr>
+<tr><td>MCP Tool: bobanana_schedule_remove</td><td>.mcp.json, mcp_server.py, mcp_client.py</td><td>删除指定定时任务</td></tr>
+<tr><td>MCP Tool: bobanana_schedule_trigger</td><td>.mcp.json, mcp_server.py, mcp_client.py</td><td>手动触发定时任务立即执行</td></tr>
+<tr><td>MCP Tool: bobanana_schedule_logs</td><td>.mcp.json, mcp_server.py, mcp_client.py</td><td>查询定时任务执行历史日志</td></tr>
+<tr><td>TUI 仪表盘调度面板</td><td>gui_dashboard.py</td><td>在仪表盘显示已注册定时任务列表</td></tr>
+</table>
+
+<h2>改进</h2>
+<table>
+<tr><th>改进</th><th>文件</th><th>描述</th></tr>
+<tr><td>纯函数 API</td><td>scripts/pipeline_scheduler.py</td><td>新增 schedule_create_task/list_tasks/remove_task/trigger_task/get_task_logs 纯函数，供 MCP handler 直接调用</td></tr>
+<tr><td>输入校验</td><td>scripts/pipeline_scheduler.py</td><td>新增 validate_goal/validate_time/validate_task_id，含字符白名单+长度限制+格式校验</td></tr>
+<tr><td>测试覆盖</td><td>tests/test_scheduler_api.py</td><td>44 个 U 层测试用例，覆盖 Normal/Boundary/Adversarial 三路径</td></tr>
+</table>
+
+<h2>修复</h2>
+<table>
+<tr><th>修复</th><th>文件</th><th>描述</th></tr>
+<tr><td>CLI main() 缺失</td><td>scripts/pipeline_scheduler.py</td><td>code-review 发现 get_task_logs 后缺少 def main(): 声明，已修复</td></tr>
+<tr><td>weekday 参数校验</td><td>scripts/pipeline_scheduler.py</td><td>code-review 发现 schedule_create_task 未校验 weekday，添加 VALID_WEEKDAYS 检查</td></tr>
+<tr><td>rounds 参数校验</td><td>scripts/pipeline_scheduler.py</td><td>code-review 发现 schedule_create_task 未校验 rounds，添加正整型检查</td></tr>
+</table>
+
+<h2>Breaking Changes</h2>
+<p style="background: #fff3cd; padding: 12px; border-radius: 6px;"><strong>无。</strong>所有已有 CLI 接口保持向后兼容，cmd_* 函数未修改。</p>
+
+<h2>安全</h2>
+<table>
+<tr><th>安全措施</th><th>风险等级</th><th>描述</th></tr>
+<tr><td>subprocess list 模式</td><td>🟢 LOW</td><td>trigger_task 使用 list 参数而非 shell 字符串，防止命令注入</td></tr>
+<tr><td>task_id hex 校验</td><td>🟢 LOW</td><td>严格 regex ^[a-f0-9]{8}$ 防止路径穿越</td></tr>
+<tr><td>goal 字符白名单</td><td>🟢 LOW</td><td>仅允许中文/英文/数字/常用标点，长度≤200</td></tr>
+<tr><td>MCP 沙箱</td><td>🟡 INFO</td><td>受 Reasonix 桌面端安全沙箱保护</td></tr>
+</table>
+
+<h2>技术债务</h2>
+<ul>
+  <li>_install_winsch_task 的 schtasks /d 参数在某些 Windows 版本上不兼容（预存问题，非本次引入）</li>
+  <li>cmd_list 在 GBK 编码终端上因 emoji 输出崩溃（预存问题，非本次引入）</li>
+</ul>
+
+</body>
+</html>

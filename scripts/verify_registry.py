@@ -1,5 +1,9 @@
 import os, sys, yaml
-r = yaml.safe_load(open('skills/roles/.registry.yaml'))
+try:
+    r = yaml.safe_load(open('skills/roles/.registry.yaml'))
+except (FileNotFoundError, yaml.YAMLError) as e:
+    print(f'ERROR: 加载 registry 失败: {e}')
+    sys.exit(1)
 print(f'Total role cards: {len(r["cards"])}')
 issues = 0
 for c in r['cards']:

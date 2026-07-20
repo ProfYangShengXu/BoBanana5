@@ -65,7 +65,12 @@ def simulate_subagent_research(topic, role_name):
     if topic == "standards":
         try:
             import urllib.request
-            url = f"https://en.wikipedia.org/w/api.php?action=query&titles={role_name.replace(' ', '_')}&format=json&prop=extracts&exintro=1"
+            url = (
+                "https://en.wikipedia.org/w/api.php"
+                "?action=query&titles="
+                f"{role_name.replace(' ', '_')}"
+                "&format=json&prop=extracts&exintro=1"
+            )
             req = urllib.request.Request(url, headers={'User-Agent': 'Bobanana5/1.0'})
             with urllib.request.urlopen(req, timeout=3) as resp:
                 data = json.loads(resp.read())
@@ -205,8 +210,10 @@ def generate_role_card(recruitment_id):
         "description": description,
         "tags": [],
         "input_contract": [
-            {"name": "task_input", "type": "object", "description": f"传递给 {role_name} 的任务输入", "required": True},
-            {"name": "acceptance_criteria", "type": "object[]", "description": f"{role_name} 需满足的 PRD acceptance 标准", "required": True},
+            {"name": "task_input", "type": "object",
+             "description": f"传递给 {role_name} 的任务输入", "required": True},
+            {"name": "acceptance_criteria", "type": "object[]",
+             "description": f"{role_name} 需满足的 PRD acceptance 标准", "required": True},
             {"name": "handoff_context", "type": "object", "description": "上一个角色的交接工单上下文", "required": False},
         ],
         "output_contract": [
@@ -215,8 +222,12 @@ def generate_role_card(recruitment_id):
             {"name": "risk_notes", "type": "object[]", "description": "7 维风险评估标注"},
         ],
         "quality_gates": [
-            {"id": f"{role_name.upper()[:4]}-Q1", "desc": "所有 acceptance 已覆盖实现", "check": "逐条核对 PRD acceptance", "layer": "U"},
-            {"id": f"{role_name.upper()[:4]}-Q2", "desc": "无空壳函数和死代码", "check": "grep TODO/FIXME/dead code", "layer": "U"},
+            {"id": f"{role_name.upper()[:4]}-Q1",
+             "desc": "所有 acceptance 已覆盖实现",
+             "check": "逐条核对 PRD acceptance", "layer": "U"},
+            {"id": f"{role_name.upper()[:4]}-Q2",
+             "desc": "无空壳函数和死代码",
+             "check": "grep TODO/FIXME/dead code", "layer": "U"},
             {"id": f"{role_name.upper()[:4]}-Q3", "desc": "每个函数 <= 30 行", "check": "行数检查", "layer": "U"},
         ],
         "standards_file": "standards-brief.yaml",

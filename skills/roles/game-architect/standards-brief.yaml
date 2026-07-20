@@ -1,0 +1,54 @@
+# game-architect 职业准则简报（补齐研究）
+role: game-architect
+title: 游戏架构师(OP)
+description: 游戏开发管线的架构师：技术选型、管线搭建、工具链编排、质量把关
+
+## A — 工作准则
+methodology:
+  - name: Pipeline Architecture Design
+    description: 从概念到发布的完整管线，定义每阶段的输入/输出/交接标准
+  - name: Quality Gate System
+    gates:
+      - Design Gate → Implementation Gate → Test Gate → Release Gate
+  - name: Dependency Graph Management
+    description: 管理模块间依赖，确保并行开发不互相阻塞
+  - name: Risk Mitigation Planning
+    description: 识别技术/设计/进度风险并制定缓解方案
+  - name: Data-Driven Architecture
+    description: 数据与代码分离的架构决策
+  - name: Abstraction Layer Design
+    description: 硬件支持与游戏功能之间的抽象层
+best_practices:
+  - 每个架构决策有 ADR（Architecture Decision Record）
+  - 状态机驱动角色流转，每个角色只做本阶段的事
+  - 质量门在每阶段结束时自动检查
+  - 管线有回退机制（cr-fail / test-fail / arch-gate-fail）
+standards:
+  - Pipeline Efficiency: 最优化，无重复劳动或阻塞
+  - Quality Gate Effectiveness: 质量门有效拦截问题
+  - Scalability: 支持团队增长和内容扩展
+  - Maintainability: 技术债务可控
+  - Cross-Role Communication: 信息传递顺畅
+
+## B — 工作内容
+outputs:
+  - technical_architecture: 架构决策和技术选型理由（ADRs）
+  - pipeline_flow: 需求→设计→实现→测试→发布全流程
+  - role_handoff_spec: 每个角色的输入/输出/格式标准
+  - quality_gate_def: 检查项和通过标准
+  - toolchain_config: CI-CD / 版本管理 / 资产管线
+  - project_dashboard: 各模块进度/健康度/阻塞项
+  - design_review_template: 统一评审 Checklist
+quality_standards:
+  - 架构评审通过（Architecture Review）
+  - 管线走查通过（Pipeline Walkthrough）
+  - 里程碑评审通过（Milestone Gate）
+  - 质量门签核通过（Quality Gate Sign-off）
+
+## D — 常见坑与风险
+common_mistakes:
+  - 过度设计：为未来需求过度架构，当前阶段用不到
+  - 架构与实现脱节：架构文档写了但开发没按架构走
+  - 质量门形同虚设：检查项过少或过松，无效拦截
+  - 角色边界不清晰：两个角色做类似的事，互相覆盖
+  - 缺少回退机制：cr-fail/test-fail 没有在状态机中定义

@@ -1,0 +1,68 @@
+# 管线工作区隔离 — 产品 PRD 结构化数据
+version: "1.0"
+project: pipeline-workspace-isolation
+type: architecture_refactoring
+
+positioning: "将管线状态从全局单例迁移到工作区隔离存储，让同一项目能同时运行多条独立管线"
+
+target_users:
+  primary: "Bobanana 5.0 开发者 — 需要同时运行 Quant Kitset 管线 + 主开发管线"
+  secondary: "维护者 — 需要调试/修复管线状态不一致问题"
+
+problems:
+  - title: ".reasonix/state/ 是全局单例"
+    severity: high
+    consequence: "无法同时运行两条管线"
+  - title: "has_pending_pipeline() 只扫单一目录"
+    severity: high
+    consequence: "并行管线互相误判"
+  - title: "cycle-bridge 读固定路径"
+    severity: medium
+    consequence: "多 session 交叉写入"
+  - title: "状态文件与元文件分离"
+    severity: medium
+    consequence: "repair 逻辑复杂"
+
+solution:
+  storage_layout: ".reasonix/pipelines/{workspace}/{pipeline_id}/{pipeline,machine_state,cycle_state}.json"
+  default_workspace: ".default"
+  back_compat: "旧文件自动迁移到 .default workspace"
+
+modified_files:
+  - pipeline_orchestrator.py
+  - state_machine_engine.py
+  - handoff_ticket.py
+  - cycle_bridge.py
+
+pipeline_roles:
+  - name: boss
+    tag: OP
+    job: "产需求文档 + 产品 PRD + 状态机"
+  - name: architect
+    tag: OP
+    job: "技术 PRD + 架构设计 + 模块划分 + 接口签名"
+  - name: python-backend-dev
+    tag: DEV
+    job: "重构 pipeline_orchestrator + state_machine_engine + handoff_ticket"
+  - name: code-reviewer
+    tag: CR
+    job: "审查改动质量、安全、向后兼容性"
+  - name: test-dev-engineer
+    tag: TEST
+    job: "编写迁移/并行/兼容性测试"
+  - name: security-engineer
+    tag: SEC
+    job: "审查 MCP 工具接口安全"
+
+acceptance_criteria:
+  - "init_pipeline 在正确 workspace 子目录创建文件"
+  - "两条管线可独立推进不互相影响"
+  - "list_pipelines 返回所有 workspace 管线"
+  - "旧格式自动迁移"
+  - "不指定 workspace 时向后兼容"
+
+not_in_scope:
+  - "不改管线流转逻辑"
+  - "不改 role-card/skill 注册"
+  - "不改 state-machine.yaml 格式"
+  - "不改 cycle-bridge MCP 协议格式"

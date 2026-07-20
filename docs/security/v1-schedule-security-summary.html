@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>安全审查报告 — 定时任务调度模块</title>
+<style>
+body { font-family: -apple-system, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 24px; }
+h1 { border-bottom: 3px solid #0f3460; }
+.risk-low { background: #d4edda; border-left: 4px solid #16a34a; padding: 8px 12px; margin: 8px 0; }
+.risk-med { background: #fff3cd; border-left: 4px solid #e9a845; padding: 8px 12px; margin: 8px 0; }
+.risk-high { background: #f8d7da; border-left: 4px solid #e94560; padding: 8px 12px; margin: 8px 0; }
+table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #0f3460; color: white; }
+.finding-good { color: #16a34a; }
+.finding-warn { color: #e9a845; }
+.finding-bad { color: #e94560; }
+</style>
+</head>
+<body>
+
+<h1>🔒 安全审查报告 — 定时任务调度模块</h1>
+<p><strong>日期：</strong>2026-07-16 · <strong>审查员：</strong>security-engineer · <strong>审查版本：</strong>v1</p>
+
+<h2>审查范围</h2>
+<table>
+<tr><th>文件</th><th>行数</th><th>风险面</th></tr>
+<tr><td>scripts/pipeline_scheduler.py</td><td>~380</td><td>subprocess.run, schtasks 调用, 日志文件写入</td></tr>
+<tr><td>mcp_server.py</td><td>~345</td><td>JSON-RPC handler 参数传递, error 响应</td></tr>
+<tr><td>.mcp.json</td><td>~168</td><td>MCP tool 定义（inputSchema 安全）</td></tr>
+<tr><td>mcp_client.py</td><td>~280</td><td>仅客户端代理，无安全风险</td></tr>
+<tr><td>gui_dashboard.py</td><td>~230</td><td>仅显示数据，无安全风险</td></tr>
+<tr><td>tests/test_scheduler_api.py</td><td>~270</td><td>adversarial 测试覆盖 12 用例</td></tr>
+</table>
+
+<h2>安全分析结论</h2>
+<div class="risk-low">
+<strong>✅ 最终安全评级：LOW（低风险）</strong> — 未发现可被利用的安全漏洞。所有攻击向量均有有效防护。
+</div>
+
+<h2>威胁模型分析</h2>
+
+<h3>🔴 1. 命令注入（Command Injection）</h3>
+<p><strong>攻击向量：</strong>通过 MCP handler 传递恶意 goal 参数，企图执行任意系统命令。</p>
+<p><strong>分析：</strong></p>
+<ul>
+  <li><code>trigger_task()</code> 第 303 行：<code>subprocess.run([sys.executable, '-m', 'pipeline_orchestrator', 'init', goal], ...)</code> — 使用 <strong>list 参数</strong>而非 shell 字符串，Python 的 <code>subprocess.run</code> 不经过 shell 解析。即使 goal 包含 <code>; rm -rf /</code> 也只作为单个参数传递给 Python 进程。</li>
+  <li><code>_install_winsch_task()</code> 第 153 行：action 字符串拼接 goal，但 goal 已在创建时经过 <code>validate_goal()</code> 白名单校验。</li>
+  <li><code>cmd_run()</code> 第 57 行：同样使用 list 参数调用 subprocess。</li>
+</ul>
+<div class="risk-low"><strong>✅ 防护：</strong>subprocess list 模式 + goal 输入校验白名单。风险等级：<strong>LOW</strong></div>
+
+<h3>🔴 2. 路径穿越（Path Traversal）</h3>
+<p><strong>攻击向量：</strong>通过 MCP handler 传递恶意 task_id，访问日志目录外的文件。</p>
+<p><strong>分析：</strong></p>
+<ul>
+  <li>所有接受 task_id 的函数（<code>remove_task</code>, <code>trigger_task</code>, <code>get_task_logs</code>）均先调用 <code>validate_task_id()</code></li>
+  <li><code>validate_task_id()</code> 使用正则 <code>^[a-f0-9]{8}$</code> — 仅允许 8 位 16 进制字符</li>
+  <li>路径穿越尝试如 <code>../../..</code> 或 <code>/etc/passwd</code> 会被立即拒绝</li>
+</ul>
+<div class="risk-low"><strong>✅ 防护：</strong>严格 task_id 校验 regex。风险等级：<strong>LOW</strong></div>
+
+<h3>🟡 3. 输入验证绕过（Input Validation Bypass）</h3>
+<p><strong>攻击向量：</strong>绕过 validate_goal 的字符白名单。</p>
+<pre>_GOAL_PATTERN = re.compile(r'^[\u4e00-\u9fff\w\s,.\-:;!?，。：；！？、（）()【】\[\]/@#%&+=~·]+$')</pre>
+<p><strong>分析：</strong></p>
+<ul>
+  <li>白名单允许 <code>/</code>, <code>.</code>, <code>@</code>, <code>#</code>, <code>%</code>, <code>&</code>, <code>+</code> 等字符。</li>
+  <li>但这些字符在 subprocess list 模式下不构成命令注入风险。</li>
+  <li>白名单已过滤 <code>&lt;&gt;</code>（HTML/XML 标签）、<code>'</code>（单引号）、<code>"</code>（双引号）、<code>$</code>（变量替换）</li>
+  <li>最大长度 200 字符防止缓冲区/日志滥用。</li>
+</ul>
+<div class="risk-low"><strong>✅ 防护：</strong>白名单 + 长度限制 + subprocess list 模式三重防护。风险等级：<strong>LOW</strong></div>
+
+<h3>🟡 4. MCP Handler 越权</h3>
+<p><strong>攻击向量：</strong>MCP handler 无鉴权，可能被任意 Reasonix 会话调用。</p>
+<p><strong>分析：</strong></p>
+<ul>
+  <li>MCP server 运行在 Reasonix 桌面端的 stdio 通道内，受 Reasonix 安全沙箱保护。</li>
+  <li>所有 MCP handler 仅操作本地文件（tasks.json + 日志），不发起网络请求。</li>
+  <li>操作范围限定在 pipeline 调度域（创建/列出/删除/执行/日志），不能执行任意系统命令。</li>
+  <li><code>schedule_create</code> 的参数长度和字符集受限。</li>
+</ul>
+<div class="risk-med"><strong>⚠️ 注意：</strong>Reasonix 的 <code>trusted_write_tools</code> 和 <code>tool_timeout_seconds</code> 配置可进一步限制 MCP handler 的行为。建议在 <code>reasonix.toml</code> 中为 schedule_* tools 设置独立的超时和权限。当前无需立即修复。</div>
+
+<h3>🟢 5. 日志安全</h3>
+<p><strong>攻击向量：</strong>日志文件包含敏感信息或可被污染。</p>
+<p><strong>分析：</strong></p>
+<ul>
+  <li>日志文件仅存储 task_id、goal、rounds、时间戳、pipeline初始化输出摘要 —— 不包含密码/密钥/Token</li>
+  <li>日志文件命名：<code>{task_id}_{timestamp}.json</code> — task_id 经过 hex 校验</li>
+  <li>日志写入失败使用 try/except 捕获，不会崩溃</li>
+  <li>多任务同时写入不存在竞争条件（每个日志文件独立）</li>
+</ul>
+<div class="risk-low"><strong>✅ 合规：</strong>满足最小日志原则。风险等级：<strong>LOW</strong></div>
+
+<h2>安全测试结果</h2>
+<table>
+<tr><th>测试用例</th><th>结果</th><th>覆盖的攻击向量</th></tr>
+<tr><td>validate_goal: &lt;script&gt;</td><td class="finding-good">✅ 拒绝</td><td>XSS/HTML注入</td></tr>
+<tr><td>validate_goal: 空/None/整数</td><td class="finding-good">✅ 拒绝</td><td>类型混淆</td></tr>
+<tr><td>validate_goal: 超长(201)</td><td class="finding-good">✅ 拒绝</td><td>缓冲区溢出</td></tr>
+<tr><td>validate_time: 25:00 / 09:60</td><td class="finding-good">✅ 拒绝</td><td>非法时间格式</td></tr>
+<tr><td>validate_task_id: ../../..</td><td class="finding-good">✅ 拒绝</td><td>路径穿越</td></tr>
+<tr><td>validate_task_id: xyz12345</td><td class="finding-good">✅ 拒绝</td><td>非法字符</td></tr>
+<tr><td>schedule_create: 无效 weekday</td><td class="finding-good">✅ 拒绝</td><td>schtasks 参数注入</td></tr>
+<tr><td>schedule_create: rounds=0/-1</td><td class="finding-good">✅ 拒绝</td><td>非法数值</td></tr>
+<tr><td>get_task_logs: 无效 task_id</td><td class="finding-good">✅ 拒绝</td><td>路径穿越</td></tr>
+</table>
+
+<h2>最终建议</h2>
+<ol>
+  <li><strong>（建议）</strong> 在 <code>reasonix.toml</code> 中为 <code>bobanana_schedule_*</code> tools 设置独立的 <code>tool_timeout_seconds</code>，防止调度器阻塞影响其他 MCP 工具。</li>
+  <li><strong>（建议）</strong> 当前 <code>validate_goal</code> 允许 <code>/</code> 和 <code>.</code> 等字符。虽然 subprocess list 模式使其安全，但考虑收窄白名单以增强纵深防御。</li>
+  <li><strong>（无操作）</strong> 所有其他发现的安全问题已有有效防护，无需修复。</li>
+</ol>
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>管线工作区隔离 — 产品 PRD</title>
+<style>
+body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; line-height: 1.7; color: #333; }
+h1 { color: #1a237e; border-bottom: 3px solid #1a237e; padding-bottom: 8px; }
+h2 { color: #283593; margin-top: 32px; }
+h3 { color: #3949ab; }
+.card { background: #f5f7ff; border-radius: 8px; padding: 16px; margin: 12px 0; border-left: 4px solid #1a237e; }
+code { background: #e8eaf6; padding: 2px 6px; border-radius: 3px; font-size: 14px; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+th { background: #e8eaf6; font-weight: 600; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin: 2px; }
+.tag-op { background: #c8e6c9; color: #2e7d32; }
+.tag-dev { background: #bbdefb; color: #1565c0; }
+.tag-cr { background: #fff3e0; color: #e65100; }
+.tag-test { background: #f3e5f5; color: #7b1fa2; }
+.tag-sec { background: #ffebee; color: #c62828; }
+</style>
+</head>
+<body>
+
+<h1>📦 管线工作区隔离 — 产品 PRD</h1>
+<p><strong>版本</strong>: v1.0 | <strong>状态</strong>: 需求已确认 | <strong>类型</strong>: 架构重构</p>
+
+<h2>1. 一句话定位</h2>
+<div class="card">
+将管线状态从全局单例迁移到工作区隔离存储，让同一项目能同时运行多条独立管线。
+</div>
+
+<h2>2. 目标用户</h2>
+<ul>
+<li><strong>主要</strong>: Bobanana 5.0 开发者 — 需要同时运行 Quant Kitset 管线 + 主开发管线</li>
+<li><strong>次要</strong>: 维护者 — 需要调试/修复管线状态不一致问题</li>
+</ul>
+
+<h2>3. 当前架构问题</h2>
+<table>
+<tr><th>问题</th><th>后果</th><th>严重性</th></tr>
+<tr><td><code>.reasonix/state/machine_state.json</code> 是全局单例</td><td>无法同时运行两条管线</td><td>🔴 高</td></tr>
+<tr><td><code>has_pending_pipeline()</code> 只扫单一目录</td><td>并行管线互相误判为"进行中"</td><td>🔴 高</td></tr>
+<tr><td>cycle-bridge MCP 工具读固定路径</td><td>多 session 交叉写入破坏状态</td><td>🟡 中</td></tr>
+<tr><td>状态文件与管线元文件分离存储</td><td>repair 逻辑复杂，易不一致</td><td>🟡 中</td></tr>
+</table>
+
+<h2>4. 方案</h2>
+
+<h3>4.1 目录结构</h3>
+<pre><code>.reasonix/pipelines/
+├── {workspace}/
+│   ├── {pipeline_id}/
+│   │   ├── pipeline.json       ← 管线元数据（替代旧 .reasonix/pipelines/pl-*.json）
+│   │   ├── machine_state.json  ← 状态机运行态（替代旧 .reasonix/state/）
+│   │   ├── cycle_state.json    ← Cycle 工作流（替代旧 .reasonix/cycle/）
+│   │   └── next_prompt.txt     ← 下一提示（替代旧 .reasonix/cycle/）
+│   └── ... (更多管线)
+└── .default/                   ← 向后兼容：未指定 workspace 时使用
+</code></pre>
+
+<h3>4.2 核心改动</h3>
+<table>
+<tr><th>文件</th><th>改动</th></tr>
+<tr><td><code>pipeline_orchestrator.py</code></td><td>PIPELINE_DIR 改为 workspace 感知；<code>init_pipeline</code>/<code>advance_pipeline</code>/<code>list_pipelines</code> 增加 workspace 参数；<code>has_pending_pipeline</code> 按 workspace 过滤</td></tr>
+<tr><td><code>state_machine_engine.py</code></td><td><code>StateMachineRuntime.__init__</code> 增加 workspace/pipeline_id 参数；<code>_save_state</code>/<code>load_state</code> 走管线子目录</td></tr>
+<tr><td><code>handoff_ticket.py</code></td><td>工单存储路径支持 workspace</td></tr>
+<tr><td><code>cycle_bridge.py</code> (MCP)</td><td><code>get_cycle_state</code>/<code>queue_next_prompt</code> 增加 workspace 参数</td></tr>
+</table>
+
+<h3>4.3 向后兼容</h3>
+<ul>
+<li>旧 <code>.reasonix/pipelines/pl-*.json</code> → 自动迁移到 <code>.reasonix/pipelines/.default/{id}/pipeline.json</code></li>
+<li>旧 <code>.reasonix/state/machine_state.json</code> → 迁移到默认管线子目录</li>
+<li>不指定 workspace 参数时，使用 <code>.default</code> workspace</li>
+</ul>
+
+<h2>5. 管线角色</h2>
+<table>
+<tr><th>角色</th><th>标签</th><th>职责</th></tr>
+<tr><td>Boss</td><td><span class="tag tag-op">OP</span></td><td>产需求文档 + 产品 PRD + 本状态机</td></tr>
+<tr><td>Architect</td><td><span class="tag tag-op">OP</span></td><td>读 PRD → 技术设计 + 模块划分 + 接口签名</td></tr>
+<tr><td>python-backend-dev</td><td><span class="tag tag-dev">DEV</span></td><td>重构 pipeline_orchestrator.py + state_machine_engine.py + handoff_ticket.py</td></tr>
+<tr><td>code-reviewer</td><td><span class="tag tag-cr">CR</span></td><td>审查改动质量、安全、向后兼容性</td></tr>
+<tr><td>test-dev-engineer</td><td><span class="tag tag-test">TEST</span></td><td>编写迁移测试 + 并行管线测试 + cycle-bridge 兼容性测试</td></tr>
+<tr><td>security-engineer</td><td><span class="tag tag-sec">SEC</span></td><td>审查 MCP 工具接口安全 + 文件路径注入风险</td></tr>
+</table>
+
+<h2>6. 验收标准</h2>
+<ol>
+<li><code>init_pipeline("test")</code> 在 <code>.reasonix/pipelines/.default/{id}/</code> 下创建完整文件</li>
+<li><code>init_pipeline("quant", workspace="quant")</code> 在 <code>.reasonix/pipelines/quant/{id}/</code> 下创建</li>
+<li>两条管线可独立推进，状态不互相影响</li>
+<li><code>list_pipelines()</code> 返回所有 workspace 的所有管线</li>
+<li>旧 <code>.reasonix/pipelines/pl-*.json</code> 在首次读取时自动迁移</li>
+<li>不指定 workspace 的 CLI 命令向后兼容</li>
+</ol>
+
+<h2>7. 不做什么</h2>
+<ul>
+<li>不改管线流转逻辑本身（只改存储路径）</li>
+<li>不改 role-card/skill 注册机制</li>
+<li>不改 state-machine.yaml 定义格式</li>
+<li>不改 cycle-bridge MCP 协议的消息格式（只加参数）</li>
+</ul>
+
+</body>
+</html>

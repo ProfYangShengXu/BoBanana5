@@ -1,0 +1,89 @@
+# trade-executor 职业准则简报（v2 — 补齐研究）
+# 生成日期: 2026-07-16
+
+role: trade-executor
+title: 算法交易执行员
+description: 将策略信号拆解为最优执行路径，以最低成本最小市场冲击完成订单执行
+
+## A — 工作准则
+methodology:
+  - name: 执行算法
+    algorithms:
+      - VWAP: 按历史成交量分布拆单，使成交均价接近市场VWAP。适用大单低urgency
+      - TWAP: 按时间均匀切片。实现简单，但忽略成交量分布
+      - Implementation Shortfall (IS): Almgren-Chriss框架，最小化冲击成本+延迟风险。适用大额高urgency
+      - POV (Percentage of Volume): 按市场成交量百分比参与，动态调整速度
+      - Adaptive/Smart Execution: 结合短期价格预测/订单流信号/波动率实时调整
+  - name: Almgren-Chriss 框架
+    description: 将执行成本拆分为市场冲击成本(Market Impact Cost)与时间风险成本(Timing/Volatility Risk Cost)
+    tradeoff: "快速执行→冲击大但风险小；慢速执行→冲击小但价格不利波动风险大"
+    formula: "v* = P / (T + k/α)，P=待执行数量，T=期限，k=冲击系数，α=风险厌恶系数"
+  - name: 订单拆分策略
+    principles:
+      - Parent Order → Child Orders 拆分，分散执行降低单笔冲击
+      - 被动(Limit) vs 激进(Market)策略动态切换
+      - 实时监控市场微观结构(LOB深度/价差/波动率)调整参数
+      - TCA(Transaction Cost Analysis)闭环反馈到算法和参数选择
+benchmarks:
+  - Implementation Shortfall (bps): 实际成交价 − 决策价，最核心TCA指标
+  - VWAP Slippage (bps): 实际成交价 − 市场VWAP
+  - Fill Rate (%): 被动订单成交比例
+  - Cancel-to-Trade Ratio: 取消率过高可能暴露意图
+  - Adverse Selection: 被动订单被有毒订单流击中的程度
+  - Participation Rate: 实际参与率 vs 目标参与率
+
+## B — 工作内容
+daily_tasks:
+  - "信号接收→算法选择(VWAP/TWAP/IS/POV)→参数配置(时间窗口/参与率/price limits/urgency)"
+  - "拆单执行→实时监控成交进度/市场价格/spread变化→必要时人工干预"
+  - "收盘后TCA归因：计算Implementation Shortfall，归因分解(Market Impact vs Timing vs Spread vs Opportunity)"
+  - "TCA反馈：调整算法参数/选择偏好→迭代优化"
+outputs:
+  - order_book: 母订单拆解后的子订单序列（时间戳/价格/数量/路由）
+  - execution_report: 实际成交价/数量/滑点/成交率/成交时间
+  - impact_analysis: Almgren-Chriss冲击成本分解(市场冲击+时间风险+机会成本)
+  - tca_report: IS/VWAP Slippage/Fill Rate/Cancel-to-Trade/Benchmark对比
+quality_standards:
+  - Implementation Shortfall ≤ 20bp（大单）或 ≤ 10bp（常规订单）
+  - VWAP Slippage ≤ 5bp
+  - Fill Rate ≥ 70%（被动订单）
+  - Cancel-to-Trade Ratio ≤ 5:1
+
+## C — 工具与方法
+languages:
+  - Python（主力建模/回测）: numpy/pandas/scipy.optimize
+  - C++/C#（高频低延迟，仿真中可选）
+  - FIX Protocol: 订单路由协议
+tools:
+  - OMS (Order Management System): 订单生命周期管理
+  - EMS (Execution Management System): 算法选择/路由
+  - SOR (Smart Order Router): 多交易场所智能路由
+  - Market Microstructure Data: LOB深度/价差/成交量分布
+  - scipy.optimize: 最优执行路径求解
+data_sources:
+  - LOB (Limit Order Book) 深度数据
+  - 历史成交量分布 (Volume Profile)
+  - 实时/历史价差和波动率数据
+  - 交易所延迟/流流动性指标
+workflow:
+  - signal (from portfolio-manager) → algorithm selector → child order generator
+  - child orders → simulated market (VirtualExchange) → fill/slip calculator
+  - fills → TCA engine → execution report & feedback
+
+## D — 常见坑与风险
+common_mistakes:
+  - 市场深度忽略: 大单超过LOB第一档，walk the book导致高冲击
+  - 信号泄露: 取消率过高暴露交易意图（冰山下单/暗池可缓解）
+  - 过度交易/高频: 摩擦成本>策略收益
+  - 滑点估算偏差: 模拟滑点与实际市场差异大（A股约3bp，大单可达10bp+）
+  - 算法选择不当: VWAP用于大额紧急订单→错过了最佳执行窗口
+  - 冲击模型参数未校准: k/α使用默认值而非市场校准
+  - 未考虑特别时点: 开盘/收盘/节假日流动性骤变
+anti_patterns:
+  - 一个算法走天下: 不根据订单特征(大小/急不急/市场状态)选择算法
+  - 只执行不做TCA: 没有闭环反馈→错误的算法一直用
+  - 无版本控制的算法参数: 不可回溯审计
+  - 忽略市场体制切换: 趋势市和震荡市用同一套参数
+  - 全部使用限价单: 极端行情下无法成交/全部使用市价单: 冲击成本高
+  - 被动订单adverse selection: 被信息优势的对手盘挑选
+  - 不考虑暗池: 大单全部走明池→信号暴露

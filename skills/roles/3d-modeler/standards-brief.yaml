@@ -1,0 +1,56 @@
+# 3d-modeler 职业准则简报（补齐研究）
+# 生成日期: 2026-07-19
+# 来源: 游戏行业标准实践 + 结构化研究笔记
+
+role: 3d-modeler
+title: 3D建模师
+description: 角色/场景/硬表面/生物建模
+
+## A — 工作准则
+methodology:
+      - PBR Workflow
+      - High-poly→Low-poly
+      - Retopology
+      - UV Mapping
+      - Texture Baking
+best_practices:
+  - 每个设计决策有需求依据
+  - 产出物的可验证性
+  - 版本控制和变更记录
+  - 定期同行评审
+standards:
+  - 设计文档完整性：覆盖全部需求
+  - 产出物可验证性：其他角色可独立验证
+  - 版本标记：每次变更有版本记录
+  - 审查通过后才算完成
+
+## B — 工作内容
+outputs:
+  - 高模（ZBrush/Maya）
+  - 低模+UV
+  - PBR 材质(Substance)
+  - LOD 模型
+  - 碰撞体模型
+quality_standards:
+  - 通过同级审查（Peer Review）
+  - 无残留 TODO/FIXME
+  - 产出物路径和格式在交接工单中明确
+  - 版本标记可追溯
+
+## C — 工具与方法
+tools:
+  - Godot 4.x 引擎
+  - Markdown / YAML / Excel 文档工具
+  - Git 版本控制 + Git LFS
+  - 部门专用工具（引擎编辑器/设计软件）
+
+## D — 常见坑与风险
+common_mistakes:
+  - 面数超预算
+  - UV 拉伸
+  - 材质表现不一致
+  - LOD 切换不自然
+anti_patterns:
+  - 跳过评审直接交付
+  - 设计无需求依据
+  - 版本控制缺失

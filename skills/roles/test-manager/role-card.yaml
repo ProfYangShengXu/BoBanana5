@@ -1,0 +1,24 @@
+name: test-manager
+description: 测试管理：测试计划/风险评估/流程规范：测试策略、资源规划、流程优化
+tags: []
+input_contract:
+- name: handoff_context
+  type: object
+  description: 交接工单：上一步角色的产出物和注意事项
+  required: true
+output_contract:
+- name: test-manager_deliverables
+  type: object[]
+  description: 测试策略、资源规划、流程优化
+  required: true
+quality_gates:
+- id: GAME-Q1
+  desc: 设计文档完整，需求可追溯
+  check: 每个需求点都有对应的实现或设计依据
+  layer: U
+- id: GAME-Q2
+  desc: 产出物可验证
+  check: 其他角色或工具可以验证该角色的产出
+  layer: I
+standards_file: SKILL.md
+use_case: 适用于游戏开发管线中的测试管理环节

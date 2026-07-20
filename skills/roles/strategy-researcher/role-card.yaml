@@ -1,0 +1,61 @@
+name: strategy-researcher
+description: "因子挖掘与策略研发：Alpha 因子构造、IC/IR 检验、分层回测、多因子组合、样本外验证。模拟私募的策略研究员"
+tags: []
+input_contract:
+  - name: market_data
+    type: object
+    description: 行情数据（日频 OHLCV / 分钟频数据 / 复权因子）
+    required: true
+  - name: fundamental_data
+    type: object
+    description: 基本面数据（财报/估值/行业分类/市值）
+    required: false
+  - name: alternative_data
+    type: object
+    description: 另类数据（情绪/新闻/资金流等）
+    required: false
+  - name: handoff_context
+    type: object
+    description: 上一个角色的交接工单（如数据工程已完成的数据缓存信息）
+    required: false
+output_contract:
+  - name: factor_library
+    type: object[]
+    description: 因子库——正交化后的因子值矩阵（日频/周频），含因子元信息
+  - name: factor_analysis_report
+    type: object
+    description: 因子分析报告——IC 时序/ICIR/分层回测/衰减曲线/拥挤度
+  - name: strategy_doc
+    type: object
+    description: 策略设计文档——Idea 逻辑/数据需求/回测参数/预期 Sharpe
+  - name: backtest_report
+    type: object
+    description: 回测报告——权益曲线/绩效指标（Sharpe/Calmar/最大回撤/换手率）
+quality_gates:
+  - id: STRA-Q1
+    desc: "无未来函数泄露——因子计算时刻只能使用该时刻之前的数据"
+    check: "检查因子计算 pipeline 中 groupby/rolling 的 time shift 是否正确，无前视偏差"
+    layer: U
+  - id: STRA-Q2
+    desc: "回测包含实盘约束——滑点(3bp) + 手续费 + T+1 规则已计入"
+    check: "回测代码中确认有 slippage/commission/T+1 等实盘约束参数"
+    layer: I
+  - id: STRA-Q3
+    desc: "过拟合检测——样本外绩效不应明显弱于样本内（衰减率 ≤ 30%）"
+    check: "计算样本内 vs 样本外 IC 比值，确认衰减率 ≤ 30%"
+    layer: U
+  - id: STRA-Q4
+    desc: "因子拥挤度检测——与同类因子截面相关性均值 ≤ 0.3"
+    check: "计算因子与同类因子的截面相关性均值，确认 ≤ 0.3"
+    layer: I
+  - id: STRA-Q5
+    desc: "市值/行业中性化——因子值已做 Barra 风格回归中性化"
+    check: "确认因子值在 stage 中已通过 groupby('date') 做市值/行业回归取残差"
+    layer: S
+standards_file: SKILL.md
+research:
+  subagents: 4
+  sources:
+    - web_fetch
+    - local_docs
+use_case: "适合量化策略研发阶段：Alpha 因子挖掘、IC 检验、回测报告生成，替代数据工程师后的策略研究角色"

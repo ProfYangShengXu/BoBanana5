@@ -1,0 +1,61 @@
+name: trade-executor
+description: "算法交易仿真：把组合策略信号拆成具体订单，计算冲击成本，模拟 VWAP/TWAP 拆单执行。模拟私募的交易员"
+tags: []
+input_contract:
+  - name: signal
+    type: object
+    description: 策略信号——目标标的/方向/数量/紧急程度/执行期限
+    required: true
+  - name: market_microstructure
+    type: object
+    description: 市场微观结构数据——LOB 深度/买卖价差/历史成交量分布/波动率
+    required: true
+  - name: execution_constraints
+    type: object
+    description: 执行约束——参与率上限/价格限制/算法选择偏好
+    required: false
+  - name: handoff_context
+    type: object
+    description: 上一个角色的交接工单（策略研究员产出的信号）
+    required: false
+output_contract:
+  - name: order_book
+    type: object[]
+    description: 订单簿——母订单拆解后的子订单序列（含时间戳/价格/数量/路由）
+  - name: execution_report
+    type: object
+    description: 成交报告——实际成交价/数量/滑点/成交率/成交时间
+  - name: impact_analysis
+    type: object
+    description: 冲击成本分析——市场冲击/时间风险/机会成本分解
+  - name: tca_report
+    type: object
+    description: TCA（交易成本分析）报告——Implementation Shortfall/VWAP Slippage/Benchmark 对比
+quality_gates:
+  - id: EXEC-Q1
+    desc: "冲击成本模型已嵌入——Almgren-Chriss 或等效模型已配置"
+    check: "执行代码中确认有 market_impact 和 timing_risk 计算模块"
+    layer: U
+  - id: EXEC-Q2
+    desc: "拆单算法正确——所选算法（VWAP/TWAP/IS/POV）逻辑符合行业标准"
+    check: "检查 child order 生成逻辑的时间/成交量分布是否符合算法定义"
+    layer: I
+  - id: EXEC-Q3
+    desc: "TCA 报告完整——包含 Implementation Shortfall/VWAP Slippage/Fill Rate/Cancel-to-Trade"
+    check: "确认 TCA 输出包含所有核心指标"
+    layer: U
+  - id: EXEC-Q4
+    desc: "订单路由无泄露——模拟环境中无真实市场暴露"
+    check: "确认订单仅发向模拟交易所/Backtester，不连接实盘 Broker API"
+    layer: U
+  - id: EXEC-Q5
+    desc: "滑点估算合理——滑点参数与实际市场一致（A 股约 3bp）"
+    check: "确认滑点参数在合理范围内（1-5bp），与实际市场匹配"
+    layer: S
+standards_file: SKILL.md
+research:
+  subagents: 4
+  sources:
+    - web_fetch
+    - local_docs
+use_case: "适合策略信号转订单执行仿真的环节：将 portfolio-manager 或 strategy-researcher 的信号拆解为子订单序列并做 TCA"

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Godot Adaption Kitset — 产品 PRD</title>
+<style>
+body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; max-width: 960px; margin: 40px auto; padding: 20px; line-height: 1.7; color: #333; }
+h1 { color: #478cbf; border-bottom: 3px solid #478cbf; padding-bottom: 8px; }
+h2 { color: #2d6a9f; margin-top: 32px; border-left: 4px solid #478cbf; padding-left: 12px; }
+h3 { color: #3a7fbf; }
+h4 { color: #555; }
+.card { background: #f0f7ff; border-radius: 8px; padding: 16px; margin: 12px 0; border-left: 4px solid #478cbf; }
+.card-warn { background: #fff8e1; border-left-color: #ff9800; }
+.card-danger { background: #fff5f5; border-left-color: #e53935; }
+code { background: #e3f2fd; padding: 2px 6px; border-radius: 3px; font-size: 14px; }
+pre { background: #f5f5f5; padding: 16px; border-radius: 8px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+th { background: #e3f2fd; font-weight: 600; }
+.emoji-big { font-size: 32px; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin: 2px; }
+.tag-green { background: #e8f5e9; color: #2e7d32; }
+.tag-red { background: #ffebee; color: #c62828; }
+.tag-blue { background: #e3f2fd; color: #1565c0; }
+.tag-amber { background: #fff8e1; color: #e65100; }
+</style>
+</head>
+<body>
+
+<h1>🎮 Godot 工具集插件 — 产品设计文档</h1>
+<p><strong>项目</strong>: Godot Adaption Kitset for BoBanana 5.0 |
+<strong>版本</strong>: v0.1-DRAFT |
+<strong>类型</strong>: 非技术产品设计</p>
+
+<div class="card">
+<strong>📌 一句话定位</strong><br>
+将 Godot 引擎变成 AI Agent 的"游戏沙盒"——Agent 通过结构化工具操控引擎，用户用自然语言做游戏。
+</div>
+
+<!-- ──────── 1. 用户访谈提纲 ──────── -->
+<h2>1. 用户访谈提纲</h2>
+
+<h3>目标用户</h3>
+<ul>
+<li><strong>P1 — 独立游戏开发者</strong>（全职/副业）：会用 Godot/Unity，想用 AI 加速游戏开发</li>
+<li><strong>P2 — 游戏开发初学者</strong>：有编程基础但没做过完整游戏，希望 AI 带着做</li>
+<li><strong>P3 — AI 工具爱好者</strong>：已经在用 Cursor/Copilot，想试 AI + Godot 组合</li>
+</ul>
+
+<h3>招募条件</h3>
+<ul>
+<li>用过 Godot 4.x（至少打开过编辑器）</li>
+<li>听说过或试过 AI 辅助编程（Copilot/Cursor/Claude）</li>
+<li>最近 3 个月有游戏开发尝试</li>
+</ul>
+
+<h3>访谈问题（8 个）</h3>
+
+<ol>
+<li><strong>你目前做游戏开发，最耗时的是哪个环节？</strong>
+<br><em>追问：编码？场景搭建？资源管理？调试？为什么最耗时间？</em></li>
+
+<li><strong>你试过用 AI 辅助做游戏吗？用的什么工具？效果怎么样？</strong>
+<br><em>追问：有没有遇到"AI 不懂游戏引擎"的感觉？比如生成的代码跑不了？</em></li>
+
+<li><strong>如果有一款工具能让 AI Agent 直接操作 Godot 编辑器——创建场景、挂脚本、调参数——你觉得有用吗？每周你会用几次？</strong>
+<br><em>封闭：每天/每周几次/每月/不会用</em></li>
+
+<li><strong>你愿意在 AI 辅助工具上花多少钱？</strong>
+<br><em>封闭：$0（只用免费的）/ $5-10/月 / $10-20/月 / $20+/月</em></li>
+
+<li><strong>你用过 Godot 的插件系统吗？（addons 目录下的 EditorPlugin）</strong>
+<br><em>追问：自己写过插件吗？期望插件能提供什么功能？</em></li>
+
+<li><strong>如果有 AI 能看懂你的需求文档并自动搭建 Godot 项目结构和场景，你会信任它吗？还是每一步都要人工确认？</strong>
+<br><em>追问：什么场景下你敢让 AI 全自动？什么场景必须每一步审查？</em></li>
+
+<li><strong>你是从哪个引擎转到 Godot 的？（还是直接上的 Godot？）</strong>
+<br><em>追问：如果 Unity 的 AI 工具更好，你会回去吗？Godot 吸引你的是什么？</em></li>
+
+<li><strong>如果这个工具开源免费但需要自己配 API Key，和一个 $15/月开箱即用，你选哪个？</strong>
+<br><em>封闭：开源自配 / $15/月省事 / 都不选（说明原因）</em></li>
+</ol>
+
+<h3>总结模板</h3>
+<pre>用户画像: [P1/P2/P3]
+核心痛点: [用户最痛的一个环节]
+支付意愿: [$0 / <$10 / $15+ / 不确定]
+关键顾虑: [对 AI 最大的担心]
+一句话引用: "..."</pre>
+
+<div class="card-warn">
+<strong>🔍 悲观预判</strong><br>
+多数用户会对 AI 操控编辑器持谨慎态度，尤其是在"AI 偷偷改坏已有逻辑"上有 PTS。访谈时要特别注意追问信任和安全性相关的问题。
+</div>
+
+<!-- ──────── 2. 价值主张画布 ──────── -->
+<h2>2. 价值主张画布</h2>
+
+<table>
+<tr><th>用户任务</th><th>痛点</th><th>收益</th><th>产品方案</th></tr>
+<tr>
+<td>搭建 Godot 项目骨架<br>创建场景和预制体</td>
+<td>手动创建目录/场景/脚本，重复劳动多；初学者不知道标准结构</td>
+<td>一句命令生成完整项目结构</td>
+<td><code>template_library.ts fork</code> + 场景生成器 M2</td>
+</tr>
+<tr>
+<td>编写和挂载 GDScript</td>
+<td>GDScript 语法不熟；信号连接要手动拖拽；AI 生成的代码常跑不了</td>
+<td>AI 生成即用代码，自动挂载到节点</td>
+<td>Script Manager M3 + GDScript 日志模板</td>
+</tr>
+<tr>
+<td>调试游戏逻辑</td>
+<td>print 调试效率低；日志格式不统一；反复改→跑→看→改</td>
+<td>一键捕获日志 + AI 分析问题</td>
+<td>Debug Loop M11 + 日志捕获 + LLM 分析</td>
+</tr>
+<tr>
+<td>测试多个输入场景</td>
+<td>手动操作重复枯燥；覆盖率难以保证</td>
+<td>录制回放 + 脚本化测试</td>
+<td>输入模拟 M10 + vitest 测试框架</td>
+</tr>
+<tr>
+<td>与 AI Agent 双向沟通</td>
+<td>Agent 不知道引擎内部状态；引擎无法报告当前场景</td>
+<td>实时双向通信：Agent 发送命令，引擎回传结果</td>
+<td>Godox 插件（WebSocket JSON-RPC 桥接）</td>
+</tr>
+</table>
+
+<div class="card-warn">
+<strong>🔍 悲观预判</strong><br>
+最大风险是"AI 操控引擎"的可靠性和响应速度。如果 Godot 插件通信不稳定或延迟过高，整个价值主张崩塌。M6 CLI Bridge 作为 fallback 必须始终保持可用。
+</div>
+
+<!-- ──────── 3. 假设验证卡片 ──────── -->
+<h2>3. 假设验证卡片</h2>
+
+<table>
+<tr><th>#</th><th>假设</th><th>验证方法</th><th>成功标准</th><th>时间</th><th>责任人</th></tr>
+<tr>
+<td><strong>H1</strong> 🔴</td>
+<td>独立开发者愿意用 AI Agent 操控 Godot 编辑器来加速开发</td>
+<td>MVP 内测 + NPS 问卷（招募 20 人，每人用 2 周）</td>
+<td>NPS ≥ 30，≥ 60% 每周使用 ≥ 3 次</td>
+<td>4 周</td>
+<td>产品+开发</td>
+</tr>
+<tr>
+<td><strong>H2</strong> 🟡</td>
+<td>Godot 插件（WebSocket）比 CLI 桥接更受 Agent 欢迎（开发效率更高）</td>
+<td>A/B 测试：同一批任务，Plugin 组 vs CLI 组</td>
+<td>Plugin 组完成任务速度快 30%，用户满意度高 20%</td>
+<td>3 周</td>
+<td>开发</td>
+</tr>
+<tr>
+<td><strong>H3</strong> 🟢</td>
+<td>用户愿意为 AI Godot 工具付费 ≥ $9/月</td>
+<td>定价页面 A/B 测试 + 预注册转化率</td>
+<td>预注册转化率 ≥ 3%（从 landing page 到注册）</td>
+<td>2 周</td>
+<td>产品+市场</td></tr>
+</table>
+
+<div class="card-warn">
+<strong>🔍 悲观预判</strong><br>
+H1 最可能失败：用户口头说"想要"，实际 2 周后只剩 30% 活跃。NPS 可能被稳定性问题拉低到 0-10。建议提前准备"快速失败"标准：2 周内活跃率 < 40% 则 pivot。
+</div>
+
+<!-- ──────── 4. 用户旅程地图 ──────── -->
+<h2>4. 用户旅程地图</h2>
+
+<table>
+<tr><th>阶段</th><th>用户行为</th><th>想法</th><th>痛点</th><th>机会点</th></tr>
+<tr>
+<td><strong>🔍 发现</strong><br><span class="emoji-big">🔍</span></td>
+<td>在 B站/GitHub/知乎看到 "用 AI 做 Godot 游戏" 内容</td>
+<td>"终于有人做 Godot 的 AI 工具了？"</td>
+<td>Godot 可搜到的 AI 资源几乎为零</td>
+<td>做 B站教程视频 "10分钟AI搓一个Godot Demo"</td>
+</tr>
+<tr>
+<td><strong>📖 了解</strong><br><span class="emoji-big">📖</span></td>
+<td>打开 GitHub 仓库，看 README 和演示</td>
+<td>"这能跑起来吗？配置复杂吗？"</td>
+<td>README 太长；不知道怎么装；不知道自己能不能用</td>
+<td>提供 <code>npx tsx tools/template_library.ts fork platformer ./demo</code> 一行命令体验</td>
+</tr>
+<tr>
+<td><strong>🚀 首次使用</strong><br><span class="emoji-big">🚀</span></td>
+<td>安装插件 → 配置 API Key → 试创建项目</td>
+<td>"能成功吗？"→🤩"居然一次过了！" 或 😤"哪里报错了？"</td>
+<td>AI API Key 配置麻烦；Godot 路径检测失败；首次成功率可能低于 50%</td>
+<td><code>install.bat</code> 一键安装 + 自动检测 Godot 路径；首次体验做成引导式的</td>
+</tr>
+<tr>
+<td><strong>🔄 持续使用</strong><br><span class="emoji-big">🔄</span></td>
+<td>日常用 AI 写脚本、搭场景、调试游戏</td>
+<td>"写 GDScript 快多了" / "怎么又偷偷改了老逻辑？"</td>
+<td>AI 不理解已有代码逻辑；GDScript 训练数据少导致生成质量不稳</td>
+<td>提供 "范围限定" 机制（只改指定文件）+ GDScript 训练数据集微调</td>
+</tr>
+<tr>
+<td><strong>📢 推荐</strong><br><span class="emoji-big">📢</span></td>
+<td>在社区分享使用体验</td>
+<td>"这工具帮我省了 XX 小时"</td>
+<td>遇到 bug 找不到人；中文社区资源少</td>
+<td>建 QQ/微信交流群 + 中文文档 + B站教程矩阵</td>
+</tr>
+</table>
+
+<div class="card-warn">
+<strong>🔍 悲观预判</strong><br>
+"持续使用"阶段的留存是最大挑战。AI 工具通常有新鲜感驱动的短期使用高峰，但 2 周后留存率可能跌至 20-30%。关键是让用户在前 3 次使用中都能获得"哇塞时刻"。
+</div>
+
+<!-- ──────── 5. RICE 优先级矩阵 ──────── -->
+<h2>5. RICE 优先级矩阵</h2>
+
+<table>
+<tr><th>功能</th><th>Reach</th><th>Impact</th><th>Confidence</th><th>Effort</th><th>RICE</th></tr>
+<tr>
+<td><strong>1. 基础 Kitset 迁移</strong><br>把现有 TypeScript 工具打包为 kitsets/godot/ 结构</td>
+<td>5（所有用户）</td><td>4（入口）</td><td>5（已有代码）</td><td>2（复制+配置）</td><td><strong>50</strong></td>
+</tr>
+<tr>
+<td><strong>2. Godot 通信插件（enhanced godox）</strong><br>WebSocket JSON-RPC 双向通信 + 自动启动</td>
+<td>5（所有用户）</td><td>5（核心桥梁）</td><td>3（新开发）</td><td>3（中）</td><td><strong>25</strong></td>
+</tr>
+<tr>
+<td><strong>3. GDScript 补全新能优化</strong><br>收集更多 GDScript 训练数据，提升生成质量</td>
+<td>4（编码用户）</td><td>3（质量提升）</td><td>2（效果不确定）</td><td>3（收集+微调）</td><td><strong>8</strong></td>
+</tr>
+<tr>
+<td><strong>4. 中文文档 + 教程</strong><br>中文 README、快速开始、常见问题</td>
+<td>5（中文用户）</td><td>3（降低门槛）</td><td>4（效果可预期）</td><td>1（写文档）</td><td><strong>60</strong></td>
+</tr>
+<tr>
+<td><strong>5. 微信小游戏适配</strong><br>导出适配模板 + 自动化构建管线</td>
+<td>3（特定需求）</td><td>4（中国特色刚需）</td><td>3（需求明确）</td><td>4（工作量大）</td><td><strong>9</strong></td>
+</tr>
+<tr>
+<td><strong>6. 调试闭环（CaptureLogs + LLM）</strong></td>
+<td>3（调试环节）</td><td>4（痛点明确）</td><td>4（已有实现）</td><td>1（迁移即可）</td><td><strong>48</strong></td>
+</tr>
+</table>
+
+<div class="card-warn">
+<strong>🔍 悲观预判</strong><br>
+RICE 评分中 Confidence 普遍偏低（2-4）。中文文档的效果虽然可预期但转化路径长；通信插件的技术风险最高（WebSocket 稳定性和 Godot 版本兼容性）。建议前两周聚焦 P1 + P2 + P4，快速交付一个可用版本。
+</div>
+
+<!-- ──────── 6. 竞品体验对比 ──────── -->
+<h2>6. 竞品体验对比</h2>
+
+<table>
+<tr><th>产品</th><th>定位</th><th>注册/启动</th><th>首任务耗时</th><th>用户评分</th><th>差评集中点</th></tr>
+<tr>
+<td><strong>gda (godot-agent)</strong></td>
+<td>AI Agent CLI + MCP Server for Godot</td>
+<td>pip install + gda init</td>
+<td>~5 分钟</td>
+<td>⭐ 社区好评（26★）</td>
+<td>live 模式仅 macOS/Linux；pre-1.0</td>
+</tr>
+<tr>
+<td><strong>Fennara MCP Godot</strong></td>
+<td>Rust MCP 服务器</td>
+<td>npm install + 配置</td>
+<td>~10 分钟</td>
+<td>⭐⭐ 224★</td>
+<td>功能有限；文档不完善</td>
+</tr>
+<tr>
+<td><strong>Ziva (Cursor for Godot)</strong></td>
+<td>50+ MCP 工具，AI 编辑场景</td>
+<td>npm install + Godot 插件</td>
+<td>~15 分钟</td>
+<td>⭐⭐⭐ 新项目</td>
+<td>仍在早期；MCP 工具多但文档少</td>
+</tr>
+<tr>
+<td><strong>Noko (Godot Ollama)</strong></td>
+<td>本地 LLM 对话插件</td>
+<td>addons 安装</td>
+<td>~3 分钟</td>
+<td>⭐⭐ 7★</td>
+<td>只做对话；只能本地模型</td>
+</tr>
+<tr>
+<td><strong>🎯 本项目 (BoBanana5 Godot Kitset)</strong></td>
+<td>Bobanana 管线 + Godot 双向通信</td>
+<td>install.bat → kitset 扫描</td>
+<td>~2 分钟</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</table>
+
+<div class="card">
+<strong>🎯 差异化机会</strong><br>
+1. 竞品都是"单向"工具（Agent→引擎），本项目强调<b>双向通信</b>（引擎状态回传 Agent）<br>
+2. 竞品无管线概念，本项目整合 Bobanana 的管线编排（设计→开发→测试→评审）<br>
+3. 竞品英文为主，本项目明确覆盖中文社区<br>
+4. 竞品无测试框架，本项目自带 vitest 四层测试（U/I/S/A）
+</div>
+
+<!-- ──────── 7. 一句话定位卡片 ──────── -->
+<h2>7. 一句话定位卡片</h2>
+
+<table>
+<tr><th>方案</th><th>目标用户</th><th>解决什么</th><th>为什么选你</th><th>一句话</th><th>谁最可能反对</th></tr>
+<tr>
+<td><strong>A — AI 游戏开发助理</strong></td>
+<td>Godot 独立开发者</td>
+<td>编码/调试/场景搭建的重复劳动</td>
+<td>全流程覆盖（从搭项目到调试）</td>
+<td>"Godot 开发者的 AI 副驾驶——你说想法，Agent 帮你做游戏"</td>
+<td>坚持手写代码的纯派；担心 AI 扼杀创作乐趣</td>
+</tr>
+<tr>
+<td><strong>B — 游戏开发学习助手</strong></td>
+<td>想学做游戏的初学者</td>
+<td>不知从何入手、看不懂引擎</td>
+<td>自然语言→游戏，零门槛入门</td>
+<td>"不会编程也能做自己的 Godot 游戏——跟 AI 说就行"</td>
+<td>教育工作者：认为 AI 代劳跳过学习过程</td>
+</tr>
+<tr>
+<td style="background:#e8f5e9;"><strong>C — 中文 Godot AI 工具集</strong><br><strong>⭐ 推荐</strong></td>
+<td style="background:#e8f5e9;">中文 Godot 开发者</td>
+<td style="background:#e8f5e9;">中文社区无任何 AI Godot 工具</td>
+<td style="background:#e8f5e9;">中文文档 + 中文教程 + 无墙 API</td>
+<td style="background:#e8f5e9;">"中文圈第一个 Godot AI 工具集——让独立开发者不再被 Unity 绑架"</td>
+<td style="background:#e8f5e9;">Unity 生态的 AI 工具开发者</td>
+</tr>
+</table>
+
+<div class="card-warn">
+<strong>🔍 悲观预判</strong><br>
+方案 C 的定位最清晰，但也意味着市场规模最小。中文 Godot 开发者群体远小于 Unity。建议用方案 C 做 MVP 切入点，后期通过"通用 Godot AI 工具"扩展英文市场。方案 B 的可信度最低——不会编程的用户做出来的游戏质量难以保证，差评风险高。
+</div>
+
+<!-- ──────── 8. 需求评审清单 ──────── -->
+<h2>8. 需求评审清单</h2>
+
+<table>
+<tr><th>#</th><th>自查问题</th><th>为什么重要</th></tr>
+<tr>
+<td>1</td><td><strong>用户真的需要这个吗？还是我们觉得他们需要？</strong></td><td>如果用户不觉得"AI 操控引擎"比"AI 写代码"更实用，就会用回 Copilot</td></tr>
+<tr>
+<td>2</td><td><strong>MVP 能 2 周内交付吗？</strong></td><td>Godot 的 AI 生态在快速变化（gda/Fennara/Ziva 都在迭代），慢了就被竞争对手覆盖</td></tr>
+<tr>
+<td>3</td><td><strong>没有 Godot 插件能工作吗？（CLI fallback 是否足够？）</strong></td><td>插件是差异化核心但不是 MVP 必要条件。CLI 桥接足够让用户先用起来</td></tr>
+<tr>
+<td>4</td><td><strong>中文用户能否在 5 分钟内成功跑起来？</strong></td><td>中国用户需要国内可访问的 API、GitHub 不墙、中文 README。任何一步卡住就放弃</td></tr>
+<tr>
+<td>5</td><td><strong>AI 生成错误代码时用户怎么办？</strong></td><td>必须有"回滚"机制和"手动修复引导"。否则一次生成错误就永久失去信任</td></tr>
+<tr>
+<td>6</td><td><strong>我为什么选 Godot 而不是 Unity/Unreal？</strong></td><td>Godot 选择既是机会（蓝海）也是风险（用户少）。定位必须足够清晰</td></tr>
+<tr>
+<td>7</td><td><strong>长期维护谁来做？</strong></td><td>需要跟着 Godot 版本升级（4.x 到 5.0）。否则会像某些 Godot 插件一样版本更新后废弃</td></tr>
+<tr>
+<td>8</td><td><strong>社区是否在做一个比我更好的方案？</strong></td><td>gda 的 stars 在快速增长。如果在 1 个月内被反超，说明需求已被满足，不做</td></tr>
+</table>
+
+<div class="card-warn">
+<strong>🔍 悲观预判</strong><br>
+Q4（中文用户 5 分钟启动）最难做到。GitHub 在中国部分地区访问不稳定，Node.js 安装、API Key 配置、Godot 路径检测任何一个环节都可能让用户放弃。建议准备一个完全离线的"体验版"（内置示例项目，不需要 API Key）。
+</div>
+
+<!-- ──────── 9. 一句话总结 ──────── -->
+<h2>9. 一句话总结（≤100 字）</h2>
+
+<div class="card" style="font-size:18px; text-align:center; background:#e3f2fd;">
+<strong>将 Godot 引擎变成 AI Agent 的"游戏沙盒"——让中文独立开发者用自然语言做 Godot 游戏，填补中文圈 Godot AI 工具的空白。</strong>
+</div>
+
+<p style="color:#999; font-size:12px; margin-top:40px;">
+生成日期: 2026-07-18 | 文档类型: 非技术产品设计（docs skill）| 悲观评判版本
+</p>
+
+</body>
+</html>

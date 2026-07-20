@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>Code Review Report — backend-dev 定时任务调度</title>
+<style>
+body { font-family: -apple-system, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 24px; }
+h1 { border-bottom: 3px solid #0f3460; }
+.verdict-pass { background: #d4edda; border-left: 4px solid #16a34a; padding: 12px 16px; border-radius: 6px; }
+.issue-blocker { background: #f8d7da; border-left: 4px solid #e94560; padding: 8px 12px; margin: 8px 0; }
+.issue-warning { background: #fff3cd; border-left: 4px solid #e9a845; padding: 8px 12px; margin: 8px 0; }
+.issue-info { background: #e2e3f5; border-left: 4px solid #0f3460; padding: 8px 12px; margin: 8px 0; }
+.fixed { color: #16a34a; font-weight: bold; }
+table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #0f3460; color: white; }
+</style>
+</head>
+<body>
+
+<h1>🔍 Code Review Report — backend-dev 定时任务调度</h1>
+<p><strong>日期：</strong>2026-07-16 · <strong>审查员：</strong>code-reviewer</p>
+
+<div class="verdict-pass">
+<strong>✅ 审查结论：PASS</strong> — 0 blocker / 0 warning / 1 info（预存问题）
+</div>
+
+<h2>审查文件清单</h2>
+<table>
+<tr><th>#</th><th>文件</th><th>行数</th><th>问题数</th></tr>
+<tr><td>A</td><td><code>scripts/pipeline_scheduler.py</code></td><td>+130</td><td>3 发现 → 3 修复</td></tr>
+<tr><td>B</td><td><code>mcp_server.py</code></td><td>+55</td><td>0</td></tr>
+<tr><td>C</td><td><code>.mcp.json</code></td><td>+80</td><td>0</td></tr>
+<tr><td>D</td><td><code>mcp_client.py</code></td><td>+35</td><td>0</td></tr>
+</table>
+
+<h2>六维度审查结果</h2>
+
+<h3>File A: scripts/pipeline_scheduler.py</h3>
+
+<div class="issue-blocker">
+<strong>🔴 BLOCKER #1 — `def main():` 缺失</strong><br>
+<strong>发现：</strong> `get_task_logs()` 的 `return {"logs": logs}` 之后直接跟着 `parser = argparse...`，缺少 `def main():` 声明，导致整个 CLI 入口丢失。<br>
+<strong>修复：</strong> <span class="fixed">✅ 已修复</span> — 在第 345 行添加 `def main():`
+</div>
+
+<div class="issue-warning">
+<strong>🟡 WARNING #1 — weekday 参数缺少校验</strong><br>
+<strong>发现：</strong> `schedule_create_task()` 未校验 `weekday` 参数，无效值会传给 `_install_winsch_task` 导致 schtasks 失败。<br>
+<strong>修复：</strong> <span class="fixed">✅ 已修复</span> — 添加 `VALID_WEEKDAYS` 集合检查
+</div>
+
+<div class="issue-warning">
+<strong>🟡 WARNING #2 — rounds 参数缺少校验</strong><br>
+<strong>发现：</strong> `schedule_create_task()` 未校验 `rounds` 参数，非正整数值可能导致后期 TypeError。<br>
+<strong>修复：</strong> <span class="fixed">✅ 已修复</span> — 添加 `isinstance(rounds, int) or rounds < 1` 检查
+</div>
+
+<div class="issue-info">
+<strong>🔵 INFO #1 — `_install_winsch_task` 的 schtasks /d 兼容性</strong><br>
+<strong>说明：</strong> 使用 `/sc daily` + `/d WEEKDAY` 时，部分 Windows 版本不支持此组合。此问题在原始代码中已存在，非本次改动引入。建议后续迁移到 pywin32 COM API。
+</div>
+
+<h3>File B: mcp_server.py</h3>
+<ul>
+  <li>✅ 5 个 handler 全部注册，命名一致</li>
+  <li>✅ 延迟导入（lazy import）避免循环依赖</li>
+  <li>✅ 错误码统一使用 `-32602`（Invalid params）</li>
+  <li>✅ 参数通过 pipeline_scheduler 的纯函数做了输入校验</li>
+</ul>
+
+<h3>File C: .mcp.json</h3>
+<ul>
+  <li>✅ 5 个 tool 定义完整，含 inputSchema</li>
+  <li>✅ required 字段正确标记</li>
+  <li>✅ description 与 handler 功能一致</li>
+</ul>
+
+<h3>File D: mcp_client.py</h3>
+<ul>
+  <li>✅ 5 个方法遵循现有 MCPClient 模式</li>
+  <li>✅ 参数名与 server handler 一致</li>
+  <li>✅ 默认值与 server 端匹配</li>
+</ul>
+
+<h2>集成验证结果</h2>
+<table>
+<tr><th>场景</th><th>结果</th></tr>
+<tr><td>创建定时任务 → 返回 task_id</td><td>✅ PASS</td></tr>
+<tr><td>列出所有任务 → 返回任务列表</td><td>✅ PASS</td></tr>
+<tr><td>删除任务 → 返回 removed=true</td><td>✅ PASS</td></tr>
+<tr><td>输入校验：空 goal → 拒绝</td><td>✅ PASS</td></tr>
+<tr><td>输入校验：超长 goal → 拒绝</td><td>✅ PASS</td></tr>
+<tr><td>输入校验：非法字符 goal → 拒绝</td><td>✅ PASS</td></tr>
+<tr><td>输入校验：无效 time → 拒绝</td><td>✅ PASS</td></tr>
+<tr><td>输入校验：无效 weekday → 拒绝</td><td>✅ PASS</td></tr>
+<tr><td>输入校验：无效 rounds → 拒绝</td><td>✅ PASS</td></tr>
+<tr><td>输入校验：无效 task_id → 拒绝</td><td>✅ PASS</td></tr>
+</table>
+
+</body>
+</html>

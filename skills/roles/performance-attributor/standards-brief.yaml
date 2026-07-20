@@ -1,0 +1,139 @@
+# performance-attributor 职业准则简报（v2 — 补齐研究）
+# 生成日期: 2026-07-16
+
+role: performance-attributor
+title: 绩效归因分析师
+description: 将组合总收益拆解为可解释的贡献项(市场/行业/选股/因子)，理解收益来源和风险暴露
+
+## A — 工作准则
+methodology:
+  - name: Brinson 归因
+    variants:
+      - Brinson-Hood-Beebower (BHB): 经典三因子分解
+      - Brinson-Fachler (BF): 推荐，配置项用(r_b - R_b)更合理
+    components:
+      - 配置效应 (Allocation): 行业权重决策贡献
+      - 选股效应 (Selection): 行业内选股贡献
+      - 交互效应 (Interaction): 配置与选股的协同/对冲
+  - name: Campisi 归因(固定收益)
+    components:
+      - 收入收益 (Income/Yield Return): 票息+折溢价摊销
+      - 国债收益 (Treasury Return): 久期×基准利率变动
+      - 利差收益 (Spread Return): 久期×信用利差变动
+  - name: 多因子归因(横截面因子回归)
+    framework: Barra 风格
+    factors:
+      style: 价值/动量/规模/波动率/质量/成长/股息率/流动性
+      industry: GICS行业分类
+      country: 国家/地区
+      currency: 货币
+    method: "横截面WLS回归(每期拟合因子收益)，因子暴露匹配(组合vs基准)"
+  - name: 风险归因
+    description: "跟踪误差分解 = 因子贡献 + 特异性风险"
+    metrics:
+      - 边际风险贡献 (Marginal Contribution to Risk)
+      - 成分VaR (Component VaR)
+      - 因子贡献跟踪误差
+  - name: 多期链接
+    algorithms:
+      - Carino链接: 平滑残差分配，最常用
+      - Menchero正则化
+      - GRAP链接
+      - Frongello几何平滑
+    requirement: 算术归因跨期不可简单加总，必须用链接算法
+standards:
+  - GIPS (Global Investment Performance Standards): CFA Institute
+  - CIPM (Certificate in Investment Performance Measurement): 行业权威认证
+quality_thresholds:
+  attribution_completeness: "归因残差≤5bp"
+  factor_vif: "<5"
+  data_consistency: 持仓与交易数据一致/估值日对齐/汇率处理一致
+  timeliness: "T+1日度归因/T+5月度归因"
+  reproducibility: 相同输入产生相同结果，模型参数版本控制
+
+## B — 工作内容
+daily_tasks:
+  - 监控组合风险暴露(因子载荷/跟踪误差)
+  - 检查异常归因残差
+  - 处理数据质量问题(持仓/交易/估值对齐)
+weekly_tasks:
+  - 周度归因报告(Brinson/因子)
+  - 因子回报更新
+  - 归因讨论(与PM核对异常归因结果)
+monthly_tasks:
+  - 月度完整归因报告(含Brinson/因子/风险归因)
+  - GIPS复合业绩更新
+  - 客户披露报告
+quarterly_tasks:
+  - 季度深度归因分析
+  - 风格漂移检测(滚动窗口因子暴露稳定性)
+  - 归因模型校验和参数复审
+outputs:
+  - attribution_report: Brinson/因子归因详情(配置/选股/交互)
+  - return_decomposition: 总收益=基准收益+配置贡献+选股贡献+交叉贡献+货币贡献
+  - risk_contribution: 因子贡献跟踪误差/边际风险/成分VaR
+  - factor_exposure_dashboard: 组合vs基准风格因子载荷对比/暴露变化时序
+  - multi_period_report: 多期链接后一致性归因报告
+quality_standards:
+  - 归因完整性: 残差≤5bp，所有超额收益可解释
+  - 因子正交性: VIF<5，必要时做PCA降维
+  - 数据一致性: 持仓/交易/估值/汇率一致
+  - 时效性: T+1日度/T+5月度归因
+  - 可复现性: 版本控制/参数哈希/数据快照
+  - 合规性: 符合GIPS披露要求
+
+## C — 工具与方法
+languages:
+  - Python: 主力(pyfolio/empyrical/quantstats/riskfolio-lib/statsmodels)
+  - R: 学术验证备选
+  - SQL: 数据提取和批量计算
+libraries:
+  - pyfolio: 回测报告(滚动Sharpe/因子暴露/回撤/换手率)
+  - empyrical: 底层绩效指标(Sharpe/Sortino/MDD/alpha/beta)
+  - quantstats: 60+绩效指标/HTML报告/蒙特卡洛模拟
+  - riskfolio-lib: 组合优化/因子模型/Black-Litterman/HRP
+  - statsmodels: 时间序列/横截面因子回归(OLS/WLS)
+  - scikit-learn: PCA降维/正则化回归/Lasso
+  - arch: GARCH/EGARCH波动率建模
+commercial_platforms:
+  - Bloomberg PORT: 多资产归因/因子风险分析/情景分析
+  - MSCI Barra: 多因子风险模型/横截面因子回归/风险预算
+  - FactSet: Brinson/Campisi/因子归因/GIPS报告
+  - Aladdin (BlackRock): 全组合生命周期/因子风险分解/压力测试
+  - Axioma: 短周期因子模型/日度更新/自定义因子
+statistical_methods:
+  - Brinson分解: 配置+选股+交互
+  - 横截面因子回归: 因子收益估计/载荷计算
+  - 时间序列因子回归(Fama-French): 因子暴露识别/alpha估计
+  - PCA: 利率曲线因子分解/共线性降维
+  - GARCH/EWMA: 时变波动率建模/动态VaR
+  - Dietz/Modified Dietz: 含现金流的时权重收益率计算
+  - Carino/Menchero/GRAP: 多期归因链接
+workflow:
+  - data prep → return calculation (Dietz time-weighted)
+  - Brinson/factor regression attribution → residual check (≤5bp)
+  - risk decomposition (tracking error breakdown) → multi-period linking
+  - report generation (HTML tearsheet + data tables)
+
+## D — 常见坑与风险
+common_mistakes:
+  - 方法误选: Brinson用于衍生品→用因子归因或Campisi
+  - 交互项忽视/误解: 选股效应虚高/虚低
+  - 基准选择偏差: custom benchmark过度匹配→超额被抹平
+  - 跨期链接问题: 算术归因直接累计→残差放大
+  - 多币种不分离: 汇率波动扭曲行业归因
+  - 因子共线性(VIF高): 回归系数不稳定→结果对时间段敏感
+  - 幸存者偏差: 归因数据仅含幸存基金/持仓→高估
+  - 前瞻偏差: 使用事后已知的因子分类→不真实
+  - 短期数据噪音: 日频归因信噪比极低→错误决策
+  - 模型误设定: 遗漏关键因子→alpha被高估
+  - 非流动性资产stale pricing: 伪平滑收益→Sharpe高估→因子模型失效
+anti_patterns:
+  - 一个模型走天下: 同一套因子归因所有策略(长仓/多空/固收/衍生品)
+  - 归因与绩效脱节: 归因不用于投资决策→沦为报表面条
+  - 归因频率不匹配: 日频归因但决策月频→噪音淹没问题
+  - 重归因轻风控: 只做收益归因不做风险分解→风险预算缺失
+  - 无版本控制的归因模型: 因子定义/参数/基准不可回溯→审计灾难
+  - 人工修补归因残差: 为让归因"好看"手动调整→完整性和合规风险
+  - 精细化谬误: 输出到小数点后3位→伪精细误导决策
+  - 过度拟合历史归因: 反复调整因子定义直到残差≈0→无样本外验证

@@ -72,6 +72,85 @@
         },
         "required": ["name"]
       }
+    },
+    {
+      "name": "bobanana_schedule_create",
+      "description": "创建定时任务：指定目标、时间、频率，注册到 Windows 任务计划程序",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "goal": {
+            "type": "string",
+            "description": "管线目标描述（≤200字符）"
+          },
+          "time": {
+            "type": "string",
+            "description": "执行时间 (HH:MM 格式)"
+          },
+          "weekday": {
+            "type": "string",
+            "description": "执行频率：daily(默认)/mon-fri/weekend/mon/tue/wed/thu/fri/sat/sun"
+          },
+          "rounds": {
+            "type": "integer",
+            "description": "轮数（默认1）"
+          }
+        },
+        "required": ["goal", "time"]
+      }
+    },
+    {
+      "name": "bobanana_schedule_list",
+      "description": "列出所有已注册的定时任务",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "bobanana_schedule_remove",
+      "description": "删除指定定时任务",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "description": "任务 ID（8位hex）"
+          }
+        },
+        "required": ["task_id"]
+      }
+    },
+    {
+      "name": "bobanana_schedule_trigger",
+      "description": "手动触发指定定时任务立即执行",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "description": "任务 ID（8位hex）"
+          }
+        },
+        "required": ["task_id"]
+      }
+    },
+    {
+      "name": "bobanana_schedule_logs",
+      "description": "查询定时任务的执行历史日志",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "description": "可选，按任务ID过滤"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "返回条数（默认10）"
+          }
+        }
+      }
     }
   ],
   "resources": [

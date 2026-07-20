@@ -47,9 +47,12 @@ def refresh():
 
     # 4. 通知 Reasonix 刷新（写入标记文件）
     refresh_file = os.path.join(PLUGIN_DIR, '.refresh')
-    with open(refresh_file, 'w') as f:
-        f.write('refresh')
-    print(f"  [+] 刷新标记已写入，Reasonix 将在下次交互时检测")
+    try:
+        with open(refresh_file, 'w') as f:
+            f.write('refresh')
+        print(f"  [+] 刷新标记已写入，Reasonix 将在下次交互时检测")
+    except OSError as e:
+        print(f"  [!] 写入刷新标记失败: {e}")
 
     # 5. 同步全局 skills/commands（覆盖安装）
     for item_dir, item_type in [('skills', 'skill'), ('commands', 'command')]:

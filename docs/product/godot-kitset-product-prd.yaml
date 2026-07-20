@@ -1,0 +1,105 @@
+# Godot Adaption Kitset — 产品 PRD 结构化数据
+version: "0.1-DRAFT"
+project: godot-kitset
+type: non_technical_product_design
+
+positioning: "将 Godot 引擎变成 AI Agent 的'游戏沙盒'——Agent 通过结构化工具操控引擎，用户用自然语言做游戏"
+recommended_positioning: "中文圈第一个 Godot AI 工具集——让独立开发者不再被 Unity 绑架"
+
+target_users:
+  p1: "独立游戏开发者（全职/副业）：会用 Godot/Unity，想用 AI 加速"
+  p2: "游戏开发初学者：有编程基础但没做过完整游戏"
+  p3: "AI 工具爱好者：在用 Cursor/Copilot，想试 AI+Godot"
+
+value_proposition:
+  user_tasks:
+    - "搭建 Godot 项目骨架"
+    - "编写和挂载 GDScript"
+    - "调试游戏逻辑"
+    - "测试多个输入场景"
+    - "与 AI Agent 双向沟通"
+  pain_points:
+    - "手动重复劳动多"
+    - "GDScript 语法不熟"
+    - "print 调试效率低"
+    - "手动操作覆盖率低"
+    - "Agent 不知引擎内部状态"
+  solutions:
+    - "template_library.ts fork + 场景生成器"
+    - "Script Manager + GDScript 日志模板"
+    - "Debug Loop + 日志捕获 + LLM 分析"
+    - "输入模拟 + vitest 测试框架"
+    - "Godox 插件 WebSocket JSON-RPC"
+
+hypotheses:
+  - id: H1
+    risk: high
+    desc: "独立开发者愿意用 AI Agent 操控 Godot 编辑器"
+    method: "MVP 内测 20 人，2 周 NPS 问卷"
+    success_criteria: "NPS ≥ 30，60% 周使用 ≥ 3 次"
+    timeline: "4 周"
+  - id: H2
+    risk: medium
+    desc: "Godot 插件比 CLI 桥接更高效"
+    method: "A/B 测试插件组 vs CLI 组"
+    success_criteria: "插件组快 30%，满意度高 20%"
+    timeline: "3 周"
+  - id: H3
+    risk: low
+    desc: "用户愿意付费 ≥ $9/月"
+    method: "定价 A/B 测试 + 预注册转化率"
+    success_criteria: "预注册转化率 ≥ 3%"
+    timeline: "2 周"
+
+rice:
+  - feature: "基础 Kitset 迁移"
+    reach: 5; impact: 4; confidence: 5; effort: 2
+    score: 50
+  - feature: "Godot 通信插件 (WebSocket)"
+    reach: 5; impact: 5; confidence: 3; effort: 3
+    score: 25
+  - feature: "中文文档 + 教程"
+    reach: 5; impact: 3; confidence: 4; effort: 1
+    score: 60
+  - feature: "调试闭环 (CaptureLogs + LLM)"
+    reach: 3; impact: 4; confidence: 4; effort: 1
+    score: 48
+  - feature: "GDScript 补全优化"
+    reach: 4; impact: 3; confidence: 2; effort: 3
+    score: 8
+  - feature: "微信小游戏适配"
+    reach: 3; impact: 4; confidence: 3; effort: 4
+    score: 9
+
+competitive_landscape:
+  - product: "gda (godot-agent)"
+    positioning: "AI Agent CLI + MCP Server"
+    stars: 26
+    weaknesses: "live 模式仅 macOS/Linux；pre-1.0"
+  - product: "Fennara MCP Godot"
+    positioning: "Rust MCP 服务器"
+    stars: 224
+    weaknesses: "功能有限；文档不完善"
+  - product: "Ziva (Cursor for Godot)"
+    positioning: "50+ MCP 工具"
+    stars: "new"
+    weaknesses: "仍在早期；文档少"
+  - product: "Noko (Godot Ollama)"
+    positioning: "本地 LLM 对话"
+    stars: 7
+    weaknesses: "只做对话；只能本地"
+
+differentiators:
+  - "双向通信：引擎状态回传 Agent，竞品都是单向 Agent→引擎"
+  - "管线编排：Bobanana 的设计→开发→测试→评审全流程"
+  - "中文社区：英文工具为主，本项目覆盖中文"
+  - "测试框架：自带 vitest 四层测试（U/I/S/A）"
+
+pricing_recommendation: "免费开源插件 + 可选云服务（$9-15/月），年付 $99"
+pricing_model: "自带 API Key 免费使用；托管云服务订阅制"
+
+warnings:
+  - "Q4 中文用户 5 分钟内跑起来最难——GitHub 访问/Node.js 安装/API Key 配置"
+  - "WebSocket 通信插件技术风险最高——Godot 版本兼容性可能带来稳定性问题"
+  - "留存挑战——AI 工具普遍 2 周留存率跌至 20-30%"
+  - "gda/Fennara/Ziva 都在快速迭代，慢了就会被覆盖"

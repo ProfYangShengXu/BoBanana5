@@ -73,8 +73,12 @@ class EventSubscriber:
         """计算文件哈希"""
         if not os.path.exists(path):
             return None
-        with open(path, 'rb') as f:
-            return hashlib.md5(f.read()).hexdigest()
+        try:
+            with open(path, 'rb') as f:
+                return hashlib.md5(f.read()).hexdigest()
+        except (OSError, PermissionError) as e:
+            logging.warning("文件哈希计算失败: %s — %s", path, e)
+            return None
 
     def _check_file(self, path, event_type):
         """检查单个文件变化"""

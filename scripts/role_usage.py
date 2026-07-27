@@ -17,8 +17,11 @@ USAGE_FILE = ".reasonix/role_usage.json"
 def _ensure():
     os.makedirs(os.path.dirname(USAGE_FILE) or ".", exist_ok=True)
     if not os.path.exists(USAGE_FILE):
-        with open(USAGE_FILE, "w") as f:
-            json.dump({}, f)
+        try:
+            with open(USAGE_FILE, "w") as f:
+                json.dump({}, f)
+        except OSError as e:
+            print(f"初始化使用记录文件失败: {e}")
 
 
 def _load():

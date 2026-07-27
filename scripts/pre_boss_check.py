@@ -9,14 +9,20 @@ def has_pending():
     nf = os.path.join(CYCLE_DIR, 'next_prompt.txt')
     sf = os.path.join(CYCLE_DIR, 'state.json')
     if os.path.exists(nf) and os.path.exists(sf):
-        with open(nf, 'r', encoding='utf-8') as f:
-            return len(f.read().strip()) > 0
+        try:
+            with open(nf, 'r', encoding='utf-8') as f:
+                return len(f.read().strip()) > 0
+        except (OSError, IOError):
+            return False
     return False
 
 def get_pending_goal():
     sf = os.path.join(CYCLE_DIR, 'state.json')
-    with open(sf, 'r', encoding='utf-8') as f:
-        return json.load(f).get('goal', '')
+    try:
+        with open(sf, 'r', encoding='utf-8') as f:
+            return json.load(f).get('goal', '')
+    except (OSError, json.JSONDecodeError):
+        return ''
 
 def set_goal_mode(goal):
     """写入 topic 文件触发 Reasonix 目标模式"""

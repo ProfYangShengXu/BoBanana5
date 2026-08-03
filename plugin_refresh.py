@@ -7,7 +7,6 @@ Bobanana 5.0 — 插件刷新工具
 import os
 import json
 import shutil
-import sys
 
 PLUGIN_DIR = os.path.expandvars(r'%APPDATA%\reasonix\plugins\bobanana5')
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))

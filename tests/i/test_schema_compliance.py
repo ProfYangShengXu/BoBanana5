@@ -2,7 +2,7 @@
 Bobanana 5.0 — Integration: YAML Schema Compliance
 验证全部59张角色卡的YAML格式和Schema合规性
 """
-import os, yaml, glob, unittest, sys
+import os, yaml, glob, unittest
 
 class TestAllRoleCardsSchema(unittest.TestCase):
     """所有角色卡 Schema 验证"""

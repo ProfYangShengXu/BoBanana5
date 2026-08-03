@@ -1,6 +1,6 @@
 """批量生成游戏工作室角色卡 — 快速引用模式"""
 
-import os, sys, json, yaml, shutil
+import os, yaml
 
 ROLES_DIR = "skills/roles"
 
@@ -205,7 +205,7 @@ def main():
 
         is_op = "OP" in name  # only game-architect is OP
         tags = ["OP", "game"] if is_op else ["game"]
-        role_type = "op" if is_op else ("design" if name.endswith("designer") or name.endswith("designer") or "design" in full_desc else
+        role_type = "op" if is_op else ("design" if name.endswith("designer") or "design" in full_desc else
                                         "dev" if "程序" in full_desc or "programmer" in name else
                                         "test" if "test" in name else
                                         "art" if "artist" in name or "美术" in full_desc else

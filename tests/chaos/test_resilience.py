@@ -2,7 +2,7 @@
 Bobanana 5.0 — Chaos: 故障注入测试
 模拟各种异常场景（损坏文件、空目录、缺失依赖），验证系统降级行为。
 """
-import os, sys, yaml, json, tempfile, shutil, unittest, logging
+import os, sys, yaml, json, tempfile, shutil, unittest
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, _ROOT)

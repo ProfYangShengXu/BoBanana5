@@ -2,7 +2,6 @@
 Bobanana 5.0 — MCP Server Unit Tests (U层)
 测试 mcp_server.py 的 handle_request 分发和 handler 函数，normal/boundary/adversarial 三路径。
 """
-import os
 import sys
 import json
 import unittest

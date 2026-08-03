@@ -31,18 +31,18 @@ def fix_installed_plugin():
         except (json.JSONDecodeError, OSError) as e:
             print(f"  [!] 读取 manifest 失败: {e}")
             return False
-        
+
         # 清理 hooks 中的 contextFile
         for hook_list in manifest.get('hooks', {}).values():
             for hook in hook_list:
                 hook.pop('contextFile', None)
-        
+
         # 修复 MCP 服务器命令为绝对路径
         for server in manifest.get('mcpServers', {}).values():
             if server.get('command') == 'python':
                 server['command'] = 'cmd.exe'
                 server['args'] = ['/c', 'cd', '/d', PROJECT_DIR, '&&', 'python', '-m', 'mcp_server']
-        
+
         with open(manifest_path, 'w', encoding='utf-8') as f:
             json.dump(manifest, f, ensure_ascii=False, indent=2)
         print(f"  [+] manifest 已修复")
@@ -57,7 +57,7 @@ def fix_installed_plugin():
     if os.path.exists(readme_src):
         shutil.copy2(readme_src, readme_dst)
         print(f"  [+] README.quick.md 已复制")
-    
+
     # 3. 复制更新后的 skills 和 commands
     for item in ['skills', 'commands']:
         src = os.path.join(SOURCE_DIR, item)

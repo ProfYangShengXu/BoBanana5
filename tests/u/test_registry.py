@@ -1,7 +1,7 @@
 """
 Bobanana 5.0 — Unit: Role Tag System & Registry
 """
-import os, yaml, glob, unittest, sys
+import os, yaml, unittest, sys
 sys.path.insert(0, '.')
 
 class TestRoleRegistry(unittest.TestCase):

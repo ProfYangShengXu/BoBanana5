@@ -3,7 +3,6 @@ Bobanana 5.0 — MCP Events Unit Tests (U层)
 测试 mcp_events.py 的 PipelineEvent、EventSubscriber 独立功能，normal/boundary/adversarial 三路径。
 """
 import os
-import sys
 import json
 import time
 import unittest

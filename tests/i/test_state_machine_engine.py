@@ -2,7 +2,7 @@
 Bobanana 5.0 — Integration: State Machine Engine
 测试状态机引擎的加载、流转、条件分支、临时节点。
 """
-import os, sys, yaml, json, tempfile, shutil, unittest
+import os, sys, yaml, tempfile, shutil, unittest
 
 sys.path.insert(0, '.')
 from state_machine_engine import StateMachineRuntime

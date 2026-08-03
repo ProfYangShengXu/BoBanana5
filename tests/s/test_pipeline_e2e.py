@@ -1,7 +1,7 @@
 """
 Bobanana 5.0 — E2E: Pipeline (使用独立目录，不改变cwd)
 """
-import os, sys, json, yaml, tempfile, shutil, unittest
+import os, sys, yaml, tempfile, shutil, unittest
 
 sys.path.insert(0, '.')
 import pipeline_orchestrator as po

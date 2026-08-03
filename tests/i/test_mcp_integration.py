@@ -3,9 +3,6 @@ Bobanana 5.0 — MCP Client+Server Integration Tests (I层)
 测试 mcp_client 与 mcp_server 的 direct 模式完整交互。
 normal/boundary/adversarial 三路径。
 """
-import os
-import sys
-import json
 import unittest
 
 

@@ -11,12 +11,10 @@ EUI-NEO 桌面端通过此类与 reasonix.exe 通信。
     status = client.get_pipeline_status()
 """
 
-import os
 import sys
 import json
 import subprocess
 import time
-import threading
 
 
 class MCPError(Exception):

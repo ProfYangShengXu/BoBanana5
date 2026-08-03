@@ -3,7 +3,7 @@ Bobanana 5.0 — Security: 安全扫描测试
 静态分析检查常见安全问题。
 跳过 tests/ 目录避免自检误报。
 """
-import os, sys, glob, unittest
+import os, glob, unittest
 
 SKIP_DIRS = ('build-eui', '__pycache__', 'external', '.git', 'tests/')
 

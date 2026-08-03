@@ -582,7 +582,9 @@ def cmd_repair(args):
         "phase": phase,
         "iteration": pipeline.get('loop_count', 0),
         "max_iterations": pipeline.get('max_loops', 50),
-        "next_prompt": f"[GOAL] {pipeline.get('goal', '')}\n[PHASE] {phase}\n[ROLE] {pipeline.get('current_node', '?')}",
+        "next_prompt": (f"[GOAL] {pipeline.get('goal', '')}\n"
+                        f"[PHASE] {phase}\n"
+                        f"[ROLE] {pipeline.get('current_node', '?')}"),
         "summary": f"重建自 pipeline.json | 节点: {pipeline.get('current_node')} | phase: {phase}",
         "last_updated": datetime.now().isoformat(),
     }

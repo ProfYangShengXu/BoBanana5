@@ -1,7 +1,7 @@
 """
 Bobanana 5.0 — Chaos: 边角测试
 """
-import os, yaml, json, tempfile, shutil, unittest
+import os, yaml, tempfile, shutil, unittest
 import sys
 sys.path.insert(0, '.')
 

@@ -9,10 +9,8 @@ Bobanana 5.0 — State Machine Parser & Validator
     python state_machine_parser.py graph state-machine.yaml      # 输出 Mermaid 图
 """
 
-import os
 import sys
 import yaml
-import json
 from collections import defaultdict
 
 

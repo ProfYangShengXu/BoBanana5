@@ -13,7 +13,8 @@ STUDIES = {
        ["System Bloat：加无意义系统", "边界条件遗漏", "系统间张力不足", "忽视新人体验"]),
     "level-designer": ("关卡策划", "关卡/地形/谜题/流程设计", "设计",
        "Blockout→Playtest→Polish, Paper Level Design, Difficulty Curve, Flow Channel, Golden Path",
-       ["Bubble Diagram（泡泡图）", "Level Blockout 白盒", "Greybox Map 灰盒", "Intensity Arc 图", "Encounter 配置表", "Puzzle Logic 图"],
+       ["Bubble Diagram（泡泡图）", "Level Blockout 白盒", "Greybox Map 灰盒",
+        "Intensity Arc 图", "Encounter 配置表", "Puzzle Logic 图"],
        ["Blockout 阶段 playtest 不够", "难度曲线设计不合理", "玩家 flow 被阻断", "谜题解法收束过窄"]),
     "narrative-designer": ("剧情策划", "主线/支线/世界观/对话设计", "设计",
        "Narrative Systems vs Content, Gameplay First, Ludonarrative Harmony, Arc Diagram, Branching Narrative",
@@ -24,7 +25,8 @@ STUDIES = {
        ["战斗系统设计文档", "技能配置表", "敌人设计文档", "AI Behavior Tree", "Game Feel 参数表", "连招树", "战斗 Prototype"],
        ["输入反馈延迟 >100ms", "玩家看不懂敌人攻击预告", "敌人类型单一", "Combo 深度不足/过深"]),
     "numerical-designer": ("数值策划", "战斗/经济/平衡/概率设计", "设计",
-       "Spreadsheet Modeling, Economy Flow Design, Inflation Control, Difficulty Curve Modeling, Dominant Strategy Detection",
+       "Spreadsheet Modeling, Economy Flow Design, Inflation Control, "
+       "Difficulty Curve Modeling, Dominant Strategy Detection",
        ["数值模型（Excel）", "属性配置表", "经济循环图", "难度曲线表", "模拟运行结果", "平衡性调整日志"],
        ["Dominant Strategy: 存在最优解", "经济恶性通胀", "Edge Cases 未覆盖", "数值自洽性不足"]),
 
@@ -119,7 +121,10 @@ STUDIES = {
 
 
 def gen_standards_brief(name, title, desc, role_type, methodology, outputs, pitfalls):
-    method_lines = "\n".join(f"      - {m.strip()}" for m in methodology.split(",")) if methodology else "      - 行业通用实践"
+    method_lines = (
+        "\n".join(f"      - {m.strip()}" for m in methodology.split(","))
+        if methodology else "      - 行业通用实践"
+    )
     output_lines = "\n".join(f"  - {o}" for o in outputs)
     pitfall_lines = "\n".join(f"  - {p}" for p in pitfalls)
     tag = {"设计": "design", "开发": "dev", "美术": "art", "音频": "audio", "测试": "test"}.get(role_type, "general")

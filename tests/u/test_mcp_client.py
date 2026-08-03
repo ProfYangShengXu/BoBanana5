@@ -2,9 +2,6 @@
 Bobanana 5.0 — MCP Client Unit Tests (U层)
 测试 mcp_client.MCPClient 的独立功能，normal/boundary/adversarial 三路径。
 """
-import os
-import sys
-import json
 import unittest
 from unittest.mock import MagicMock, patch
 

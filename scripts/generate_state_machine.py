@@ -8,7 +8,7 @@ Bobanana 5.0 — 状态机生成器 (Schema标准工具)
     python scripts/generate_state_machine.py validate state-machine.yaml
 """
 
-import os, sys, yaml, json, glob, shutil
+import os, sys, yaml
 
 TEMPLATES_DIR = "docs/examples"
 OUTPUT_PATH = "state-machine.yaml"

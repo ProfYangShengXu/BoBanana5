@@ -14,7 +14,6 @@ Bobanana 5.0 — Role Card Registry CLI
 
 import os
 import sys
-import json
 import yaml
 import argparse
 

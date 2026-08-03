@@ -2,7 +2,7 @@
 Bobanana 5.0 — E2E: MCP Server 协议测试
 启动 mcp_server.py 子进程 → 发 JSON-RPC 请求 → 验响应 → 关进程
 """
-import os, sys, json, subprocess, time, signal, tempfile, unittest
+import os, sys, json, subprocess, time, unittest
 
 class TestMCPE2E(unittest.TestCase):
     @classmethod

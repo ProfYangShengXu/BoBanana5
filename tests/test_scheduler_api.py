@@ -3,13 +3,13 @@ Bobanana 5.0 — 定时任务调度 API 单元测试
 测试纯函数 API: validate_goal / validate_time / validate_task_id / schedule_create_task / list_tasks / remove_task / get_task_logs
 """
 
-import os, sys, tempfile, shutil
+import os, sys, tempfile
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from scripts.pipeline_scheduler import (
     validate_goal, validate_time, validate_task_id,
     schedule_create_task, list_tasks, remove_task, get_task_logs,
-    CONFIG_DIR, LOG_DIR, TASKS_FILE,
+    CONFIG_DIR, TASKS_FILE,
 )
 
 import pytest

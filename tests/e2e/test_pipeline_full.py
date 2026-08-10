@@ -2,7 +2,7 @@
 Bobanana 5.0 — 真实端到端管线测试
 使用真实 state-machine.yaml，直接操作 pipeline 文件，不调用 init_pipeline。
 """
-import os, sys, yaml, json, tempfile, shutil, unittest, time
+import os, sys, yaml, tempfile, shutil, unittest, time
 
 sys.path.insert(0, '.')
 import pipeline_orchestrator as po

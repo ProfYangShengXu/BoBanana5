@@ -3,7 +3,7 @@ Bobanana 5.0 — MCP Client Unit Tests (U层)
 测试 mcp_client.MCPClient 的独立功能，normal/boundary/adversarial 三路径。
 """
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 
 # ── Test: MCPClient 基础功能 ──
@@ -74,7 +74,7 @@ class TestMCPClientConnect(unittest.TestCase):
 
     def test_adversarial_connect_before_subprocess(self):
         """对抗路径：subprocess 模式未连接时调用"""
-        from mcp_client import MCPClient, MCPError
+        from mcp_client import MCPClient
         client = MCPClient(direct_mode=False)
         # subprocess 模式尚未启动 proc，connect 内部会尝试 Popen
         # 这里不实际启动，直接验证状态

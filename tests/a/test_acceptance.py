@@ -5,7 +5,6 @@ Bobanana 5.0 — Acceptance Tests (A层)
 """
 import os
 import sys
-import yaml
 import subprocess
 import unittest
 
@@ -172,7 +171,6 @@ class TestA_M4_Tags(unittest.TestCase):
 
     def test_M4_A2_cl_isolation(self):
         """M4-A2: CL 隔离审查存在"""
-        from pipeline_orchestrator import run_cl_review
         import tempfile, json
         d = tempfile.mkdtemp()
         try:

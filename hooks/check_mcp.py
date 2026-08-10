@@ -34,7 +34,7 @@ def _get_goal():
 
 def _set_goal_mode(goal):
     """写入 topic 文件 → 触发 Reasonix 目标模式"""
-    import hashlib, time
+    import time
     topic_file = os.path.join(PROJECT_ROOT, '.reasonix', 'desktop-topic-titles.json')
     tid = f"topic_bobanana_c_{int(time.time())}"
     titles = {}

@@ -6,7 +6,6 @@ import os
 import json
 import time
 import unittest
-from unittest.mock import MagicMock, patch
 
 
 class TestPipelineEvent(unittest.TestCase):

@@ -3,11 +3,12 @@ Bobanana 5.0 — Security: 安全扫描测试
 静态分析检查常见安全问题。
 跳过 tests/ 目录避免自检误报。
 """
-import os, glob, unittest
+import glob, unittest
 
 SKIP_DIRS = ('build-eui', '__pycache__', 'external', '.git', 'tests/')
 
 def _skip_path(p):
+    p = p.replace('\\', '/')  # Windows 路径归一化，避免自检误报
     for s in SKIP_DIRS:
         if s in p:
             return True

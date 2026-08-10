@@ -26,7 +26,7 @@ def get_pending_goal():
 
 def set_goal_mode(goal):
     """写入 topic 文件触发 Reasonix 目标模式"""
-    import hashlib, time
+    import time
     topic_id = f"topic_bobanana_{int(time.time())}"
     titles = {}
     if os.path.exists(TOPIC_FILE):

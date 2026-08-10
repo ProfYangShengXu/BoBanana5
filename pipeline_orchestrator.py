@@ -15,8 +15,9 @@ import sys
 import json
 import logging
 import time
-import yaml
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 CL_PASS_THRESHOLD = 9
 PIPELINE_DIR = ".reasonix/pipelines"
@@ -484,7 +485,6 @@ def cmd_advance(args):
 
 def cmd_continue(args):
     """从 pipeline.json 读取下一 phase 并推进管线（以 pipeline.json 为权威源）"""
-    import json as _json
     # 从 pipeline.json 获取当前状态（权威源），不依赖 cycle/state.json
     pipeline = get_pipeline()
     if not pipeline:

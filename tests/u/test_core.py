@@ -4,7 +4,6 @@ Bobanana 5.0 — Unit Tests (U层)
 """
 import os
 import sys
-import json
 import yaml
 import tempfile
 import shutil

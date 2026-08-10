@@ -2,10 +2,8 @@
 Bobanana 5.0 — MCP Server Unit Tests (U层)
 测试 mcp_server.py 的 handle_request 分发和 handler 函数，normal/boundary/adversarial 三路径。
 """
-import sys
-import json
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 
 class TestMCPServerRequestDispatcher(unittest.TestCase):
@@ -235,7 +233,6 @@ class TestMCPServerMainLoop(unittest.TestCase):
     @patch('sys.stdin')
     def test_normal_main_parse_error(self, mock_stdin):
         """正常路径：main 循环中解析错误返回 -32700"""
-        from mcp_server import main, send_response
         mock_stdin.readline.return_value = 'not valid json\n'
         with patch('sys.stdout'):
             # main() 会进入无限循环，模拟一次后手动停止

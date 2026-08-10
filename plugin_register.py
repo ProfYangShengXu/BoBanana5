@@ -11,9 +11,7 @@ Bobanana 5.0 — Reasonix 插件注册工具
 
 import os
 import sys
-import json
 import shutil
-from pathlib import Path
 
 
 REASONIX_HOME = os.path.expanduser("~/.reasonix")

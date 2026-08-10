@@ -2,7 +2,7 @@
 Bobanana 5.0 — Unit: Handoff Ticket
 测试 handoff_ticket.py 的核心功能。
 """
-import sys, time, tempfile, shutil, unittest
+import sys, tempfile, shutil, unittest
 
 sys.path.insert(0, '.')
 import handoff_ticket as ht

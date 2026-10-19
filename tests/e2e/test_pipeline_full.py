@@ -102,8 +102,9 @@ class TestPipelineFullE2E(unittest.TestCase):
         self.assertEqual(found['goal'], pl['goal'])
 
     def test_get_pipeline_latest(self):
-        pl1 = _create_test_pipeline(self.tmpdir, "first")
-        pl2 = _create_test_pipeline(self.tmpdir, "second")
+        # 两次调用均有写文件副作用，返回值此处无需使用
+        _create_test_pipeline(self.tmpdir, "first")
+        _create_test_pipeline(self.tmpdir, "second")
         latest = po.get_pipeline()
         self.assertEqual(latest['goal'], "second")
 

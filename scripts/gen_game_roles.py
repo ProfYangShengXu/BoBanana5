@@ -50,9 +50,9 @@ def gen_role_card(name, desc, tags):
                             "description": desc.split("：")[-1] if "：" in desc else desc,
                             "required": True}],
         "quality_gates": [
-            {"id": f"GAME-Q1", "desc": "设计文档完整，需求可追溯",
+            {"id": "GAME-Q1", "desc": "设计文档完整，需求可追溯",
              "check": "每个需求点都有对应的实现或设计依据", "layer": "U"},
-            {"id": f"GAME-Q2", "desc": "产出物可验证",
+            {"id": "GAME-Q2", "desc": "产出物可验证",
              "check": "其他角色或工具可以验证该角色的产出", "layer": "I"},
         ],
         "standards_file": "SKILL.md",
@@ -60,9 +60,6 @@ def gen_role_card(name, desc, tags):
     }, default_flow_style=False, allow_unicode=True, sort_keys=False)
 
 def gen_skill_md(name, desc, role_type, tags):
-    part = desc.split("：")[0] if "：" in desc else name
-    detail = desc.split("：")[-1] if "：" in desc else desc
-    is_op = "OP" in tags
     phase_flag = {"design": "design-done", "dev": "dev-done_task-done",
                   "test": "test-done_layer-all-done", "art": "design-done",
                   "audio": "design-done"}.get(role_type, "dev-done_task-done")

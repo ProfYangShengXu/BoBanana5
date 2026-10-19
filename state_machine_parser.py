@@ -105,7 +105,6 @@ def validate_state_machine(sm, schema_path=None):
         is_exit = node_map[nid].get('is_exit', False)
         if is_exit and nid in out_edges:
             # 允许条件分支出边（CL 的打回/通过分支）
-            has_conditional = any('condition' in e for e in out_edges[nid])
             has_unconditional = any('condition' not in e for e in out_edges[nid])
             if has_unconditional:
                 warnings.append(f"出口节点 '{nid}' 有无条件出边（出口出边应全部带 condition）")
@@ -160,8 +159,6 @@ def generate_mermaid(sm):
     """生成 Mermaid 流程图"""
     lines = ["graph TD"]
     lines.append(f"  ENTRY[{sm.get('entry_point', '?')}]")
-
-    node_ids = {n['id'] for n in sm.get('nodes', [])}
 
     for node in sm.get('nodes', []):
         nid = node['id']

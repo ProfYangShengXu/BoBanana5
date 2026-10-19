@@ -14,11 +14,22 @@ import yaml
 import traceback
 
 
+PIPELINE_DIR = ".reasonix/pipelines"
+STATE_PATH = ".reasonix/state/machine_state.json"
+ROLES_DIR = "skills/roles"
+
+
 def send_response(id, result=None, error=None):
     """发送 JSON-RPC 2.0 响应到 stdout"""
     response = {"jsonrpc": "2.0", "id": id}
     if error:
-        response["error"] = {"code": error.get("code", -1), "message": error.get("message", "Unknown error")}
+        # handler 可能只返回字符串形式的 error，此处统一包装成协议对象
+        if not isinstance(error, dict):
+            error = {"code": -32603, "message": str(error)}
+        response["error"] = {
+            "code": error.get("code", -1),
+            "message": error.get("message", "Unknown error"),
+        }
     else:
         response["result"] = result or {}
     line = json.dumps(response, ensure_ascii=False)
@@ -54,6 +65,19 @@ def handle_request(method, params):
     return handler(params or {})
 
 
+def _resolve_pipeline_path(pipeline_id):
+    """定位管线文件：指定 id 则直取，否则回退到目录内最新的 json；找不到返回 None"""
+    if pipeline_id:
+        return os.path.join(PIPELINE_DIR, f"{pipeline_id}.json")
+    if not os.path.exists(PIPELINE_DIR):
+        return None
+    files = sorted(
+        [f for f in os.listdir(PIPELINE_DIR) if f.endswith('.json')],
+        reverse=True,
+    )
+    return os.path.join(PIPELINE_DIR, files[0]) if files else None
+
+
 # ── Handlers ─────────────────────────────────────
 
 
@@ -79,7 +103,7 @@ def handle_get_state_machine(params):
             edge["condition"] = e["condition"]
         edges.append(edge)
 
-    state_path = ".reasonix/state/machine_state.json"
+    state_path = STATE_PATH
     current_node = None
     completed = []
     if os.path.exists(state_path):
@@ -102,16 +126,7 @@ def handle_get_state_machine(params):
 
 def handle_get_pipeline_status(params):
     pipeline_id = params.get("pipeline_id")
-    pipeline_dir = ".reasonix/pipelines"
-    if pipeline_id:
-        path = os.path.join(pipeline_dir, f"{pipeline_id}.json")
-    else:
-        # 获取最新
-        files = sorted(
-            [f for f in os.listdir(pipeline_dir) if f.endswith('.json')],
-            reverse=True
-        ) if os.path.exists(pipeline_dir) else []
-        path = os.path.join(pipeline_dir, files[0]) if files else None
+    path = _resolve_pipeline_path(pipeline_id)
 
     if not path or not os.path.exists(path):
         return {"status": "no_active_pipeline"}
@@ -169,7 +184,7 @@ def handle_get_role_cards(params):
 
 def handle_get_role_card_detail(params):
     name = params.get("name")
-    path = f"skills/roles/{name}/role-card.yaml"
+    path = os.path.join(ROLES_DIR, str(name), "role-card.yaml")
     if not os.path.exists(path):
         return {"error": f"Role card not found: {name}"}
     with open(path, 'r', encoding='utf-8') as f:
@@ -203,15 +218,7 @@ def handle_trigger_hr_recruit(params):
 
 def handle_get_cl_report(params):
     pipeline_id = params.get("pipeline_id")
-    pipeline_dir = ".reasonix/pipelines"
-    if pipeline_id:
-        path = os.path.join(pipeline_dir, f"{pipeline_id}.json")
-    else:
-        files = sorted(
-            [f for f in os.listdir(pipeline_dir) if f.endswith('.json')],
-            reverse=True
-        ) if os.path.exists(pipeline_dir) else []
-        path = os.path.join(pipeline_dir, files[0]) if files else None
+    path = _resolve_pipeline_path(pipeline_id)
 
     if not path or not os.path.exists(path):
         return {"report": None}
@@ -244,19 +251,26 @@ def handle_read_file(params):
     # 路径消毒：用 realpath 解析真实路径 + commonpath 比较
     cwd = os.path.realpath(os.getcwd())
     requested = os.path.realpath(os.path.join(cwd, path))
-    if os.path.commonpath([cwd]) != os.path.commonpath([cwd, requested]):
+    try:
+        # 跨盘符时 commonpath 会抛 ValueError，视为越界
+        inside = os.path.commonpath([cwd]) == os.path.commonpath([cwd, requested])
+    except (ValueError, OSError):
+        inside = False
+    if not inside:
         return {"error": "Path traversal denied"}
     if not os.path.exists(requested):
         return {"error": f"File not found: {path}"}
-    with open(requested, 'r', encoding='utf-8') as f:
-        content = f.read()
+    try:
+        with open(requested, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except (OSError, UnicodeDecodeError) as e:  # 二进制/无权限文件不应让服务端崩溃
+        return {"error": f"Read failed: {path}: {e}"}
     return {"content": content, "path": path}
 
 
 # ── Main Loop ────────────────────────────────────
 
 def main():
-    import sys
     # 确保 UTF-8 输出
     if hasattr(sys.stdout, 'reconfigure'):
         sys.stdout.reconfigure(encoding='utf-8')
@@ -269,6 +283,7 @@ def main():
         line = line.strip()
         if not line:
             continue
+        req_id = None  # 解析成功后再回填，供异常分支引用
         try:
             request = json.loads(line)
             method = request.get("method", "")
@@ -282,9 +297,9 @@ def main():
                 send_response(req_id, result=result)
 
         except json.JSONDecodeError:
-            send_response(None, error={"code": -32700, "message": "Parse error"})
+            send_response(req_id, error={"code": -32700, "message": "Parse error"})
         except Exception as e:
-            send_response(None, error={"code": -32603, "message": str(e)})
+            send_response(req_id, error={"code": -32603, "message": str(e)})
             traceback.print_exc(file=sys.stderr)
 
 

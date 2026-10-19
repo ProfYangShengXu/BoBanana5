@@ -178,7 +178,7 @@ def run_cl_review(pipeline_id, score, context=None):
         assumptions=[f"隔离审查完成，状态: {status}"],
     )
 
-    print(f"CL 隔离审查完成:")
+    print("CL 隔离审查完成:")
     print(f"  管线:      {pipeline_id}")
     print(f"  分数:      {score}/10")
     print(f"  已完成节点: {len(isolated_context['completed_nodes'])} 个")
@@ -191,7 +191,7 @@ def run_cl_review(pipeline_id, score, context=None):
 def handle_cl_failback(pipeline_id, cl_report=None):
     """
     Badcase M6-A3 修复: CL 打回逻辑。
-    CL 分数 < 9 时打回给最近的 OP 角色，并附带审查报告。
+    CL 分数 < CL_PASS_THRESHOLD 时打回给最近的 OP 角色，并附带审查报告。
     """
     pipeline = get_pipeline(pipeline_id)
     if not pipeline:
@@ -206,7 +206,6 @@ def handle_cl_failback(pipeline_id, cl_report=None):
 
     # 生成打回工单
     from handoff_ticket import create_handoff_ticket
-    report = cl_report or pipeline.get("cl_report", {})
     ticket = create_handoff_ticket(
         "client-gate",
         "architect",
@@ -222,19 +221,19 @@ def handle_cl_failback(pipeline_id, cl_report=None):
     pipeline["current_node"] = "architect"
     pipeline["current_phase"] = "cl-failback"
     pipeline["status"] = "failback_to_architect"
-    pipeline["failed_count"] += 1
+    pipeline["failed_count"] = pipeline.get("failed_count", 0) + 1
     pipeline["history"].append({
         "from": "client-gate",
         "to": "architect",
         "phase": "cl-done_fail",
         "timestamp": datetime.now().isoformat(),
-        "reason": f"CL score {score}/10 < 9",
+        "reason": f"CL score {score}/10 < {CL_PASS_THRESHOLD}",
     })
     save_json(_pipeline_path(pipeline_id), pipeline)
 
-    print(f"CL 打回触发:")
-    print(f"  分数:      {score}/10 (< 9)")
-    print(f"  目标角色:  architect (OP)")
+    print("CL 打回触发:")
+    print(f"  分数:      {score}/10 (< {CL_PASS_THRESHOLD})")
+    print("  目标角色:  architect (OP)")
     print(f"  工单:      {ticket['ticket_id']}")
     print(f"  失败计数:  {pipeline['failed_count']}")
 
@@ -332,13 +331,10 @@ def advance_pipeline(phase, score=None, pid=None):
     engine.state['completed_nodes'] = list(pipeline.get('completed_nodes', []))
 
     # 处理 CL 分数
-    from state_machine_parser import load_state_machine
-    sm_config = load_state_machine(STATE_MACHINE_PATH)
-
     context = {}
     if score is not None:
         context['score'] = score
-        if phase == 'cl-done_pass' and score < 9:
+        if phase == 'cl-done_pass' and score < CL_PASS_THRESHOLD:
             phase = 'cl-done_fail'
         elif phase == 'cl-done_fail' and score >= CL_PASS_THRESHOLD:
             phase = 'cl-done_pass'
@@ -368,7 +364,7 @@ def advance_pipeline(phase, score=None, pid=None):
                               assumptions=[f"CL score: {score}"])
         print(f"管线完成! 总分: {score}")
     elif phase in ('cl-done_fail',) or ('fail' in phase.lower() and current == 'client-gate'):
-        pipeline['failed_count'] += 1
+        pipeline['failed_count'] = pipeline.get('failed_count', 0) + 1
         pipeline['status'] = 'failback_to_architect'
         pipeline['cl_score'] = score
         run_cl_review(pipeline['pipeline_id'], score if score else 0)
@@ -460,7 +456,7 @@ def show_status(pid=None):
     print(f"失败次数:   {pipeline['failed_count']}")
 
     if pipeline['history']:
-        print(f"\n最近流转:")
+        print("\n最近流转:")
         for h in pipeline['history'][-5:]:
             print(f"  {h['from']:15s} -> {h['to']:15s}  [{h['phase']}]")
 
@@ -470,7 +466,8 @@ def show_status(pid=None):
 
 
 def cmd_init(args):
-    pipeline = init_pipeline(args.goal, rounds=getattr(args, 'rounds', 3))
+    # init_pipeline 有写文件副作用，调用结果此处无需使用
+    init_pipeline(args.goal, rounds=getattr(args, 'rounds', 3))
     return 0
 
 
@@ -590,7 +587,7 @@ def cmd_repair(args):
     }
     with open(os.path.join(cycle_dir, 'state.json'), 'w', encoding='utf-8') as f:
         json.dump(cycle_state, f, ensure_ascii=False, indent=2)
-    print(f"[修复] cycle/state.json 已从 pipeline.json 重建")
+    print("[修复] cycle/state.json 已从 pipeline.json 重建")
 
     # 重建 next_prompt.txt
     npt = os.path.join(cycle_dir, 'next_prompt.txt')
@@ -614,7 +611,7 @@ def cmd_repair(args):
         engine.state['max_loops'] = pipeline.get('max_loops', 50)
         engine.state['failed_count'] = pipeline.get('failed_count', 0)
         engine._save_state()
-        print(f"[修复] machine_state.json 已从 pipeline.json 重建")
+        print("[修复] machine_state.json 已从 pipeline.json 重建")
 
     print(f"\n修复完成。当前状态: phase={phase}, node={pipeline.get('current_node')}")
     return 0

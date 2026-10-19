@@ -149,7 +149,7 @@ class TestEventSubscriberFileHash(unittest.TestCase):
 
     def test_boundary_empty_file(self):
         """边界路径：空文件"""
-        with open(self.tmpfile, 'w') as f:
+        with open(self.tmpfile, 'w'):
             pass  # 空文件
         h = self.sub._file_hash(self.tmpfile)
         self.assertIsNotNone(h)  # 空文件也有 MD5

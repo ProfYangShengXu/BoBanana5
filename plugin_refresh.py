@@ -17,7 +17,7 @@ def refresh():
     print()
 
     if not os.path.exists(PLUGIN_DIR):
-        print(f"  [!] 插件未安装，请先安装")
+        print("  [!] 插件未安装，请先安装")
         print(f"      reasonix plugin install {SOURCE_DIR} --replace --yes")
         return False
 
@@ -25,7 +25,7 @@ def refresh():
     src = os.path.join(SOURCE_DIR, 'reasonix-plugin.json')
     dst = os.path.join(PLUGIN_DIR, 'reasonix-plugin.json')
     shutil.copy2(src, dst)
-    print(f"  [+] manifest 已同步")
+    print("  [+] manifest 已同步")
 
     # 2. 同步 skills
     src_skills = os.path.join(SOURCE_DIR, 'skills')
@@ -33,7 +33,7 @@ def refresh():
     if os.path.exists(dst_skills):
         shutil.rmtree(dst_skills)
     shutil.copytree(src_skills, dst_skills)
-    print(f"  [+] skills 已同步")
+    print("  [+] skills 已同步")
 
     # 3. 同步 commands
     src_cmds = os.path.join(SOURCE_DIR, 'commands')
@@ -41,14 +41,14 @@ def refresh():
     if os.path.exists(dst_cmds):
         shutil.rmtree(dst_cmds)
     shutil.copytree(src_cmds, dst_cmds)
-    print(f"  [+] commands 已同步")
+    print("  [+] commands 已同步")
 
     # 4. 通知 Reasonix 刷新（写入标记文件）
     refresh_file = os.path.join(PLUGIN_DIR, '.refresh')
     try:
         with open(refresh_file, 'w') as f:
             f.write('refresh')
-        print(f"  [+] 刷新标记已写入，Reasonix 将在下次交互时检测")
+        print("  [+] 刷新标记已写入，Reasonix 将在下次交互时检测")
     except OSError as e:
         print(f"  [!] 写入刷新标记失败: {e}")
 

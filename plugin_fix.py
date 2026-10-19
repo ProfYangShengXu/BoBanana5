@@ -16,7 +16,7 @@ SOURCE_DIR = os.path.join(PROJECT_DIR, 'bobanana-plugin')
 def fix_installed_plugin():
     if not os.path.exists(INSTALLED_DIR):
         print(f"  [!] 未找到已安装的插件: {INSTALLED_DIR}")
-        print(f"  [!] 请先在 Reasonix 桌面端安装插件")
+        print("  [!] 请先在 Reasonix 桌面端安装插件")
         print(f"       Settings -> Plugins -> Install Plugin -> 选择 {SOURCE_DIR}")
         return False
 
@@ -45,10 +45,10 @@ def fix_installed_plugin():
 
         with open(manifest_path, 'w', encoding='utf-8') as f:
             json.dump(manifest, f, ensure_ascii=False, indent=2)
-        print(f"  [+] manifest 已修复")
+        print("  [+] manifest 已修复")
 
     else:
-        print(f"  [!] manifest 不存在")
+        print("  [!] manifest 不存在")
         return False
 
     # 2. 复制 README.quick.md（如果 reference 还存在）
@@ -56,7 +56,7 @@ def fix_installed_plugin():
     readme_dst = os.path.join(INSTALLED_DIR, 'README.quick.md')
     if os.path.exists(readme_src):
         shutil.copy2(readme_src, readme_dst)
-        print(f"  [+] README.quick.md 已复制")
+        print("  [+] README.quick.md 已复制")
 
     # 3. 复制更新后的 skills 和 commands
     for item in ['skills', 'commands']:
@@ -68,7 +68,7 @@ def fix_installed_plugin():
             shutil.copytree(src, dst)
             print(f"  [+] {item} 已更新")
 
-    print(f"\n  修复完成！请重启 Reasonix 桌面端。")
+    print("\n  修复完成！请重启 Reasonix 桌面端。")
     return True
 
 

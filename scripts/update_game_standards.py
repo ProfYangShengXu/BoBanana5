@@ -127,7 +127,6 @@ def gen_standards_brief(name, title, desc, role_type, methodology, outputs, pitf
     )
     output_lines = "\n".join(f"  - {o}" for o in outputs)
     pitfall_lines = "\n".join(f"  - {p}" for p in pitfalls)
-    tag = {"设计": "design", "开发": "dev", "美术": "art", "音频": "audio", "测试": "test"}.get(role_type, "general")
 
     return f"""# {name} 职业准则简报（补齐研究）
 # 生成日期: 2026-07-19

@@ -54,7 +54,7 @@ def _set_goal_mode(goal):
 def main():
     if _pending():
         goal = _get_goal()
-        print(f"[Bobanana Hook] 管线进行中，强制进目标模式")
+        print("[Bobanana Hook] 管线进行中，强制进目标模式")
         _set_goal_mode(goal)
         print(f"[Bobanana Hook] 目标: {goal[:80]}...")
         # 调用 pre_boss_check 跳过 Boss 并继续管线

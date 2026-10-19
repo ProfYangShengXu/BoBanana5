@@ -5,16 +5,32 @@ Bobanana 5.0 — Pipeline Dashboard (TUI v2)
 UX 优化: 紧凑布局, 彩色, 实时刷新, 一键操作入口
 """
 
-import os, sys, json, time, shutil
+import os
+import sys
+import json
+import time
+import shutil
+import logging
 from datetime import datetime
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-sys.stdout.reconfigure(encoding='utf-8')
+if hasattr(sys.stdout, 'reconfigure'):  # 非 TTY/重定向时不存在该方法
+    sys.stdout.reconfigure(encoding='utf-8')
 from mcp_client import MCPClient
 
-W, COL = shutil.get_terminal_size((80, 24)), 70
-W = W.columns if W and W.columns > 40 else 70
-COL = min(W - 4, 70)
+# 布局常量
+MIN_TERMINAL_COLS = 40      # 低于此宽度回退到默认列宽
+MAX_CONTENT_COLS = 70       # 内容区最大宽度
+CONTENT_MARGIN = 4          # 内容区两侧留白
+PROGRESS_BAR_WIDTH = 25     # 进度条总格数
+PCT_PER_BLOCK = 4           # 每个进度块代表的百分比
+CL_PASS_THRESHOLD = 9       # CL 审查通过分数线（满分 10）
+DEFAULT_TOTAL_NODES = 11    # 状态机节点数缺失时的兜底值
+REFRESH_INTERVAL_SEC = 3
+
+W, COL = shutil.get_terminal_size((80, 24)), MAX_CONTENT_COLS
+W = W.columns if W and W.columns > MIN_TERMINAL_COLS else MAX_CONTENT_COLS
+COL = min(W - CONTENT_MARGIN, MAX_CONTENT_COLS)
 
 # ── 色 ─────────────────────────────────────
 C = {
@@ -52,14 +68,14 @@ class Dashboard:
     def show_status_bar(self, status, sm):
         current = status.get('current_node', sm.get('current_node', 'idle'))
         done = status.get('completed_count', len(sm.get('completed_nodes', [])))
-        total_nodes = len(sm.get('nodes', sm.get('completed_nodes', []))) if sm.get('nodes') else 11
+        total_nodes = len(sm.get('nodes', sm.get('completed_nodes', []))) if sm.get('nodes') else DEFAULT_TOTAL_NODES
         total = max(total_nodes, done + 1)
         phase = status.get('current_phase', 'waiting')
         loops = status.get('loop_count', 0)
         pct = int(done / max(total, 1) * 100)
 
-        bar1 = '█' * (pct // 4) if pct > 0 else ''
-        bar2 = '░' * (25 - len(bar1))
+        bar1 = '█' * (pct // PCT_PER_BLOCK) if pct > 0 else ''
+        bar2 = '░' * (PROGRESS_BAR_WIDTH - len(bar1))
         bar = c('G', bar1) + c('DIM', bar2)
 
         line('═')
@@ -85,7 +101,7 @@ class Dashboard:
 
         # 节点流水线
         flow = ''
-        for i, n in enumerate(nodes):
+        for n in nodes:
             is_cur = n['id'] == cur
             is_exit = n.get('is_exit', False)
             name = n.get('label', n['id'])[:12]
@@ -97,7 +113,8 @@ class Dashboard:
                 flow += c('M', f"({name})") + c('DIM', '→')
             else:
                 flow += c('DIM', f"○{name}→")
-        print(f" {flow[:-1]}")
+        # 末节点不带箭头，切掉最后一个 '→' 避免悬空
+        print(f" {flow[:-1] if flow else c('DIM', 'no nodes')}")
         print(f" {c('DIM',f'{len(nodes)} nodes / {len(edges)} edges')}")
 
     # ── 角色卡 ────────────────────────────
@@ -112,11 +129,11 @@ class Dashboard:
             pairs.append((a, b))
 
         for a, b in pairs:
+            # 字段缺失时退化为占位符，避免 KeyError 中断整个仪表盘
             tag_a = (a.get('tags') or ['-'])[0]
-            name_a = a['name'][:18]
+            name_a = a.get('name', '?')[:18]
             tag_b = (b.get('tags') or ['-'])[0] if b else ''
-            name_b = b['name'][:18] if b else ''
-            mid = 38
+            name_b = b.get('name', '?')[:18] if b else ''
             print(f"  {badge(tag_a,True)} {name_a:20s}  {badge(tag_b,True) if b else ''} {name_b:20s}")
 
     # ── 管线进度 ──────────────────────────
@@ -141,8 +158,8 @@ class Dashboard:
         r = report.get('report')
         if r and r.get('score') is not None:
             s = r['score']
-            bar = c('G','█'*s) + c('R','█'*(10-s)) if s < 9 else c('G','█'*s)
-            verdict = c('G','PASS') if s >= 9 else c('R','FAIL')
+            bar = c('G','█'*s) + c('R','█'*(10-s)) if s < CL_PASS_THRESHOLD else c('G','█'*s)
+            verdict = c('G','PASS') if s >= CL_PASS_THRESHOLD else c('R','FAIL')
             print(f"  Score: {c('BOLD',str(s))}/10  {bar}  {verdict}")
         else:
             print(f"  {c('DIM','No CL report yet')}")
@@ -162,11 +179,12 @@ class Dashboard:
     # ── 完整仪表盘 ────────────────────────
     def show_all(self):
         self._refresh_count += 1
-        sm = self.client.get_state_machine()
-        status = self.client.get_pipeline_status()
-        cards = self.client.get_role_cards()
-        cl = self.client.get_cl_report()
-        tickets = self.client.get_handoff_tickets()
+        # 任一远端调用返回 None 时统一退化为空字典，避免下游 .get() 崩溃
+        sm = self.client.get_state_machine() or {}
+        status = self.client.get_pipeline_status() or {}
+        cards = self.client.get_role_cards() or {}
+        cl = self.client.get_cl_report() or {}
+        tickets = self.client.get_handoff_tickets() or {}
 
         self.show_status_bar(status, sm)
         self.show_sm_graph(sm)
@@ -199,14 +217,12 @@ def main():
             print('\n' * 2 + f'=== Refresh #{dash._refresh_count} ===')
             try:
                 dash.show_all()
-            except Exception as e:
-                import logging
+            except Exception as e:  # 单帧渲染失败不应终止轮询
                 logging.warning("Dashboard render error: %s", e)
-            time.sleep(3)
+            time.sleep(REFRESH_INTERVAL_SEC)
     except KeyboardInterrupt:
         print('\nBye!')
     except Exception as e:
-        import logging
         logging.warning("Dashboard fatal error: %s", e)
         input('\nPress Enter to exit...')
     finally:

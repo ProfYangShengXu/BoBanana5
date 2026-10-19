@@ -309,7 +309,7 @@ class TestMCPClientSubscribe(unittest.TestCase):
     def test_normal_subscribe_create(self):
         """正常路径：subscribe 创建但未开始轮询"""
         from mcp_client import MCPClient
-        client = MCPClient(direct_mode=True)
+        MCPClient(direct_mode=True)
         # subscribe 方法只是创建守护线程，不阻塞
         # 无法在此测试实际轮询，验证参数传递正确
         self.assertTrue(callable(lambda: None) or True)
@@ -317,7 +317,7 @@ class TestMCPClientSubscribe(unittest.TestCase):
     def test_adversarial_subscribe_without_connect(self):
         """对抗路径：未连接时 subscribe"""
         from mcp_client import MCPClient
-        client = MCPClient(direct_mode=False)
+        MCPClient(direct_mode=False)
         # 未连接时 subscribe 会因 _send_request 失败而抛出 MCPError
         # 不实际运行以避免死循环
 

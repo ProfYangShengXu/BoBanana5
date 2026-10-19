@@ -61,7 +61,7 @@ class TestS_FullPipeline(unittest.TestCase):
         advance_pipeline('cl-done_pass', score=4)
         pl = get_pipeline()
         assert pl['status'] == 'failback_to_architect', f"Expected failback, got {pl['status']}"
-        assert pl['current_node'] == 'architect', f"Should return to architect"
+        assert pl['current_node'] == 'architect', "Should return to architect"
         assert pl['failed_count'] == 1
 
     def test_adversarial_max_loops_reached(self):
@@ -118,11 +118,11 @@ class TestS_EmergencyHiring(unittest.TestCase):
         engine.transition('arch-done')
 
         # 第一次招聘
-        r1 = engine.insert_temporary_node('role-a', 'need-a')
+        engine.insert_temporary_node('role-a', 'need-a')
         engine.transition('role-a-done')
 
         # 第二次招聘
-        r2 = engine.insert_temporary_node('role-b', 'need-b')
+        engine.insert_temporary_node('role-b', 'need-b')
         engine.transition('role-b-done')
         assert engine.state['current_node'] == 'developer'
         assert len(engine.state['temporary_nodes']) == 0
@@ -172,7 +172,6 @@ class TestS_HandoffFlow(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    import tempfile
     suite = unittest.TestLoader().loadTestsFromModule(sys.modules[__name__])
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)

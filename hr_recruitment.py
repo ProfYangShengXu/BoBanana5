@@ -15,6 +15,9 @@ import sys
 import json
 import time
 import yaml
+import logging
+import urllib.error
+import urllib.request
 from datetime import datetime
 
 RECRUIT_DIR = ".reasonix/recruitments"
@@ -41,7 +44,7 @@ def simulate_subagent_research(topic, role_name):
     results_db = {
         "standards": {
             "key_standards": [f"{role_name} 的标准工作流程", f"{role_name} 核心方法论", f"{role_name} 交付物规范"],
-            "best_practices": [f"使用业界标准工具链", "遵循团队协作规范", "保持文档同步"],
+            "best_practices": ["使用业界标准工具链", "遵循团队协作规范", "保持文档同步"],
             "industry_references": [f"IGDA {role_name} 课程体系", f"GDC {role_name} 最佳实践演讲"],
         },
         "deliverables": {
@@ -64,7 +67,6 @@ def simulate_subagent_research(topic, role_name):
     # 尝试网络获取真实信息（失败则用本地数据）
     if topic == "standards":
         try:
-            import urllib.request
             url = (
                 "https://en.wikipedia.org/w/api.php"
                 "?action=query&titles="
@@ -80,9 +82,9 @@ def simulate_subagent_research(topic, role_name):
                         results_db["standards"]["industry_references"].append(
                             page['extract'][:200]
                         )
-        except Exception:
-            import logging
-            logging.warning("网络请求失败，使用本地数据")
+        # 网络不可用/超时/HTTP 错误/响应非 JSON 都退回本地数据，不中断招聘
+        except (urllib.error.URLError, OSError, json.JSONDecodeError) as e:
+            logging.warning("网络请求失败，使用本地数据: %s", e)
 
     return results_db.get(topic, {})
 
@@ -218,7 +220,7 @@ def generate_role_card(recruitment_id):
         ],
         "output_contract": [
             {"name": "implementation", "type": "object", "description": f"{role_name} 的实现产出（代码/设计/配置）"},
-            {"name": "test_results", "type": "object[]", "description": f"测试结果（normal/boundary/adversarial 三路径）"},
+            {"name": "test_results", "type": "object[]", "description": "测试结果（normal/boundary/adversarial 三路径）"},
             {"name": "risk_notes", "type": "object[]", "description": "7 维风险评估标注"},
         ],
         "quality_gates": [
@@ -295,11 +297,11 @@ standards-brief.yaml
     recruitment["status"] = "completed"
     _save_recruitment(recruitment)
 
-    print(f"角色卡生成:")
+    print("角色卡生成:")
     print(f"  role-card.yaml:     {card_path}")
     print(f"  SKILL.md:           {skill_path}")
     print(f"  standards-brief:    {brief_path}")
-    print(f"  注册命令:           python skills/roles/role_card_registry.py scan")
+    print("  注册命令:           python skills/roles/role_card_registry.py scan")
 
     return recruitment
 
@@ -362,11 +364,11 @@ def cmd_quick(args):
     recruitment = reference_existing_standards(args.role_name, args.standards_path)
     if not recruitment:
         return 1
-    print(f"快速创建角色卡:")
+    print("快速创建角色卡:")
     print(f"  角色: {recruitment['role_name']}")
     print(f"  引用: {recruitment['existing_standards_file']}")
     print(f"  跳过 subagent: {recruitment.get('skipped_subagents', 0)} 个")
-    print(f"\n生成角色卡:")
+    print("\n生成角色卡:")
     generate_role_card(recruitment['recruitment_id'])
     return 0
 

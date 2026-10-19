@@ -46,7 +46,7 @@ def _set_goal_mode(goal):
 def main():
     if _pending():
         goal = _get_goal()
-        print(f"[Bobanana Hook] 管线进行中，强制进目标模式")
+        print("[Bobanana Hook] 管线进行中，强制进目标模式")
         _set_goal_mode(goal)
         r = subprocess.run([sys.executable, os.path.join(PROJECT_ROOT, 'pipeline_orchestrator.py'), 'continue'],
                           capture_output=True, text=True, cwd=PROJECT_ROOT)

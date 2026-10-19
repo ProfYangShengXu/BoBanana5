@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Boss 前置检查：有pending管线时强制设目标模式"""
-import os, sys, json
+import os
+import sys
+import json
+import subprocess
 
 CYCLE_DIR = '.reasonix/cycle'
 TOPIC_FILE = '.reasonix/desktop-topic-titles.json'
@@ -46,10 +49,9 @@ def set_goal_mode(goal):
 if __name__ == '__main__':
     if has_pending():
         goal = get_pending_goal()
-        print(f"[SKIP] 管线未完成，强制进目标模式")
+        print("[SKIP] 管线未完成，强制进目标模式")
         print(f"[GOAL] {goal[:80]}...")
         set_goal_mode(goal)
-        import subprocess
         result = subprocess.run([sys.executable, 'pipeline_orchestrator.py', 'continue'],
                                capture_output=True, text=True, cwd=os.getcwd())
         for line in result.stdout.strip().split('\n'):

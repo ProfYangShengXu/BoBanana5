@@ -117,7 +117,7 @@ def copy_skills_and_commands():
     pipeline_dst = os.path.join(REASONIX_HOME, 'commands', 'pipeline.md')
     if os.path.exists(cycle_src) and not os.path.exists(pipeline_dst):
         shutil.copy2(cycle_src, pipeline_dst)
-        print(f"  [+] command: pipeline.md (alias)")
+        print("  [+] command: pipeline.md (alias)")
 
 
 def check_status():
@@ -128,9 +128,9 @@ def check_status():
 
     # 检查 .mcp.json
     if os.path.exists(MCP_JSON):
-        print(f"  [OK] .mcp.json: 存在 (6 tools)")
+        print("  [OK] .mcp.json: 存在 (6 tools)")
     else:
-        print(f"  [!!] .mcp.json: 缺失")
+        print("  [!!] .mcp.json: 缺失")
         ok = False
 
     # 检查 reasonix.toml 插件条目
@@ -138,12 +138,12 @@ def check_status():
     if os.path.exists(toml_path):
         with open(toml_path, 'r', encoding='utf-8') as f:
             if 'bobanana5' in f.read():
-                print(f"  [OK] reasonix.toml: 插件已注册")
+                print("  [OK] reasonix.toml: 插件已注册")
             else:
-                print(f"  [?] reasonix.toml: 存在但未注册 bobanana5 插件")
+                print("  [?] reasonix.toml: 存在但未注册 bobanana5 插件")
                 ok = False
     else:
-        print(f"  [?] reasonix.toml: 未找到")
+        print("  [?] reasonix.toml: 未找到")
         ok = False
 
     # 检查 MCP 服务器
@@ -151,7 +151,7 @@ def check_status():
     if os.path.exists(mcp_server):
         print(f"  [OK] MCP 服务器: {mcp_server}")
     else:
-        print(f"  [!!] MCP 服务器: 缺失")
+        print("  [!!] MCP 服务器: 缺失")
         ok = False
 
     # 检查技能

@@ -178,8 +178,6 @@ class TestA_M4_Tags(unittest.TestCase):
             os.makedirs('.reasonix/pipelines', exist_ok=True)
             pl = {'pipeline_id': 'test-pl', 'goal': 'test',
                   'completed_nodes': ['a', 'b'], 'cl_score': None, 'cl_report': None}
-            from pipeline_orchestrator import PIPELINE_DIR
-            orig_dir = PIPELINE_DIR
             import pipeline_orchestrator as po
             po.PIPELINE_DIR = d
             import json as _json

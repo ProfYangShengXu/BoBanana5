@@ -33,6 +33,8 @@ def load_all_role_cards():
                     cards.append(card)
             except yaml.YAMLError:
                 logging.warning("角色卡 YAML 损坏，跳过: %s", card_path)
+            except OSError:
+                logging.warning("角色卡读取失败，跳过: %s", card_path)
     return cards
 
 
@@ -40,7 +42,7 @@ def has_tag(role_name, tag):
     """检查角色是否有指定标签"""
     cards = load_all_role_cards()
     for card in cards:
-        if card['name'] == role_name:
+        if card.get('name') == role_name:  # get 避免缺 name 字段时 KeyError
             tags = card.get('tags', [])
             return tag in tags
     return False
@@ -60,7 +62,7 @@ def apply_tag_behavior(role_name, context=None):
     cards = load_all_role_cards()
     card = None
     for c in cards:
-        if c['name'] == role_name:
+        if c.get('name') == role_name:  # get 避免缺 name 字段时 KeyError
             card = c
             break
 
@@ -145,11 +147,11 @@ def cmd_check(args):
 
     behavior = apply_tag_behavior(args.role_name)
     if behavior['actions']:
-        print(f"\n允许的操作:")
+        print("\n允许的操作:")
         for a in behavior['actions']:
             print(f"  + {a}")
     if behavior['restrictions']:
-        print(f"\n限制:")
+        print("\n限制:")
         for r in behavior['restrictions']:
             print(f"  ! {r}")
 
@@ -189,7 +191,7 @@ def cmd_verify(args):
 
 def cmd_scan(args):
     summary = get_all_tags_summary()
-    print(f"标签系统概要:")
+    print("标签系统概要:")
     for tag_name in ['OP', 'CL', 'HR']:
         roles = get_roles_by_tag(tag_name)
         print(f"  [{tag_name}] {len(roles)} 个角色: {', '.join(roles) if roles else '(无)'}")

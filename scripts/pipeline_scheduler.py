@@ -139,9 +139,6 @@ def cmd_install_winsch(args):
         logger.warning("没有已注册的任务")
         return 1
 
-    script_path = os.path.abspath(__file__)
-    python_path = sys.executable
-
     for t in tasks:
         _install_winsch_task(t)
     logger.info(f"已安装 {len(tasks)} 个任务到 Windows 任务计划程序")

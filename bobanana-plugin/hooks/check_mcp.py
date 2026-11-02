@@ -51,7 +51,8 @@ def main():
         r = subprocess.run([sys.executable, os.path.join(PROJECT_ROOT, 'pipeline_orchestrator.py'), 'continue'],
                           capture_output=True, text=True, cwd=PROJECT_ROOT)
         for line in r.stdout.strip().split('\n'):
-            if line.strip(): print(f"  > {line.strip()}")
+            if line.strip():
+                print(f"  > {line.strip()}")
     else:
         print("[Bobanana Hook] 就绪。/bb <目标> 启动新管线.")
     return 0

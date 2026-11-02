@@ -11,7 +11,9 @@ Godot Kitset 统一 CLI 入口
      python tools.py plugin ...    # 启动 Godot 通信插件
 """
 
-import sys, logging, subprocess
+import sys
+import logging
+import subprocess
 from pathlib import Path
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')

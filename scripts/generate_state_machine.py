@@ -8,7 +8,9 @@ Bobanana 5.0 — 状态机生成器 (Schema标准工具)
     python scripts/generate_state_machine.py validate state-machine.yaml
 """
 
-import os, sys, yaml
+import os
+import sys
+import yaml
 
 TEMPLATES_DIR = "docs/examples"
 OUTPUT_PATH = "state-machine.yaml"
@@ -73,21 +75,8 @@ def _normalize_schema(sm):
     nodes = sm.get("nodes", [])
     edges = sm.get("edges", [])
 
-    # 规范化节点
-    for node in nodes:
-        tags = node.get("tags", [])
-        if isinstance(tags, list) and tags:
-            # 将内联 tags 转为块格式
-            pass  # yaml.dump default_flow_style=False 会自动处理
-
-    # 规范化边
-    for edge in edges:
-        if "condition" in edge:
-            cond = edge["condition"]
-            if isinstance(cond, dict):
-                # 确保 condition 使用块格式
-                pass  # yaml.dump default_flow_style=False 会自动处理
-
+    # 规范化节点与边：yaml.dump(default_flow_style=False) 输出时即转为块格式
+    # （原逐元素检查分支为空操作，已移除）
     return {"version": sm.get("version", 1),
             "entry_point": sm.get("entry_point", "boss"),
             "max_loops": sm.get("max_loops", 50),
@@ -103,21 +92,14 @@ def validate_schema(path):
     errors = []
 
     # 检查内联 tags
-    if 'tags: [' in content or 'tags: [' in content:
+    if 'tags: [' in content:
         errors.append("使用内联 tags (如 tags: [OP]) → 请改为块格式:\n  tags:\n    - OP")
 
     # 检查 flow mapping condition
     if "condition: {" in content:
         errors.append("使用 flow mapping condition (如 condition: {field:score}) → 请改为块格式")
 
-    # 检查内联边
-    if "- from:" in content and "- to:" in content and "phase:" in content:
-        # 检查是否有单行边
-        for line in content.split("\n"):
-            ls = line.strip()
-            if ls.startswith("- from:") and len(ls) < 100:
-                pass  # 可能是多行边的起始
-
+    # 检查内联边（原循环体为空操作，已移除）
     if errors:
         print(f"[FAIL] Schema 校验未通过 ({len(errors)} 项):")
         for e in errors:

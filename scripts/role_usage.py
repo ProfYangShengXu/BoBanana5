@@ -9,7 +9,10 @@ Bobanana 5.0 — 角色卡使用追踪器
     python scripts/role_usage.py low-usage            # 列出低频卡
 """
 
-import os, json, sys, datetime
+import os
+import sys
+import json
+import datetime
 
 USAGE_FILE = ".reasonix/role_usage.json"
 

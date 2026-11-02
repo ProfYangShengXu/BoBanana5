@@ -66,7 +66,7 @@ class MCPClient:
                 return {'connected': True, 'mode': 'subprocess', 'cards': len(result['cards'])}
             raise MCPError("Subprocess connection failed")
         except Exception as e:
-            raise MCPError(f"Connection failed: {e}")
+            raise MCPError(f"Connection failed: {e}") from e
 
     def disconnect(self):
         """断开连接"""

@@ -9,7 +9,8 @@ STUDIES = {
     # ── 策划类 ──
     "system-designer": ("系统策划", "经济/社交/养成/战斗系统设计", "设计",
        "MDA Framework, Core Loop Design, Systems Design Thinking, Resource Model, Top-down Planning",
-       ["系统架构图（Miro/Visio）", "功能规格文档（输入/输出/边界/异常）", "资源循环图", "系统交互矩阵", "养成线配置表", "UI/UX 流程图"],
+       ["系统架构图（Miro/Visio）", "功能规格文档（输入/输出/边界/异常）", "资源循环图",
+        "系统交互矩阵", "养成线配置表", "UI/UX 流程图"],
        ["System Bloat：加无意义系统", "边界条件遗漏", "系统间张力不足", "忽视新人体验"]),
     "level-designer": ("关卡策划", "关卡/地形/谜题/流程设计", "设计",
        "Blockout→Playtest→Polish, Paper Level Design, Difficulty Curve, Flow Channel, Golden Path",
@@ -17,12 +18,17 @@ STUDIES = {
         "Intensity Arc 图", "Encounter 配置表", "Puzzle Logic 图"],
        ["Blockout 阶段 playtest 不够", "难度曲线设计不合理", "玩家 flow 被阻断", "谜题解法收束过窄"]),
     "narrative-designer": ("剧情策划", "主线/支线/世界观/对话设计", "设计",
-       "Narrative Systems vs Content, Gameplay First, Ludonarrative Harmony, Arc Diagram, Branching Narrative",
-       ["世界观圣经（World Bible）", "主线剧情大纲（三幕结构）", "任务流程表", "对话树（Twine/YAML）", "角色设定卡", "Intensity Arc"],
-       ["Ludonarrative Dissonance: 玩法与故事冲突", "玩家动机与故事目标不一致", "跳过对话后目标不清", "分支覆盖率不均衡"]),
+       "Narrative Systems vs Content, Gameplay First, Ludonarrative Harmony, Arc Diagram, "
+       "Branching Narrative",
+       ["世界观圣经（World Bible）", "主线剧情大纲（三幕结构）", "任务流程表",
+        "对话树（Twine/YAML）", "角色设定卡", "Intensity Arc"],
+       ["Ludonarrative Dissonance: 玩法与故事冲突", "玩家动机与故事目标不一致",
+        "跳过对话后目标不清", "分支覆盖率不均衡"]),
     "combat-designer": ("战斗策划", "动作/AI/手感/连招设计", "设计",
-       "Core Combat Loop, Enemy Archetype System, Game Feel Tuning, Telegraphing, Input Canceling, Combo Tree",
-       ["战斗系统设计文档", "技能配置表", "敌人设计文档", "AI Behavior Tree", "Game Feel 参数表", "连招树", "战斗 Prototype"],
+       "Core Combat Loop, Enemy Archetype System, Game Feel Tuning, Telegraphing, "
+       "Input Canceling, Combo Tree",
+       ["战斗系统设计文档", "技能配置表", "敌人设计文档", "AI Behavior Tree",
+        "Game Feel 参数表", "连招树", "战斗 Prototype"],
        ["输入反馈延迟 >100ms", "玩家看不懂敌人攻击预告", "敌人类型单一", "Combo 深度不足/过深"]),
     "numerical-designer": ("数值策划", "战斗/经济/平衡/概率设计", "设计",
        "Spreadsheet Modeling, Economy Flow Design, Inflation Control, "

@@ -4,7 +4,9 @@ Bobanana 5.0 — 修复已安装的插件
 修复插件包中的路径和 missing file 问题。
 """
 
-import os, json, shutil
+import os
+import json
+import shutil
 
 # 已安装的插件路径（Reasonix 桌面端使用的）
 INSTALLED_DIR = os.path.expandvars(r'%APPDATA%\reasonix\plugins\bobanana5')

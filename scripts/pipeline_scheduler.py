@@ -13,7 +13,15 @@ Windows Task Scheduler:
     python scripts/pipeline_scheduler.py install-winsch                        # 安装到 Windows 任务计划程序
 """
 
-import os, sys, json, time, datetime, logging, subprocess, argparse, hashlib
+import os
+import sys
+import json
+import time
+import datetime
+import logging
+import subprocess
+import argparse
+import hashlib
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
 logger = logging.getLogger('scheduler')

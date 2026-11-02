@@ -132,7 +132,7 @@ def main():
 
     if sys.argv[1] == '--all':
         card_files = []
-        for root, dirs, files in os.walk(roles_dir):
+        for root, _dirs, files in os.walk(roles_dir):
             for f in files:
                 if f == 'role-card.yaml':
                     card_files.append(os.path.join(root, f))

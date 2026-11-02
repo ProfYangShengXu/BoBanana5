@@ -55,7 +55,8 @@ if __name__ == '__main__':
         result = subprocess.run([sys.executable, 'pipeline_orchestrator.py', 'continue'],
                                capture_output=True, text=True, cwd=os.getcwd())
         for line in result.stdout.strip().split('\n'):
-            if line.strip(): print(f"  > {line.strip()}")
+            if line.strip():
+                print(f"  > {line.strip()}")
         sys.exit(0 if result.returncode == 0 else 1)
     else:
         sys.exit(1)

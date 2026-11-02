@@ -245,12 +245,18 @@ class StateMachineRuntime:
         if actual is None:
             return False
 
-        if op == '<': return actual < value
-        elif op == '>': return actual > value
-        elif op == '<=': return actual <= value
-        elif op == '>=': return actual >= value
-        elif op == '==': return actual == value
-        elif op == '!=': return actual != value
+        if op == '<':
+            return actual < value
+        if op == '>':
+            return actual > value
+        if op == '<=':
+            return actual <= value
+        if op == '>=':
+            return actual >= value
+        if op == '==':
+            return actual == value
+        if op == '!=':
+            return actual != value
         return False
 
     def _is_temporary_node(self, node_id):

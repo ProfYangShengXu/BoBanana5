@@ -77,7 +77,7 @@ def simulate_subagent_research(topic, role_name):
             with urllib.request.urlopen(req, timeout=3) as resp:
                 data = json.loads(resp.read())
                 pages = data.get('query', {}).get('pages', {})
-                for pid, page in pages.items():
+                for page in pages.values():
                     if 'extract' in page:
                         results_db["standards"]["industry_references"].append(
                             page['extract'][:200]
@@ -216,11 +216,14 @@ def generate_role_card(recruitment_id):
              "description": f"传递给 {role_name} 的任务输入", "required": True},
             {"name": "acceptance_criteria", "type": "object[]",
              "description": f"{role_name} 需满足的 PRD acceptance 标准", "required": True},
-            {"name": "handoff_context", "type": "object", "description": "上一个角色的交接工单上下文", "required": False},
+            {"name": "handoff_context", "type": "object",
+             "description": "上一个角色的交接工单上下文", "required": False},
         ],
         "output_contract": [
-            {"name": "implementation", "type": "object", "description": f"{role_name} 的实现产出（代码/设计/配置）"},
-            {"name": "test_results", "type": "object[]", "description": "测试结果（normal/boundary/adversarial 三路径）"},
+            {"name": "implementation", "type": "object",
+             "description": f"{role_name} 的实现产出（代码/设计/配置）"},
+            {"name": "test_results", "type": "object[]",
+             "description": "测试结果（normal/boundary/adversarial 三路径）"},
             {"name": "risk_notes", "type": "object[]", "description": "7 维风险评估标注"},
         ],
         "quality_gates": [
